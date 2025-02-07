@@ -1,0 +1,122 @@
+/* Style général de la page de modification de profil */
+.edit-profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Styles des formulaires */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+form label {
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+}
+
+form input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+form input:focus {
+    border-color: #3498db;
+}
+
+form button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #2980b9;
+}
+
+form button:active {
+    background-color: #1d6fa5;
+}
+
+/* Message d'erreur ou de succès */
+form .error, form .success {
+    text-align: center;
+    color: #e74c3c; /* Red color for error */
+    font-weight: bold;
+}
+
+form .success {
+    color: #2ecc71; /* Green color for success */
+}
+
+/* Espacement et alignement */
+form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+form .form-group input {
+    width: 100%;
+}
+
+/* Style pour les champs de formulaire */
+input[type="text"], input[type="email"] {
+    height: 40px;
+}
+
+/* Style pour le lien de retour au profil */
+.profile-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.profile-link a {
+    font-size: 16px;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.profile-link a:hover {
+    text-decoration: underline;
+}
+
+.messages .alert {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.messages .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.messages .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}

@@ -1,0 +1,211 @@
+{% load static %}
+<section id="accueil" class="py-5 text-center bg-light">
+  <style>
+    #accueil {
+      color: white;
+      
+    }
+    #accueil .welcome-container {
+      background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent noir */
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .image-container img {
+      border-radius: 10px;
+      width: 50%; /* Chaque image prend 50% de la largeur */
+      height: auto;
+
+    }
+    .image-container {
+        display: flex;
+        gap: 10px; /* Espace entre les images */
+      }
+   
+  </style>
+  <div class="image-container">
+    <img src="{% static 'images/ueh.png' %}" alt="Image du campus 1">
+    <img src="{% static 'images/ueh.png' %}" alt="Image du campus 2">
+  </div>
+  
+  
+  {% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+  <!-- Message de bienvenue affiché après l'image -->
+  <div class="container welcome-container">
+    <h1 class="display-4">Bienvenue à la Faculté des Sciences Humaines d'Haïti (FASCH)</h1>
+    <p class="lead">
+      La FASCH est une composante de l'Université d'État d'Haïti (UEH) et est dédiée à l'enseignement et à la recherche dans le domaine des sciences humaines. Elle propose des programmes de licence dans des disciplines telles que la sociologie, la communication sociale, la psychologie et le travail social.
+      Nous offrons une formation d'excellence en sciences humaines, préparant nos étudiants à un avenir prometteur.
+    </p>
+    <a href="{% url 'programmes' %}" class="btn btn-primary">Découvrir nos programmes</a>
+  </div>
+</section>
+
+  
+<div class="container my-5">
+    <div class="row">
+        <!-- Colonne gauche : Annonces -->
+        <div class="col-md-3 border-end">
+            <h4 class="text-primary">Annonces</h4>
+            <ul class="list-unstyled">
+              {% for annonce in annonces %}
+                <li class="d-flex align-items-center mb-3 border-bottom pb-2">
+                  <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
+                  <img src="{{ annonce.image.url|default:'/static/images/default.jpg' }}" 
+                       alt="Image de {{ annonce.titre }}" width="50" height="50" 
+                       class="me-2 rounded">
+                  <a href="{% url 'annonce_detail' annonce.id %}" 
+                     class="text-decoration-none text-dark fw-semibold hover-underline">
+                    {{ annonce.titre }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Colonne centrale : Articles -->
+<div class="col-md-6 border-end">
+    <h1 class="text-center mb-4">Liste des Articles</h1>
+
+    {% if articles %}
+        <div class="list-group">
+            {% for article in articles %}
+                <div class="list-group-item list-group-item-action py-3">
+                    <!-- Image de l'article -->
+                    {% if article.image %}
+                        <div class="mb-3">
+                            <img src="{{ article.image.url }}" alt="{{ article.titre }}" class="img-fluid rounded"
+                                 style="width: 100%; max-width: 600px; height: 250px; object-fit: cover; display: block; margin: 0 auto;">
+                        </div>
+                    {% endif %}
+
+                    <!-- Contenu de l'article -->
+                    <div>
+                        <h5 class="mb-1 text-center">{{ article.titre }}</h5>
+                        <p class="mb-1 text-center">{{ article.resume }}</p>
+                        <p class="text-muted text-center">
+                            Par <strong>{{ article.auteur }}</strong> • {{ article.date_publication|date:"j F Y" }}
+                        </p>
+                        <div class="text-center">
+                            <a href="{% url 'article_detail' id=article.id %}" class="btn btn-primary mt-2">Voir plus</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- PAGINATION -->
+        <nav aria-label="Pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if articles.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">&laquo; Premier</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ articles.previous_page_number }}">Précédent</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ articles.number }} sur {{ articles.paginator.num_pages }}</span>
+                </li>
+
+                {% if articles.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ articles.next_page_number }}">Suivant</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ articles.paginator.num_pages }}">Dernier &raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <p class="text-center">Aucun article disponible pour le moment.</p>
+    {% endif %}
+</div>
+
+        <!-- Colonne droite : Événements -->
+        <div class="col-md-3">
+            <h4 class="text-primary">Événements à venir</h4>
+            <ul class="list-unstyled">
+                {% for evenement in evenements %}
+                    {% if evenement.is_coming_up %}
+                        <li class="d-flex align-items-center mb-3 border-bottom pb-2">
+                            <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
+                            <img src="{{ evenement.image.url|default:'/static/images/default.jpg' }}" 
+                                 alt="Image de {{ evenement.titre }}" width="50" height="50" 
+                                 class="me-2 rounded">
+                            <a href="{% url 'evenement_detail' evenement.id %}" 
+                               class="text-decoration-none text-dark fw-semibold hover-underline">
+                                {{ evenement.titre }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+
+
+    <div class="container py-5">
+        <h1 class="text-center mb-5">Liste des Cours et Enseignants</h1>
+        <div class="row">
+            {% for cours in cours_list %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm rounded">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ cours.nom }}</h2>
+                        <p class="card-text"><strong>Spécialisation :</strong> {{ cours.specialisation }}</p>
+                        <p class="card-text"><strong>Horaire :</strong> {{ cours.horaire }}</p>
+                        <p class="card-text"><strong>Capacité :</strong> {{ cours.get_nombre_inscrits }}/{{ cours.capacite_maximale }}</p>
+                        
+                        {% if cours.est_ferme %}
+                            <p class="text-danger"><strong>Ce cours est fermé aux inscriptions.</strong></p>
+                        {% endif %}
+
+                        <h3 class="mt-3">Enseignants :</h3>
+                        {% if cours.professeurs.exists %}
+                            <ul>
+                                {% for professeur in cours.professeurs.all %}
+                                <li>
+                                    <strong>{{ professeur.nom }}</strong> 
+                                    (<em>{{ professeur.specialisation }}</em>)
+                                    {% if professeur.disponibilites.exists %}
+                                        <ul>
+                                            {% for dispo in professeur.disponibilites.all %}
+                                            <li>{{ dispo.jour }} : {{ dispo.horaire }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <em>Disponibilités non spécifiées</em>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Aucun enseignant assigné pour le moment.</p>
+                        {% endif %}
+
+                        {% if not cours.est_ferme %}
+                        <a href="{% url 'inscription_etudiant' cours.id %}" class="btn btn-primary mt-3 w-100">S'inscrire</a>
+
+                        {% else %}
+                            <button class="btn btn-secondary mt-3 w-100" disabled>Inscription fermée</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>

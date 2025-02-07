@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Contactez-nous - Faculté des Sciences Humaines{% endblock %}
+
+
+{% block content %}
+<!-- Contact -->
+<section id="contact" class="contact">
+    <div class="container d-flex flex-column align-items-center">
+        <h2 class="text-center">Contactez-nous</h2>
+        <p class="text-center">Pour toute information, n'hésitez pas à nous contacter.</p>
+        {% if messages %}
+            <ul class="list-unstyled">
+                {% for message in messages %}
+                    <li class="alert alert-success">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form method="post" class="w-100 p-4 bg-light rounded shadow-sm" style="max-width: 500px;">
+            {% csrf_token %}
+            <div class="mb-3">
+                <input type="text" name="nom" class="form-control" placeholder="Votre nom" required>
+            </div>
+            <div class="mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Votre email" required>
+            </div>
+            <div class="mb-3">
+                <textarea name="message" class="form-control" placeholder="Votre message" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

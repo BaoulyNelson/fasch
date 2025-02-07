@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Détails - {{ program.title }}{% endblock %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/programmeDetail.css' %}" />
+{% endblock %}
+{% block content %}
+<section id="program-detail" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">{{ program.title }}</h2>
+        <p>{{ program.description }}</p>
+        <a href="{% url 'programmes' %}" class="btn btn-primary">Retour aux programmes</a>
+    </div>
+</section>
+{% endblock %}

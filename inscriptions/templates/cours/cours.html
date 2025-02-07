@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Liste des Cours{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">Liste des Cours</h1>
+    <div class="row">
+        {% for cours in cours_list %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ cours.nom }}</h5>
+                    <p><strong>Spécialisation :</strong> {{ cours.specialisation }}</p>
+                    <p><strong>Horaire :</strong> {{ cours.horaire }}</p>
+                    <a href="{% url 'cours_detail' cours.id %}" class="btn btn-primary">Voir détails</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

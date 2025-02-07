@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Lien vers le fichier CSS -->
+{% load static %}
+
+<!-- Panneau coulissant (off-canvas) -->
+<div id="side-panel" class="side-panel bg-success text-white">
+  <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+    <img src="{% static 'images/fas.png' %}" alt="Logo" class="me-2" style="height: 50px" />
+  <!-- Bouton pour changer de thème -->
+<a href="#" id="theme-toggle">
+  <span class="icon" id="icon-sun">
+      <i class="fas fa-sun text-white"></i>
+  </span>
+  <span class="icon" id="icon-moon" style="display: none;">
+      <i class="fas fa-moon text-white"></i>
+  </span>
+</a>
+
+    <button class="text-white border-0 bg-transparent" id="close-panel-btn"><i class="fas fa-times fa-2x"></i></button>
+  </div>
+  <ul class="nav flex-column p-3">
+    <form method="get" action="{% url 'search' %}" class="mb-4">
+      <input type="search" name="q" class="search-input" placeholder="Rechercher..." value="{{ query }}" />
+      <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+    <hr />
+    <li class="nav-item mb-2"><a href="{% url 'home' %}" class="nav-link text-white">ACCUEIL</a></li>
+    <li class="nav-item mb-2"><a href="{% url 'programmes' %}" class="nav-link text-white">PROGRAMMES</a></li>
+    <li class="nav-item mb-2"><a href="{% url 'cours_professeurs' %}" class="nav-link text-white">COURS</a></li>
+    <li class="nav-item mb-2"><a href="{% url 'apropos' %}" class="nav-link text-white">A PROPOS</a></li>
+    <li class="nav-item mb-2"><a href="{% url 'contact' %}" class="nav-link text-white">CONTACT</a></li>
+    
+  </ul>
+  <div class="d-lg-flex custom-icons">
+    <a href="#" class="text-white"><i class="fab fa-facebook"></i></a>
+    <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+    <a href="#" class="text-white"><i class="fas fa-bookmark"></i></a>
+    {% if user.is_authenticated %}
+      {% if user.is_superuser %}
+        <a href="/admin/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> Admin</a>
+      {% else %}
+        <a href="{% url 'profile' %}" class="text-white" title="Voir le profil"><i class="fas fa-user"></i></a>
+      {% endif %}
+    {% else %}
+      <a href="{% url 'signup' %}" class="text-white" title="Créer un compte"><i class="fas fa-user-plus"></i></a>
+    {% endif %}
+  </div>
+  
+</div>
+
+{% include "partials/sectionAccueil.html" %}
+
+{% endblock %}

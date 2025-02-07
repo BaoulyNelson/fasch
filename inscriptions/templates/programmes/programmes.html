@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Programmes - Faculté des Sciences Humaines{% endblock %}
+
+{% block content %}
+
+<section id="programmes" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Nos Programmes</h2>
+        <div class="row">
+            <p>La Faculté des Sciences Humaines (FASCH), fondée en 1974, forme des universitaires dans quatre domaines : sociologie, psychologie, service social et communication sociale.</p>
+
+            <!-- Programme Sociologie -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Sociologie</h3>
+                        <p class="card-text">Explorer les structures sociales et les comportements collectifs.</p>
+                        <a href="{% url 'program_detail' 'sociologie' %}" class="btn btn-secondary">En savoir plus</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programme Psychologie -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Psychologie</h3>
+                        <p class="card-text">Préparation à comprendre et intervenir sur les comportements humains.</p>
+                        <a href="{% url 'program_detail' 'psychologie' %}" class="btn btn-secondary">En savoir plus</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programme Service Social -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Service Social</h3>
+                        <p class="card-text">Comprendre les grandes questions existentielles et éthiques.</p>
+                        <a href="{% url 'program_detail' 'service_social' %}" class="btn btn-secondary">En savoir plus</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Programme Communication Sociale -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Communication Sociale</h3>
+                        <p class="card-text">Comprendre les grandes questions existentielles et éthiques.</p>
+                        <a href="{% url 'program_detail' 'communication_sociale' %}" class="btn btn-secondary">En savoir plus</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

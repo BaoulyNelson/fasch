@@ -1,0 +1,104 @@
+/* Global styles for the event page */
+body {
+    font-family: 'Verdana', sans-serif;
+    line-height: 1.6;
+    background-color: #f7f9fc; /* Light background for readability */
+    color: #333; /* Dark gray for text */
+    margin: 0;
+    padding: 0;
+  }
+  
+  .cotainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff; /* White background for contrast */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px;
+  }
+  
+  /* Event title */
+  h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0056b3; /* Deep blue for prominence */
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 2px solid #0056b3; /* Blue underline for emphasis */
+    padding-bottom: 10px;
+  }
+  
+  /* Event details */
+  .text-muted {
+    font-size: 1rem;
+    color: #6c757d; /* Medium gray */
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.8;
+  }
+  
+  .text-muted strong {
+    color: #333; /* Stronger color for labels */
+  }
+  
+  /* Event description */
+  .event-description {
+    margin-bottom: 30px;
+  }
+  
+  .event-description h3 {
+    font-size: 1.5rem;
+    color: #0056b3; /* Match the title color */
+    margin-bottom: 10px;
+  }
+  
+  .event-description p {
+    font-size: 1rem;
+    color: #555; /* Slightly lighter gray for readability */
+    text-align: justify;
+    line-height: 1.8;
+  }
+  
+  /* Button styles */
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    background-color: #0056b3;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn:hover {
+    background-color: #004494; /* Darker blue */
+    transform: scale(1.05); /* Subtle zoom effect */
+  }
+  
+  .btn-secondary {
+    background-color: #6c757d; /* Gray for secondary button */
+  }
+  
+  .btn-secondary:hover {
+    background-color: #5a6268; /* Darker gray */
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+  
+    .text-muted {
+      font-size: 0.9rem;
+    }
+  
+    .btn {
+      font-size: 0.9rem;
+      padding: 8px 16px;
+    }
+  }
+  

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Inscription réussie{% endblock %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/succes.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <div class="success-container">
+        <h1>Inscription réussie !</h1>
+        <p>Vous êtes maintenant inscrit au cours avec succès.</p>
+        
+        <a href="{% url 'cours_et_enseignants' %}" class="button">Retour à la liste des cours</a>
+        
+        <hr>
+        
+        <!-- Lien pour modifier les informations de l'étudiant -->
+        <p><a href="{% url 'edit_info_etudiant' etudiant.id %}" class="button">Modifier vos informations</a></p>
+
+    </div>
+{% endblock %}

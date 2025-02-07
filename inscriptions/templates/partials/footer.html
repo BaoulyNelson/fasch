@@ -1,0 +1,30 @@
+<footer class="bg-dark text-white py-3">
+    <div class="container text-center">
+        <p class="text-white">&copy; {% now "Y" %} Faculté des Sciences Humaines d'Haïti. Tous droits réservés.</p>
+    </div>
+    
+</footer>
+
+<!-- Bouton pour remonter en haut -->
+<a href="#" id="back-to-top" class="btn btn-primary position-fixed bottom-0 end-0 m-3" style="display: none;">
+    <i class="bi bi-arrow-up"></i>
+</a>
+
+<!-- Bootstrap & Bootstrap Icons -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<!-- Script pour afficher/cacher le bouton -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let backToTop = document.getElementById("back-to-top");
+
+        window.addEventListener("scroll", function () {
+            if (window.scrollY > 300) {
+                backToTop.style.display = "block";
+            } else {
+                backToTop.style.display = "none";
+            }
+        });
+    });
+</script>

@@ -1,0 +1,126 @@
+/* Conteneur de recherche */
+.search-container {
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Aligne verticalement */
+    margin: 20px 0; /* Espacement autour du conteneur */
+}
+
+/* Barre de recherche */
+.search-input {
+    max-width: 200px; /* Limite la largeur */
+    padding: 10px 15px; /* Espace interne */
+    border: 2px solid #ccc; /* Bordure grise */
+    border-radius: 25px; /* Bords arrondis */
+    font-size: 1rem; /* Taille du texte */
+    outline: none; /* Retire le contour au focus */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Effet doux sur les interactions */
+}
+
+/* Focus sur l'input */
+.search-input:focus {
+    border-color: #007BFF; /* Change la couleur de la bordure au focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Ajoute une ombre bleue */
+}
+
+/* Placeholder */
+.search-input::placeholder {
+    color: #aaa; /* Couleur du placeholder */
+    font-style: italic; /* Style italique pour différencier */
+}
+
+
+/* Style des résultats de recherche */
+#search-results {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.search-result-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-result-item:hover {
+    background-color: #f0f0f0;
+}
+
+
+
+.search-results-container {
+    margin: 2rem auto;
+    max-width: 800px;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.category-section {
+    margin-top: 1.5rem;
+}
+
+.category-title {
+    font-size: 1.5rem;
+    color: #555;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.category-list {
+    list-style: none;
+    padding: 0;
+}
+
+.result-item {
+    margin-bottom: 0.8rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-link {
+    font-size: 1.2rem;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.result-link:hover {
+    text-decoration: underline;
+}
+
+.result-meta {
+    font-size: 0.9rem;
+    color: #666;
+    display: block;
+    margin-top: 0.3rem;
+}
+
+.no-results, .no-query-message {
+    font-size: 1rem;
+    color: #999;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}

@@ -1,0 +1,13 @@
+.list-group-item {
+    background-color: #f8f9fa; /* Fond clair */
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.list-group-item img {
+    border-radius: 5px;
+}
+
+h5 {
+    font-weight: bold;
+}

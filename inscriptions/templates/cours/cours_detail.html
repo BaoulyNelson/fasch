@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+    <div class="container py-5">
+        <h1 class="text-center mb-4">{{ cours.nom }}</h1>
+        <p class="text-muted text-center">ID du cours : {{ cours.id }}</p>
+        <p class="text-center">
+            <strong>Spécialisation :</strong> {{ cours.specialisation }}
+        </p>
+
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm rounded">
+                    <div class="card-body">
+                        <h2>Informations sur le cours</h2>
+                        <p><strong>Horaire :</strong> {{ cours.horaire }}</p>
+                        <p><strong>Capacité :</strong> {{ cours.get_nombre_inscrits }}/{{ cours.capacite_maximale }}</p>
+                        
+                        {% if cours.est_ferme %}
+                            <p class="text-danger"><strong>Ce cours est fermé aux inscriptions.</strong></p>
+                        {% endif %}
+
+                        <h3 class="mt-4">Enseignants</h3>
+                        {% if cours.professeurs.exists %}
+                            <ul>
+                                {% for professeur in cours.professeurs.all %}
+                                <li>
+                                    <strong>{{ professeur.nom }}</strong> 
+                                    (<em>{{ professeur.specialisation }}</em>) 
+                                    - Disponibilités : 
+                                    {% if professeur.disponibilites.exists %}
+                                        <ul>
+                                            {% for dispo in professeur.disponibilites.all %}
+                                            <li>{{ dispo.jour }} : {{ dispo.horaire }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        Non spécifiées
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Aucun enseignant associé à ce cours pour le moment.</p>
+                        {% endif %}
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'cours_professeurs' %}" class="btn btn-secondary">Retour à la liste des cours</a>
+
+                            {% if inscrit %}
+                                <button class="btn btn-success" disabled>Vous êtes inscrit à ce cours</button>
+                            {% elif not cours.est_ferme %}
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">S'inscrire à ce cours</button>
+                                </form>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Inscription fermée</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center display-4">Liste des Événements</h1>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for evenement in evenements %}
+        <div class="col">
+            <div class="card h-100">
+                {% if evenement.image %}
+                    <img src="{{ evenement.image.url }}" class="card-img-top" alt="{{ evenement.titre }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ evenement.titre }}</h5>
+                    <p class="card-text">{{ evenement.description|slice:":100" }}{% if evenement.description|length > 100 %}...{% endif %}</p>
+                    <small class="text-muted">Date : {{ evenement.date_debut|date:"Y-m-d" }}</small>
+
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'evenement_detail' evenement.id %}" class="btn btn-primary">Voir plus</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-center">Aucun événement à venir.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

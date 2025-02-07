@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/etudiants.css' %}" />
+{% endblock %}
+{% block content %}
+    <h1 class="text-center">Liste des Étudiants</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Niveau</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Cours Inscrits</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for etudiant in etudiants %}
+            <tr>
+                <td>{{ etudiant.nom }}</td>
+                <td>{{ etudiant.prenom }}</td>
+                <td>{{ etudiant.niveau }}</td>
+                <td>{{ etudiant.email }}</td>
+                <td>{{ etudiant.telephone }}</td>
+                <td>
+                    {% if etudiant.inscriptions.all %}
+                        <ul>
+                            {% for inscription in etudiant.inscriptions.all %}
+                                <li>{{ inscription.cours.nom }} ({{ inscription.cours.horaire }})</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        Aucune inscription
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Aucun étudiant trouvé.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

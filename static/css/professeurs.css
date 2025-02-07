@@ -1,0 +1,105 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corps de la page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    padding: 20px;
+}
+
+/* Conteneur principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Titre principal */
+h1 {
+    text-align: center;
+    color: #004d7a;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+}
+
+/* Liste des professeurs */
+.professeurs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Carte de chaque professeur */
+.professeur-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.professeur-card h2 {
+    color: #006b8f;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.professeur-card .disponibilites {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.professeur-card h3 {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Liste des cours */
+.cours-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.cours-list li {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.cours-list .horaire {
+    font-weight: bold;
+    color: #004d7a;
+}
+
+/* Séparateur entre les professeurs */
+hr {
+    border: 0;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .professeur-card {
+        padding: 15px;
+    }
+
+    .cours-list li {
+        font-size: 1rem;
+    }
+}

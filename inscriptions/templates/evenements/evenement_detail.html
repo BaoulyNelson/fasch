@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+  <div class="row">
+    <!-- Colonne principale -->
+    <div class="col-md-8">
+      <h1 class="text-center fw-bold display-4">{{ evenement.titre }}</h1>
+      
+      {% if evenement.image %}
+        <div class="card mx-auto mb-4">
+          <img src="{{ evenement.image.url }}" alt="{{ evenement.titre }}" class="card-img-top w-100" style="object-fit: cover;">
+        </div>
+      {% endif %}
+
+      <div class="event-content my-4">
+        <h3>Description</h3>
+        <p class="fs-5">{{ evenement.description|safe }}</p>
+        <p><strong>Date de début :</strong> {{ evenement.date_debut|date:"d M Y H:i" }}</p>
+        <p><strong>Date de fin :</strong> {{ evenement.date_fin|date:"d M Y H:i" }}</p>
+        <p><strong>Lieu :</strong> {{ evenement.lieu }}</p>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="{% url 'evenements_list' %}" class="btn btn-primary rounded-pill px-4">Retour aux événements</a>
+      </div>
+    </div>
+
+    <!-- Colonne latérale -->
+    <div class="col-md-4">
+      <h4 class="text-primary">Autres événements</h4>
+      <ul class="list-unstyled">
+        {% for upcoming_event in evenements %}
+          {% if upcoming_event.is_coming_up and upcoming_event != evenement %}
+            <li class="d-flex align-items-center mb-3 border-bottom pb-2">
+              <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
+              <a href="{% url 'evenement_detail' upcoming_event.id %}" class="text-decoration-none text-dark fw-semibold">
+                {{ upcoming_event.titre }}
+              </a>
+            </li>
+          {% endif %}
+        {% empty %}
+          <li>Aucun événement à venir</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

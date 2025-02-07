@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier informations étudiant{% endblock %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/modifierProfil.css' %}" />
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<div class="container my-5">
+    <h1 class="text-center mb-4">Modifier les informations de l'étudiant {{ etudiant.nom }} {{ etudiant.prenom }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <div class="d-flex gap-2 mt-3">
+            <!-- Bouton Sauvegarder -->
+            <button type="submit" class="btn btn-primary">Modifier</button>
+    
+            <!-- Bouton Retour -->
+            <a href="{% url 'etudiant_profil' %}" class="btn btn-secondary">Retour</a>
+        </div>
+    </form>
+    
+
+   
+    
+</div>
+{% endblock %}

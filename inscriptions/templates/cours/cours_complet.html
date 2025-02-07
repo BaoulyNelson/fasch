@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Cours Complet{% endblock %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cours_complet.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger">
+        <h1>Ce cours est déjà complet.</h1>
+        <p>Malheureusement, il n'y a plus de places disponibles pour ce cours. Veuillez choisir un autre cours ou vous inscrire plus tard.</p>
+        <a href="{% url 'cours_et_enseignants' %}" class="btn btn-primary">Retour à la liste des cours</a>
+    </div>
+{% endblock %}

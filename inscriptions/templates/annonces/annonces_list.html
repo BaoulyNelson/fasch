@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="text-center display-4">Liste des Annonces</h1>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for annonce in annonces %}
+        <div class="col">
+            <div class="card h-100">
+                {% if annonce.image %}
+                    <img src="{{ annonce.image.url }}" class="card-img-top" alt="{{ annonce.titre }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ annonce.titre }}</h5>
+                    <p class="card-text">{{ annonce.contenu|slice:":100" }}{% if annonce.contenu|length > 100 %}...{% endif %}</p>
+                    <small class="text-muted">Posté le {{ annonce.date_publication|date:"j F Y" }}</small>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'annonce_detail' id=annonce.id %}" class="btn btn-primary">Voir plus</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-center">Aucune annonce disponible.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
