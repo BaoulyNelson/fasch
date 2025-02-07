@@ -40,7 +40,7 @@
     
       {% if user.is_authenticated %}
         {% if user.is_superuser %}
-          <a href="/admin/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> Admin</a>
+          <a href="/fasch/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> fasch</a>
         {% else %}
           <a href="{% url 'profile' %}" class="text-white" title="Voir le profil"><i class="fas fa-user"></i></a>
         {% endif %}
@@ -92,7 +92,7 @@
     <a href="#" class="text-white"><i class="fas fa-bookmark"></i></a>
     {% if user.is_authenticated %}
       {% if user.is_superuser %}
-        <a href="/admin/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> Admin</a>
+        <a href="/fasch/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> fasch</a>
       {% else %}
         <a href="{% url 'profile' %}" class="text-white" title="Voir le profil"><i class="fas fa-user"></i></a>
       {% endif %}

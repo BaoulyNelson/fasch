@@ -146,9 +146,16 @@ def edit_info_etudiant(request, etudiant_id):
         form = EtudiantForm(instance=etudiant)
     return render(request, 'etudiants/edit_info_etudiant.html', {'form': form})
 
+
+
 def cours(request):
     cours_list = Cours.objects.all().order_by('-date_creation')  # Récupère tous les cours
-    return render(request, 'cours/cours.html', {'cours_list': cours_list})
+    paginator = Paginator(cours_list, 6)  # 6 cours par page
+
+    page_number = request.GET.get('page')  # Récupérer le numéro de la page
+    page_obj = paginator.get_page(page_number)  # Obtenir la page demandée
+
+    return render(request, 'cours/cours.html', {'page_obj': page_obj})
 
 
 @login_required
@@ -252,6 +259,17 @@ def cours_et_professeurs(request):
         'cours_list': cours_list,
         'professeurs_list': professeurs_list
     })
+
+
+
+def liste_professeurs(request):
+    professeurs_list = Professeur.objects.all()  # Récupérer tous les professeurs
+    paginator = Paginator(professeurs_list, 6)  # 6 professeurs par page
+
+    page_number = request.GET.get('page')  # Obtenir le numéro de la page
+    page_obj = paginator.get_page(page_number)  # Récupérer la page actuelle
+
+    return render(request, "professeurs/professeurs.html", {"page_obj": page_obj})
 
 
 @login_required

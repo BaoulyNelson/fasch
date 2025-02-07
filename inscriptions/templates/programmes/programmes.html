@@ -53,9 +53,41 @@
                     </div>
                 </div>
             </div>
+        </div> <!-- Fermeture de la .row pour les programmes -->
 
-        </div>
-    </div>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Liste des Professeurs</h5>
+                            <p class="card-text">Cliquez sur le bouton ci-dessous pour voir la liste complète des professeurs.</p>
+                            <a href="{% url 'liste_professeurs' %}" class="btn btn-primary">Voir les profs</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Liste des Cours</h5>
+                            <p class="card-text">Retrouvez ici tous les cours enseignés par nos professeurs.</p>
+                            <a href="{% url 'cours' %}" class="btn btn-secondary">Voir les Cours</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Autre Carte</h5>
+                            <p class="card-text">Cette carte est un exemple supplémentaire.</p>
+                            <a href="#" class="btn btn-success">Voir Plus</a>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- Fermeture de la .row pour les cartes supplémentaires -->
+        </div> <!-- Fermeture de la deuxième .container -->
+        
+    </div> <!-- Fermeture de la première .container -->
 </section>
 
 {% endblock %}

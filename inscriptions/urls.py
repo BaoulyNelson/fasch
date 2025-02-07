@@ -56,6 +56,8 @@ urlpatterns = [
     path('article/<int:id>/', views.article_detail, name='article_detail'),
     
     path('cours/', views.cours, name='cours'),  # Nouvelle URL pour afficher tous les cours
+    path("professeurs/", views.liste_professeurs, name="liste_professeurs"),  # URL pour la liste des profs
+
 
 ]
 
