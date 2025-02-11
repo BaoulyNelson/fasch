@@ -87,9 +87,11 @@
     
   </ul>
   <div class="d-lg-flex custom-icons">
-    <a href="#" class="text-white"><i class="fab fa-facebook"></i></a>
-    <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
-    <a href="#" class="text-white"><i class="fas fa-bookmark"></i></a>
+    <a href="https://web.facebook.com/" class="text-white"><i class="fab fa-facebook"></i></a>
+    <a href="https://x.com/home" class="text-white"><i class="fab fa-twitter"></i></a>
+    <a href="{% url 'list_etudiants' %}" class="text-white">
+      <i class="fas fa-users"></i>
+  </a>
     {% if user.is_authenticated %}
       {% if user.is_superuser %}
         <a href="/fasch/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> fasch</a>

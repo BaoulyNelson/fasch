@@ -1,7 +1,3 @@
-html, body {
-    height: 100%;
-    margin: 0;
-}
 
 .content {
     min-height: 100%;
@@ -12,3 +8,8 @@ html, body {
 footer {
     margin-top: auto;
 }
+footer a {
+    text-decoration: none; /* Retirer le soulignement des liens */
+}
+
+

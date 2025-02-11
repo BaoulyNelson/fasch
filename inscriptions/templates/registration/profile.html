@@ -19,7 +19,10 @@
 
     <div class="profile-actions">
         <!-- Bouton pour se déconnecter -->
-        <a href="{% url 'logout' %}" class="btn btn-danger">Se déconnecter</a>
+        <form action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Se déconnecter</button>
+        </form>
     
         <!-- Bouton pour modifier le profil -->
         <a href="{% url 'edit_profile' %}" class="btn btn-primary">Modifier le profil</a>

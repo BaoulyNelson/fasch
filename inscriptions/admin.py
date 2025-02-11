@@ -1,6 +1,13 @@
 from django.contrib import admin
 from .models import Professeur, Cours, Etudiant, Inscription,Annonce,Evenement,Article
 
+
+
+
+admin.site.site_header = "FASCH Administration"
+admin.site.site_title = "FASCH Admin Portal"
+admin.site.index_title = "Bienvenue sur le panneau d'administration de Fasch"
+
 admin.site.register(Annonce)
 admin.site.register(Evenement)
 admin.site.register(Article)

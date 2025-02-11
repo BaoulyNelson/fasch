@@ -1,0 +1,20 @@
+.env
+
+# Ignorer l'environnement virtuel
+env/
+.env/
+
+# Fichiers de cache et temporaires
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Fichiers spécifiques à l'IDE
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Fichiers de logs et bases de données locales
+*.log
+db.sqlite3

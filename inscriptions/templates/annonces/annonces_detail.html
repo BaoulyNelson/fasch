@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% block title %}{{ annonce.titre }} - Détail{% endblock %}
+{% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/autres_annonces.css' %}">
+{% endblock %}
 {% block content %}
 <div class="container my-5">
   <div class="row">
@@ -32,22 +36,26 @@
 
     <!-- Colonne latérale -->
     <div class="col-md-4">
-      <h4 class="text-primary">Autres Annonces</h4>
-      <ul class="list-unstyled">
-        {% for other_announcement in annonces %}
-          {% if other_announcement.is_active and other_announcement != annonce %}
-            <li class="d-flex align-items-center mb-3 border-bottom pb-2">
-              <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
-              <a href="{% url 'annonce_detail' other_announcement.id %}" class="text-decoration-none text-dark fw-semibold">
-                {{ other_announcement.titre }}
-              </a>
-            </li>
-          {% endif %}
-        {% empty %}
-          <li>Aucune annonce disponible</li>
-        {% endfor %}
+      <h4 class="text-primary text-center mb-4" style="border-bottom: 2px solid blue;">Autres Annonces</h4>
+  
+      <ul class="list-unstyled autres-annonces-list">
+          {% for other_announcement in annonces %}
+              {% if other_announcement.is_active and other_announcement != annonce %}
+                  <li class="autres-annonces-item">
+                      <span class="autres-annonces-rank">{{ forloop.counter }}.</span>
+                      <img src="{{ other_announcement.image.url|default:'/static/images/default.jpg' }}" 
+                           alt="Image de {{ other_announcement.titre }}" class="autres-annonces-image">
+                      <a href="{% url 'annonce_detail' other_announcement.id %}" class="autres-annonces-title">
+                          {{ other_announcement.titre }}
+                      </a>
+                  </li>
+              {% endif %}
+          {% empty %}
+              <li class="text-muted text-center">Aucune annonce disponible</li>
+          {% endfor %}
       </ul>
-    </div>
+  </div>
+  
   </div>
 </div>
 {% endblock %}

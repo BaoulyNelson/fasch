@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Cours, Inscription, Etudiant,Professeur,Evenement, Annonce,Article
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserChangeForm
-from django.contrib.auth import login
+from django.contrib.auth import login,authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone  # Ajouter cette ligne
 from django.shortcuts import render, get_object_or_404
@@ -13,9 +13,12 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils.html import mark_safe
 import re
-from .forms import EtudiantForm
+from .forms import EtudiantForm,ContactForm
 from django.db import IntegrityError
 from django.core.paginator import Paginator
+from django.contrib.messages import get_messages
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
+
 
 def home(request):
     # Récupérer tous les articles triés par date décroissante
@@ -85,20 +88,53 @@ def programmes(request):
 def apropos(request):
     return render(request, 'apropos.html')
 
-def contact(request):
-    return render(request, 'contact.html')
+
+
+def login_view(request):
+    # Supprime les anciens messages avant d'afficher un nouveau
+    storage = get_messages(request)
+    for _ in storage:
+        pass  # Cette boucle vide supprime tous les anciens messages
+
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                messages.success(request, f"Bienvenue {username} ! 😊 Vous êtes connecté.")
+
+                if request.POST.get("remember_me"):
+                    request.session.set_expiry(1209600)  # 2 semaines
+
+                return redirect("profile")
+            else:
+                messages.error(request, "Nom d'utilisateur ou mot de passe incorrect.")
+        else:
+            messages.error(request, "Veuillez vérifier vos informations.")
+    else:
+        form = AuthenticationForm()
+
+    return render(request, "registration/login.html", {"form": form})
 
 
 def signup_view(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user) 
-            return redirect('home')
+            login(request, user)
+            messages.success(request, "Inscription réussie ! 🎉 Bienvenue sur notre plateforme.")
+            return redirect("home")  # Redirection après succès
+        else:
+            messages.error(request, "Une erreur est survenue lors de l'inscription. Vérifiez les informations.")
     else:
         form = UserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form})
+
+    return render(request, "registration/signup.html", {"form": form})
 
 
 @login_required
@@ -230,24 +266,32 @@ def success_page(request):
 
 
 
-def contact(request):
-    if request.method == 'POST':
-        nom = request.POST.get('nom')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
+def contact_view(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            message = form.cleaned_data["message"]
 
-        # Envoyer un email (exemple)
-        send_mail(
-            subject=f"Message de {nom} via le formulaire de contact",
-            message=message,
-            from_email=email,
-            recipient_list=['fasch@gmail.com'],  # Changez par l'adresse de destination
-        )
+            # 📩 Envoyer un email (optionnel)
+            send_mail(
+                f"Nouveau message de {name}",
+                message,
+                email,
+                ["admin@example.com"],  # Remplace avec l'email de ton admin
+                fail_silently=False,
+            )
 
-        messages.success(request, "Votre message a été envoyé avec succès. Merci de nous avoir contactés !")
-        return render(request, 'contact.html')  # Recharge la page avec un message de succès
+            return redirect("contact_success")  # Redirige vers une page de succès
+    else:
+        form = ContactForm()
 
-    return render(request, 'contact.html')
+    return render(request, "contact.html", {"form": form})
+
+
+def contact_success_view(request):
+    return render(request, "contact_success.html")
 
 
 

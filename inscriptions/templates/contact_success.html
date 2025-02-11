@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4 text-center border-0 rounded-4">
+        
+        <!-- Icône de confirmation -->
+        <div class="text-success display-1">
+            ✔️
+        </div>
+
+        <h2 class="fw-bold mt-3">Message envoyé !</h2>
+        <p class="text-muted">Merci de nous avoir contactés. Nous vous répondrons bientôt.</p>
+
+        <!-- Bouton retour à l'accueil -->
+        <a href="{% url 'home' %}" class="btn btn-primary mt-3">Retour à l'accueil</a>
+    </div>
+</div>
+{% endblock %}

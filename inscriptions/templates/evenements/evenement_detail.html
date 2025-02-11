@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/autres_evenements.css' %}">
+{% endblock %}
 <div class="container my-5">
   <div class="row">
     <!-- Colonne principale -->
@@ -27,22 +32,26 @@
 
     <!-- Colonne latérale -->
     <div class="col-md-4">
-      <h4 class="text-primary">Autres événements</h4>
-      <ul class="list-unstyled">
-        {% for upcoming_event in evenements %}
-          {% if upcoming_event.is_coming_up and upcoming_event != evenement %}
-            <li class="d-flex align-items-center mb-3 border-bottom pb-2">
-              <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
-              <a href="{% url 'evenement_detail' upcoming_event.id %}" class="text-decoration-none text-dark fw-semibold">
-                {{ upcoming_event.titre }}
-              </a>
-            </li>
-          {% endif %}
-        {% empty %}
-          <li>Aucun événement à venir</li>
-        {% endfor %}
+      <h4 class="text-primary text-center mb-4" style="border-bottom: 2px solid green;">Autres événements</h4>
+  
+      <ul class="list-unstyled autres-evenements-list">
+          {% for upcoming_event in evenements %}
+              {% if upcoming_event.is_coming_up and upcoming_event != evenement %}
+                  <li class="autres-evenements-item">
+                      <span class="autres-evenements-rank">{{ forloop.counter }}.</span>
+                      <img src="{{ upcoming_event.image.url|default:'/static/images/default.jpg' }}" 
+                           alt="Image de {{ upcoming_event.titre }}" class="autres-evenements-image">
+                      <a href="{% url 'evenement_detail' upcoming_event.id %}" class="autres-evenements-title">
+                          {{ upcoming_event.titre }}
+                      </a>
+                  </li>
+              {% endif %}
+          {% empty %}
+              <li class="text-muted text-center">Aucun événement à venir</li>
+          {% endfor %}
       </ul>
-    </div>
+  </div>
+  
   </div>
 </div>
 {% endblock %}

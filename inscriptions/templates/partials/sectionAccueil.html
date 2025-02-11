@@ -1,32 +1,11 @@
 {% load static %}
-<section id="accueil" class="py-5 text-center bg-light">
-  <style>
-    #accueil {
-      color: white;
-      
-    }
-    #accueil .welcome-container {
-      background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent noir */
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-    .image-container img {
-      border-radius: 10px;
-      width: 50%; /* Chaque image prend 50% de la largeur */
-      height: auto;
 
-    }
-    .image-container {
-        display: flex;
-        gap: 10px; /* Espace entre les images */
-      }
-   
-  </style>
-  <div class="image-container">
-    <img src="{% static 'images/ueh.png' %}" alt="Image du campus 1">
-    <img src="{% static 'images/ueh.png' %}" alt="Image du campus 2">
-  </div>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/evenements_Accueil.css' %}">
+<link rel="stylesheet" href="{% static 'css/annonces_Accueil.css' %}">
+{% endblock %}
+<section id="accueil" class="py-5 text-center bg-light">
+
   
   
   {% if messages %}
@@ -53,27 +32,26 @@
     <div class="row">
         <!-- Colonne gauche : Annonces -->
         <div class="col-md-3 border-end">
-            <h4 class="text-primary">Annonces</h4>
-            <ul class="list-unstyled">
-              {% for annonce in annonces %}
-                <li class="d-flex align-items-center mb-3 border-bottom pb-2">
-                  <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
-                  <img src="{{ annonce.image.url|default:'/static/images/default.jpg' }}" 
-                       alt="Image de {{ annonce.titre }}" width="50" height="50" 
-                       class="me-2 rounded">
-                  <a href="{% url 'annonce_detail' annonce.id %}" 
-                     class="text-decoration-none text-dark fw-semibold hover-underline">
-                    {{ annonce.titre }}
-                  </a>
-                </li>
-              {% endfor %}
+            <h4 class="text-primary text-center mb-4" style="border-bottom: 2px solid red;">Annonces</h4>
+            
+            <ul class="list-unstyled annonce-list">
+                {% for annonce in annonces %}
+                    <li class="annonce-item">
+                        <span class="annonce-rank">{{ forloop.counter }}.</span>
+                        <img src="{{ annonce.image.url|default:'/static/images/default.jpg' }}" 
+                             alt="Image de {{ annonce.titre }}" class="annonce-image">
+                        <a href="{% url 'annonce_detail' annonce.id %}" class="annonce-title">
+                            {{ annonce.titre }}
+                        </a>
+                    </li>
+                {% endfor %}
             </ul>
         </div>
+        
 
         <!-- Colonne centrale : Articles -->
 <div class="col-md-6 border-end">
-    <h1 class="text-center mb-4">Liste des Articles</h1>
-
+    <h1 class="text-center mb-4" style="border-bottom: 2px solid #FFB84D;">Liste des Articles</h1>
     {% if articles %}
         <div class="list-group">
             {% for article in articles %}
@@ -134,17 +112,16 @@
 
         <!-- Colonne droite : Événements -->
         <div class="col-md-3">
-            <h4 class="text-primary">Événements à venir</h4>
-            <ul class="list-unstyled">
+            <h4 class="text-primary text-center mb-4" style="border-bottom: 2px solid blue;">Événements</h4>
+            
+            <ul class="list-unstyled evenement-list">
                 {% for evenement in evenements %}
                     {% if evenement.is_coming_up %}
-                        <li class="d-flex align-items-center mb-3 border-bottom pb-2">
-                            <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
+                        <li class="evenement-item">
+                            <span class="evenement-rank">{{ forloop.counter }}.</span>
                             <img src="{{ evenement.image.url|default:'/static/images/default.jpg' }}" 
-                                 alt="Image de {{ evenement.titre }}" width="50" height="50" 
-                                 class="me-2 rounded">
-                            <a href="{% url 'evenement_detail' evenement.id %}" 
-                               class="text-decoration-none text-dark fw-semibold hover-underline">
+                                 alt="Image de {{ evenement.titre }}" class="evenement-image">
+                            <a href="{% url 'evenement_detail' evenement.id %}" class="evenement-title">
                                 {{ evenement.titre }}
                             </a>
                         </li>
@@ -152,6 +129,7 @@
                 {% endfor %}
             </ul>
         </div>
+        
 
     </div>
 </div>

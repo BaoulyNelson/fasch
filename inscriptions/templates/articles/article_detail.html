@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/article_details.css' %}">
+<link rel="stylesheet" href="{% static 'css/art.css' %}">
 {% endblock %}
 
 <div class="container my-5">
@@ -35,23 +35,22 @@
 
     <!-- Colonne latérale -->
     <div class="col-md-4">
-      <h4 class="text-primary">Lire Egalement</h4>
-
-      <ul class="list-unstyled">
-        {% for recommended_article in recommended_articles %}
-          <li class="d-flex align-items-center mb-3 border-bottom pb-2">
-            <span class="me-2 text-primary fw-bold">{{ forloop.counter }}.</span>
-            <img src="{{ recommended_article.image.url|default:'/static/images/default.jpg' }}" 
-                 alt="Image de {{ recommended_article.titre }}" width="50" height="50" 
-                 class="me-2 rounded">
-            <a href="{% url 'article_detail' recommended_article.id %}" 
-               class="text-decoration-none text-dark fw-semibold hover-underline">
-              {{ recommended_article.titre }}
-            </a>
-          </li>
-        {% endfor %}
+      <h4 class="text-primary">Lire Également</h4>
+  
+      <ul class="list-unstyled recommended-list">
+          {% for recommended_article in recommended_articles %}
+              <li class="recommended-item">
+                  <span class="recommended-rank">{{ forloop.counter }}.</span>
+                  <img src="{{ recommended_article.image.url|default:'/static/images/default.jpg' }}" 
+                       alt="Image de {{ recommended_article.titre }}" class="recommended-image">
+                  <a href="{% url 'article_detail' recommended_article.id %}" class="recommended-title">
+                      {{ recommended_article.titre }}
+                  </a>
+              </li>
+          {% endfor %}
       </ul>
-    </div>
+  </div>
+  
   </div>
 </div>
 

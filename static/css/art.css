@@ -1,0 +1,40 @@
+.recommended-list {
+    padding: 0;
+    margin: 0;
+}
+
+.recommended-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+    padding: 8px 0;
+}
+
+.recommended-rank {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff; /* Bleu Bootstrap */
+    min-width: 20px;
+}
+
+.recommended-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.recommended-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.recommended-title:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
