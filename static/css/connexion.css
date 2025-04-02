@@ -40,14 +40,22 @@ p {
 }
 
 /* Style des champs de saisie */
+/* Style des champs de saisie */
 input[type="text"],
-input[type="password"] {
+input[type="password"], 
+input[type="email"],
+input[type="tel"],
+select { /* Ajout du style pour le champ niveau */
     width: 100%; /* Prend toute la largeur */
     padding: 10px; /* Espacement intérieur */
     margin: 10px 0; /* Espacement vertical */
     border: 1px solid #ccc; /* Bordure légère */
     border-radius: 4px; /* Coins arrondis */
+    background-color: #fff; /* Fond blanc */
+    font-size: 16px;
+    appearance: none; /* Supprime le style par défaut du navigateur */
 }
+
 
 /* Style des liens */
 a {
@@ -57,4 +65,27 @@ a {
 
 a:hover {
     text-decoration: underline; /* Soulignement au survol */
+}
+
+button {
+    background-color: #007bff !important; /* Bleu Bootstrap */
+    color: white !important;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3 !important;
+}
+
+.btn-danger {
+    background-color: #dc3545 !important; /* Rouge Bootstrap */
+    color: white !important;
+}
+
+.btn-danger:hover {
+    background-color: #c82333 !important;
 }

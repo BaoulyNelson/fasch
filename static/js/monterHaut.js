@@ -4,21 +4,23 @@ document.addEventListener("DOMContentLoaded", function() {
   });
   
 
-document.addEventListener("DOMContentLoaded", function () {
-    let backToTopBtn = document.getElementById("back-to-top");
+  document.addEventListener("DOMContentLoaded", function () {
+    let btn = document.getElementById("btnScrollTop");
 
-    // Affiche le bouton si l'utilisateur descend au-delà de 300px
-    window.addEventListener("scroll", function () {
-        if (window.scrollY > 300) {
-            backToTopBtn.style.display = "block";
+    // Afficher le bouton quand on scrolle vers le bas
+    window.onscroll = function () {
+        if (document.documentElement.scrollTop > 300) {
+            btn.style.display = "block";
         } else {
-            backToTopBtn.style.display = "none";
+            btn.style.display = "none";
         }
-    });
+    };
 
-    // Défilement fluide vers le haut
-    backToTopBtn.addEventListener("click", function (e) {
-        e.preventDefault();
+    // Scroll vers le haut quand on clique
+    btn.addEventListener("click", function () {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
+
+    // Mettre à jour l'année automatiquement
+    document.getElementById("current-year").textContent = new Date().getFullYear();
 });

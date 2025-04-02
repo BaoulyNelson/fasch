@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-primary">Mes Cours Inscrits</h2>
+
+    {% if inscriptions %}
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th>Cours</th>
+                    <th>Professeurs</th>
+                    <th>Horaire</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inscription in inscriptions %}
+                <tr>
+                    <td class="fw-bold">{{ inscription.cours.nom }}</td>
+                    <td>
+                        {% for professeur in inscription.cours.professeurs.all %}
+                            {{ professeur.nom }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td class="text-muted">{{ inscription.cours.horaire }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center" role="alert">
+        <p class="mb-0">Vous n'êtes inscrit à aucun cours.</p>
+    </div>
+    
+    {% endif %}
+</div>
+{% endblock %}

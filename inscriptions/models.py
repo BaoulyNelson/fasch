@@ -135,7 +135,6 @@ class Cours(models.Model):
 
 class Etudiant(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='etudiants')  # Un utilisateur peut avoir plusieurs étudiants
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='etudiants')  # Un utilisateur peut avoir plusieurs étudiants
 
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
@@ -151,7 +150,7 @@ class Etudiant(models.Model):
         default="Preparatoire",
     )
     email = models.EmailField(unique=True)  # Email unique
-    telephone = models.CharField(max_length=15)
+    telephone = models.CharField(max_length=15, unique=True)  # Ajout de l'unicité
 
     def __str__(self):
         return f"{self.prenom} {self.nom} - {self.niveau}"

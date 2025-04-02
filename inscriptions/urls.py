@@ -15,8 +15,10 @@ urlpatterns = [
     
     # Page de déconnexion
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    # Confirmation avant de se déconnecter
+    path('confirmer-deconnexion/', views.confirmer_deconnexion, name='confirmer_deconnexion'),
     
-    
+    path('admission/', views.admission, name='admission'),
     # Changer de mot de passe
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
@@ -40,24 +42,27 @@ urlpatterns = [
 
     # Profil utilisateur
     path('profile/', views.profile_view, name='profile'),
+    
     path('profile/edit/', views.edit_profile_view, name='edit_profile'),
     
     # Profil étudiant
     path('etudiant/profil/', views.etudiant_profil, name='etudiant_profil'),
+    
     path('edit_etudiant/<int:etudiant_id>/', views.edit_info_etudiant, name='edit_info_etudiant'),
 
     # Inscription aux cours
     path('inscription/<int:cours_id>/', views.inscription_etudiant, name='inscription_etudiant'),
-
-    # Liste et détails des étudiants
+    
     path('etudiants/', views.list_etudiants, name='list_etudiants'),
+   
+    path('professeurs/', views.liste_professeurs, name='liste_professeurs'),
 
-    # Gestion des cours
-    path('cours_professeurs/', views.cours_et_professeurs, name='cours_professeurs'),
-
-
+    path('cours/', views.cours, name='cours'),
+    
     path('cours/<int:cours_id>/', views.cours_detail, name='cours_detail'),  # Détails d’un cours
-
+    
+    path('cours_inscrits/',views.cours_inscrits, name='cours_inscrits'),
+    
     # Programmes
     path('programmes/', views.programmes, name='programmes'),
     path('programmes/<str:program_name>/', views.program_detail, name='program_detail'),
@@ -82,8 +87,11 @@ urlpatterns = [
     path('articles/', views.articles_list, name='articles_list'),
     path('article/<int:id>/', views.article_detail, name='article_detail'),
     
-    path('cours/', views.cours, name='cours'),  # Nouvelle URL pour afficher tous les cours
-    path("professeurs/", views.liste_professeurs, name="liste_professeurs"),  # URL pour la liste des profs
+
+    path('mentions-legales/', views.mentions_legales, name='mentions_legales'),
+    path('politique-confidentialite/', views.politique_confidentialite, name='politique_confidentialite'),
+    path('conditions-utilisation/', views.conditions_utilisation, name='conditions_utilisation'),
+    path('cookies/', views.politique_cookies, name='cookies'),
 
 
 ]

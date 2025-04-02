@@ -2,113 +2,165 @@
 {% load static %}
 <header class="bg-success text-white p-3">
   <div class="container d-flex justify-content-between align-items-center">
-    <button class="text-white border-0 bg-transparent d-lg-none" id="hamburger-btn">
+    <button
+      class="text-white border-0 bg-transparent d-lg-none"
+      id="hamburger-btn"
+    >
       <i class="fas fa-bars fa-2x"></i>
     </button>
     <div class="d-flex align-items-center">
-      <img src="{% static 'images/fasch.png' %}" alt="Logo" class="me-2" style="height: 50px" />
-      <span class="fs-4">FASCH <strong>UEH</strong></span>
+      <img
+        src="{% static 'images/fasch.png' %}"
+        alt="Logo"
+        class="me-2 d-none d-md-block"
+        style="height: 50px"
+      />
+      <span class="fs-4">FASCH </span>
     </div>
 
     <!-- Onglets visibles uniquement sur les grands écrans -->
     <div class="d-none d-lg-flex align-items-center gap-3">
       <a href="{% url 'home' %}" class="nav-link text-white">ACCUEIL</a>
-      <a href="{% url 'programmes' %}" class="nav-link text-white">PROGRAMMES</a>
-      <a href="{% url 'cours_professeurs' %}" class="nav-link text-white">COURS</a>
-
-      <a href="{% url 'apropos' %}" class="nav-link text-white">A PROPOS</a>
-      <a href="{% url 'contact' %}" class="nav-link text-white">CONTACT</a>
-    <!-- Bouton pour changer de thème -->
-<a href="#" id="theme-toggle">
-  <span class="icon" id="icon-sun">
-      <i class="fas fa-sun text-white"></i>
-  </span>
-  <span class="icon" id="icon-moon" style="display: none;">
-      <i class="fas fa-moon text-white"></i>
-  </span>
-</a>
-
-      
+      <a href="{% url 'programmes' %}" class="nav-link text-white"
+        >PROGRAMMES</a
+      >
+      <a href="{% url 'cours' %}" class="nav-link text-white">COURS</a>
+      <a href="{% url 'liste_professeurs' %}" class="nav-link text-white"
+        >PROFESSEURS</a
+      >
+      <a href="{% url 'list_etudiants' %}" class="nav-link text-white"
+        >ETUDIANTS</a
+      >
+      <a href="{% url 'cours_inscrits' %}" class="nav-link text-white"
+        >INSCRITS</a
+      >
+      <!-- Icône de recherche placée ailleurs -->
+      <i class="fas fa-search search-icon" style="cursor: pointer"></i>
     </div>
 
     <div class="d-none d-lg-flex gap-3 social-icons">
-      <a href="https://web.facebook.com/" class="text-white"><i class="fab fa-facebook"></i></a>
-      <a href="https://x.com/home" class="text-white"><i class="fab fa-twitter"></i></a>
-      <a href="{% url 'list_etudiants' %}" class="text-white">
-        <i class="fas fa-users"></i>
-    </a>
-    
-      {% if user.is_authenticated %}
-        {% if user.is_superuser %}
-          <a href="/fasch/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> fasch</a>
-        {% else %}
-          <a href="{% url 'profile' %}" class="text-white" title="Voir le profil"><i class="fas fa-user"></i></a>
-        {% endif %}
+      {% if user.is_authenticated %} {% if user.is_superuser %}
+      <a href="/fasch/" class="text-white" title="Admin"
+        > <i class="fas fa-user-shield"></i>
+
+      </a>
       {% else %}
-        <a href="{% url 'signup' %}" class="text-white" title="Créer un compte"><i class="fas fa-user-plus"></i></a>
+      <a href="{% url 'profile' %}" class="text-white" title="Voir le profil"
+        ><i class="fas fa-user"></i
+      ></a>
+      {% endif %} {% else %}
+      <a href="{% url 'signup' %}" class="text-white" title="Créer un compte"
+        ><i class="fas fa-user-plus"></i
+      ></a>
       {% endif %}
     </div>
-    
   </div>
 
+  <!-- Panneau coulissant (off-canvas) -->
+  <div id="side-panel" class="side-panel bg-success text-white">
+    <div
+      class="d-flex justify-content-between align-items-center p-3 border-bottom"
+    >
+      <img
+        src="{% static 'images/fas.png' %}"
+        alt="Logo"
+        class="me-2"
+        style="height: 50px"
+      />
 
+      <a href="#" id="theme-toggle">
+        <span class="icon" id="icon-sun">
+          <i class="fas fa-sun text-white"></i>
+        </span>
+        <span class="icon" id="icon-moon" style="display: none">
+          <i class="fas fa-moon text-white"></i>
+        </span>
+      </a>
 
-<!-- Panneau coulissant (off-canvas) -->
-<div id="side-panel" class="side-panel bg-success text-white">
-  <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
-    <img src="{% static 'images/fas.png' %}" alt="Logo" class="me-2" style="height: 50px" />
-  <!-- Bouton pour changer de thème -->
-<a href="#" id="theme-toggle">
-  <span class="icon" id="icon-sun">
-      <i class="fas fa-sun text-white"></i>
-  </span>
-  <span class="icon" id="icon-moon" style="display: none;">
-      <i class="fas fa-moon text-white"></i>
-  </span>
-</a>
+      <button class="text-white border-0 bg-transparent" id="close-panel-btn">
+        <i class="fas fa-times fa-2x"></i>
+      </button>
+    </div>
+    <ul class="nav flex-column p-3">
+      <form method="get" action="{% url 'search' %}" class="mb-4">
+        <input
+          type="search"
+          name="q"
+          class="search-input"
+          placeholder="Rechercher..."
+          value="{{ query }}"
+        />
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+      <hr />
+      <li class="nav-item mb-2">
+        <a href="{% url 'home' %}" class="nav-link text-white">ACCUEIL</a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="{% url 'programmes' %}" class="nav-link text-white"
+          >PROGRAMMES</a
+        >
+      </li>
+      <li class="nav-item mb-2">
+        <a href="{% url 'cours' %}" class="nav-link text-white">COURS</a>
+      </li>
 
-    <button class="text-white border-0 bg-transparent" id="close-panel-btn"><i class="fas fa-times fa-2x"></i></button>
-  </div>
-  <ul class="nav flex-column p-3">
-    <form method="get" action="{% url 'search' %}" class="mb-4">
-      <input type="search" name="q" class="search-input" placeholder="Rechercher..." value="{{ query }}" />
-      <button type="submit" class="btn btn-primary">Send</button>
-    </form>
-    <hr />
-    <li class="nav-item mb-2"><a href="{% url 'home' %}" class="nav-link text-white">ACCUEIL</a></li>
-    <li class="nav-item mb-2"><a href="{% url 'programmes' %}" class="nav-link text-white">PROGRAMMES</a></li>
-    <li class="nav-item mb-2">
-      <a href="{% url 'cours_professeurs' %}" class="nav-link text-white">COURS</a>
-  </li>
-  
+      <li class="nav-item mb-2">
+        <a href="{% url 'apropos' %}" class="nav-link text-white">A PROPOS</a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="{% url 'contact' %}" class="nav-link text-white">CONTACT</a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="{% url 'liste_professeurs' %}" class="nav-link text-white"
+          >PROFESSEURS</a
+        >
+      </li>
+      <li class="nav-item mb-2">
+        <a href="{% url 'list_etudiants' %}" class="nav-link text-white"
+          >ETUDIANTS</a
+        >
+      </li>
+      <li class="nav-item mb-2">
+        <a href="{% url 'cours_inscrits' %}" class="nav-link text-white"
+          >INSCRITS</a
+        >
+      </li>
+    </ul>
+    <div class="d-lg-flex custom-icons">
+      <a href="https://web.facebook.com/" class="text-white"
+        ><i class="fab fa-facebook"></i
+      ></a>
+      <a href="https://x.com/home" class="text-white"
+        ><i class="fab fa-twitter"></i
+      ></a>
 
-    <li class="nav-item mb-2"><a href="{% url 'apropos' %}" class="nav-link text-white">A PROPOS</a></li>
-    <li class="nav-item mb-2"><a href="{% url 'contact' %}" class="nav-link text-white">CONTACT</a></li>
-    
-  </ul>
-  <div class="d-lg-flex custom-icons">
-    <a href="https://web.facebook.com/" class="text-white"><i class="fab fa-facebook"></i></a>
-    <a href="https://x.com/home" class="text-white"><i class="fab fa-twitter"></i></a>
-    <a href="{% url 'list_etudiants' %}" class="text-white">
-      <i class="fas fa-users"></i>
-  </a>
-    {% if user.is_authenticated %}
-      {% if user.is_superuser %}
-        <a href="/fasch/" class="text-white" title="Admin"><i class="fas fa-cogs"></i> fasch</a>
+      {% if user.is_authenticated %} {% if user.is_superuser %}
+      <a href="/fasch/" class="text-white" title="Admin"
+        ><i class="fas fa-cogs"></i> fasch</a
+      >
       {% else %}
-        <a href="{% url 'profile' %}" class="text-white" title="Voir le profil"><i class="fas fa-user"></i></a>
+      <a href="{% url 'profile' %}" class="text-white" title="Voir le profil"
+        ><i class="fas fa-user"></i
+      ></a>
+      {% endif %} {% else %}
+      <a href="{% url 'signup' %}" class="text-white" title="Créer un compte"
+        ><i class="fas fa-user-plus"></i
+      ></a>
       {% endif %}
-    {% else %}
-      <a href="{% url 'signup' %}" class="text-white" title="Créer un compte"><i class="fas fa-user-plus"></i></a>
-    {% endif %}
+    </div>
   </div>
-  
-</div>
-
-  
 </header>
+<script>
+  document.querySelector(".search-icon").addEventListener("click", function () {
+    let searchForm = document.getElementById("searchForm");
+    let searchInput = searchForm.querySelector('input[type="search"]');
 
-
-
-
-
+    if (searchForm.style.display === "none") {
+      searchForm.style.display = "block"; // Afficher le formulaire
+      searchInput.focus(); // Mettre le focus sur l'input de recherche
+    } else {
+      searchForm.submit(); // Si déjà visible, soumettre le formulaire
+    }
+  });
+</script>

@@ -1,37 +1,99 @@
-{% extends 'base.html' %}
-
-{% block title %}Mon Profil{% endblock %}
+{% extends "base.html" %}
 {% load static %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/profil.css' %}" />
-
-{% endblock %}
 {% block content %}
-<div class="profile-container">
-    <h2>Bienvenue, {{ user.username }} !</h2>
-    <p><strong>Nom :</strong> {{ user.last_name }}</p>
-    <p><strong>Prenom :</strong> {{ user.first_name }}</p>
-    <p><strong>Nom d'utilisateur :</strong> {{ user.username }}</p>
-    
-    <p><strong>Adresse e-mail :</strong> {{ user.email }}</p>
-    <p><strong>Date de création du compte :</strong> {{ user.date_joined|date:"d M Y" }}</p>
-
-    <div class="profile-actions">
-        <!-- Bouton pour se déconnecter -->
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Se déconnecter</button>
-        </form>
-    
-        <!-- Bouton pour modifier le profil -->
-        <a href="{% url 'edit_profile' %}" class="btn btn-primary">Modifier le profil</a>
-    
-        <!-- Bouton "Annuler" qui redirige vers la vue d'annulation -->
-        <a href="{% url 'home' %}" class="btn btn-secondary">Annuler</a>
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <img src="{% static 'images/fac.png' %}" class="rounded-circle img-fluid" alt="Photo de Profil">
+
+                    <h3 class="mt-3">{{ user.username }}</h3>
+                    <p class="text-muted">{{ user.email }}</p>
+                    <a href="{% url 'confirmer_deconnexion' %}" class="btn btn-danger">Se déconnecter</a>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Informations Personnelles</h4>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group row mb-3">
+                            <label for="username" class="col-sm-3 col-form-label">Nom d'utilisateur</label>
+                            <div class="col-sm-9">
+                                <input type="text" readonly class="form-control" id="username" value="{{ user.username }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label for="email" class="col-sm-3 col-form-label">Email</label>
+                            <div class="col-sm-9">
+                                <input type="email" readonly class="form-control" id="email" value="{{ user.email }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label for="first_name" class="col-sm-3 col-form-label">Prénom</label>
+                            <div class="col-sm-9">
+                                <input type="text" readonly class="form-control" id="first_name" value="{{ user.first_name }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label for="last_name" class="col-sm-3 col-form-label">Nom</label>
+                            <div class="col-sm-9">
+                                <input type="text" readonly class="form-control" id="last_name" value="{{ user.last_name }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label for="last_login" class="col-sm-3 col-form-label">Dernière connexion</label>
+                            <div class="col-sm-9">
+                                <input type="text" readonly class="form-control" id="last_login" value="{{ user.last_login }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group row mb-3">
+                            <label for="date_joined" class="col-sm-3 col-form-label">Date d'inscription</label>
+                            <div class="col-sm-9">
+                                <input type="text" readonly class="form-control" id="date_joined" value="{{ user.date_joined }}">
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Modifier les informations</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
+
+
+
+
+
+
+
+
+
 
 

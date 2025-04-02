@@ -4,16 +4,20 @@
 
 {% block content %}
 
-<section id="programmes" class="py-5">
+<section id="programmes" class="py-5 bg-light">
     <div class="container">
-        <h2 class="text-center mb-4">Nos Programmes</h2>
-        <div class="row">
-            <p>La Faculté des Sciences Humaines (FASCH), fondée en 1974, forme des universitaires dans quatre domaines : sociologie, psychologie, service social et communication sociale.</p>
+        <h2 class="text-center mb-4 text-primary fw-bold">Nos Programmes</h2>
+        <p class="text-center text-muted lead">
+            La Faculté des Sciences Humaines (FASCH), fondée en 1974, forme des universitaires dans quatre domaines : 
+            <span class="fw-semibold">sociologie, psychologie, service social et communication sociale.</span>
+        </p>
+ 
 
+        <div class="row">
             <!-- Programme Sociologie -->
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h3 class="card-title">Sociologie</h3>
                         <p class="card-text">Explorer les structures sociales et les comportements collectifs.</p>
                         <a href="{% url 'program_detail' 'sociologie' %}" class="btn btn-secondary">En savoir plus</a>
@@ -22,9 +26,9 @@
             </div>
 
             <!-- Programme Psychologie -->
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h3 class="card-title">Psychologie</h3>
                         <p class="card-text">Préparation à comprendre et intervenir sur les comportements humains.</p>
                         <a href="{% url 'program_detail' 'psychologie' %}" class="btn btn-secondary">En savoir plus</a>
@@ -33,61 +37,52 @@
             </div>
 
             <!-- Programme Service Social -->
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h3 class="card-title">Service Social</h3>
-                        <p class="card-text">Comprendre les grandes questions existentielles et éthiques.</p>
+                        <p class="card-text">Accompagner les individus et groupes dans leurs parcours de vie.</p>
                         <a href="{% url 'program_detail' 'service_social' %}" class="btn btn-secondary">En savoir plus</a>
                     </div>
                 </div>
             </div>
 
             <!-- Programme Communication Sociale -->
-            <div class="col-md-4">
+            <div class="col-md-6 col-lg-3">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h3 class="card-title">Communication Sociale</h3>
-                        <p class="card-text">Comprendre les grandes questions existentielles et éthiques.</p>
+                        <p class="card-text">Analyser les dynamiques de communication dans la société.</p>
                         <a href="{% url 'program_detail' 'communication_sociale' %}" class="btn btn-secondary">En savoir plus</a>
                     </div>
                 </div>
             </div>
-        </div> <!-- Fermeture de la .row pour les programmes -->
+        </div> <!-- Fin de la rangée des programmes -->
 
-        <div class="container mt-4">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card text-center shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Liste des Professeurs</h5>
-                            <p class="card-text">Cliquez sur le bouton ci-dessous pour voir la liste complète des professeurs.</p>
-                            <a href="{% url 'liste_professeurs' %}" class="btn btn-primary">Voir les profs</a>
-                        </div>
+        <!-- Autres cartes -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Liste des Cours</h5>
+                        <p class="card-text">Retrouvez ici tous les cours enseignés par nos professeurs.</p>
+                        <a href="{% url 'cours' %}" class="btn btn-secondary">Voir les Cours</a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card text-center shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Liste des Cours</h5>
-                            <p class="card-text">Retrouvez ici tous les cours enseignés par nos professeurs.</p>
-                            <a href="{% url 'cours' %}" class="btn btn-secondary">Voir les Cours</a>
-                        </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Autre Carte</h5>
+                        <p class="card-text">Cette carte est un exemple supplémentaire.</p>
+                        <a href="#" class="btn btn-success">Voir Plus</a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card text-center shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Autre Carte</h5>
-                            <p class="card-text">Cette carte est un exemple supplémentaire.</p>
-                            <a href="#" class="btn btn-success">Voir Plus</a>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- Fermeture de la .row pour les cartes supplémentaires -->
-        </div> <!-- Fermeture de la deuxième .container -->
-        
-    </div> <!-- Fermeture de la première .container -->
+            </div>
+        </div> <!-- Fin de la rangée des cartes supplémentaires -->
+
+    </div> <!-- Fin de .container -->
 </section>
 
 {% endblock %}

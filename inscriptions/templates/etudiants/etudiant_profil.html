@@ -1,24 +1,73 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %}Mon Profil Étudiant{% endblock %} {%
+load static %} {% block extra_css %}
+<!-- Ajout du CDN Bootstrap 5 -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+{% endblock %} {% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+          {% if messages %}
+          <div class="container mt-3">
+            {% for message in messages %}
+            <div
+              class="alert alert-{{ message.tags }} alert-dismissible fade show text-center"
+              role="alert"
+            >
+              {{ message }}
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
 
-{% block title %}Mon Profil Étudiant{% endblock %}
-{% load static %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/profil.css' %}" />
-
-{% endblock %}
-{% block content %}
-<div class="profile-container">
-
-    <h1>Mon Profil Étudiant</h1>
-    <p><strong>Nom:</strong> {{ etudiant.nom }}</p>
-    <p><strong>Prénom:</strong> {{ etudiant.prenom }}</p>
-    <p><strong>Niveau:</strong> {{ etudiant.niveau }}</p>
-    <p><strong>Email:</strong> {{ etudiant.email }}</p>
-    <p><strong>Téléphone:</strong> {{ etudiant.telephone }}</p>
-
-    <div class="text-center mt-3">
-        <a href="{% url 'edit_info_etudiant' etudiant.id %}" class="btn btn-primary">Modifier mon profil</a>
+          <h2 class="mb-0">🎓 Mon Profil Étudiant</h2>
+        </div>
+        <div class="card-body">
+          {% if etudiant %}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <strong>👤 Nom:</strong> {{ etudiant.nom }}
+            </li>
+            <li class="list-group-item">
+              <strong>🆔 Prénom:</strong> {{ etudiant.prenom }}
+            </li>
+            <li class="list-group-item">
+              <strong>📚 Niveau:</strong> {{ etudiant.niveau }}
+            </li>
+            <li class="list-group-item">
+              <strong>✉️ Email:</strong> {{ etudiant.email }}
+            </li>
+            <li class="list-group-item">
+              <strong>📞 Téléphone:</strong> {{ etudiant.telephone }}
+            </li>
+          </ul>
+          <div class="text-center mt-4">
+            <a
+              href="{% url 'edit_info_etudiant' etudiant.id %}"
+              class="btn btn-warning"
+            >
+              ✏️ Modifier mon profil
+            </a>
+          </div>
+          {% else %}
+          <p class="text-danger text-center mt-3">
+            🚨 Aucun profil étudiant trouvé. Veuillez vous inscrire ou vérifier
+            vos informations.
+          </p>
+          {% endif %}
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

@@ -1,46 +1,88 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/etudiants.css' %}" />
-{% endblock %}
+
 {% block content %}
-    <h1 class="text-center">Liste des Étudiants</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Niveau</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Cours Inscrits</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for etudiant in etudiants %}
-            <tr>
-                <td>{{ etudiant.nom }}</td>
-                <td>{{ etudiant.prenom }}</td>
-                <td>{{ etudiant.niveau }}</td>
-                <td>{{ etudiant.email }}</td>
-                <td>{{ etudiant.telephone }}</td>
-                <td>
-                    {% if etudiant.inscriptions.all %}
-                        <ul>
-                            {% for inscription in etudiant.inscriptions.all %}
-                                <li>{{ inscription.cours.nom }} ({{ inscription.cours.horaire }})</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        Aucune inscription
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6">Aucun étudiant trouvé.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+{% if messages %}
+<div class="messages mt-3">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">
+        {% if request.user.is_staff %}
+            📜 Liste de Tous les Étudiants
+        {% else %}
+            🎓 Mes Cours - {{ etudiants.0.prenom }} {{ etudiants.0.nom }}
+        {% endif %}
+    </h1>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>#</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Niveau</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Cours Inscrits</th>
+                    <th>Actions</th> <!-- Colonne ajoutée pour les actions -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for etudiant in etudiants %}
+                <tr>
+                    <td class="text-center">{{ forloop.counter }}</td>
+                    <td>{{ etudiant.nom }}</td>
+                    <td>{{ etudiant.prenom }}</td>
+                    <td>{{ etudiant.niveau }}</td>
+                    <td>{{ etudiant.email }}</td>
+                    <td>{{ etudiant.telephone }}</td>
+                    <td>
+                        {% if etudiant.inscriptions.all %}
+                            <ul class="list-unstyled">
+                                {% for inscription in etudiant.inscriptions.all %}
+                                    <li class="badge bg-primary m-1">{{ inscription.cours.nom }} ({{ inscription.cours.horaire }})</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <span class="text-muted">Aucun cours</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <!-- Lien pour modifier les informations de l'étudiant -->
+                        <a href="{% url 'edit_info_etudiant' etudiant.id %}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> 
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-danger">Aucun étudiant trouvé.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if request.user.is_staff %}
+    <div class="text-center mt-4">
+        <a href="{% url 'admin:index' %}" class="btn btn-secondary">Retour au Tableau de Bord</a>
+    </div>
+    {% else %}
+    <div class="text-center mt-4">
+        <a href="{% url 'cours' %}" class="btn btn-primary">Retour à l'Accueil</a>
+    </div>
+    {% endif %}
+
+</div>
+
 {% endblock %}
