@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center mb-12">
+    <h2 class="text-3xl md:text-4xl font-bold">📚 Liste des Cours</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for horaire in page_obj %}
+        <div class="bg-white rounded-lg shadow hover:shadow-md transition">
+            <img src="{% static 'images/cours_default.jpg' %}" alt="Image du cours" class="w-full h-48 object-cover rounded-t-lg">
+            <div class="p-4 text-center">
+                <h5 class="text-lg font-semibold mb-2">{{ horaire.cours.nom }}</h5>
+                <p class="text-sm text-gray-700 mb-4">
+                    <span class="block"><strong>Jour :</strong> {{ horaire.jour }}</span>
+                    <span class="block"><strong>Heure :</strong> {{ horaire.heure_debut }} - {{ horaire.heure_fin }}</span>
+                    <span class="block"><strong>Professeur :</strong> {{ horaire.professeur }}</span>
+                </p>
+                {% if horaire.est_ferme %}
+                    <span class="inline-block bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full">❌ Fermé</span>
+                {% else %}
+                    <a href="{% url 'cours_detail' horaire.id %}" class="inline-block mt-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-4 py-2 rounded transition">
+                        Voir les détails
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full">
+            <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 p-4 rounded text-center">
+                Aucun cours disponible pour le moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-10 flex justify-center items-center space-x-2 text-sm">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">&laquo; Premier</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Précédent</a>
+        {% else %}
+            <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded">&laquo; Premier</span>
+            <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded">Précédent</span>
+        {% endif %}
+
+        <span class="px-4 py-1 bg-blue-600 text-white rounded">{{ page_obj.number }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Suivant</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Dernier &raquo;</a>
+        {% else %}
+            <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded">Suivant</span>
+            <span class="px-3 py-1 bg-gray-100 text-gray-400 rounded">Dernier &raquo;</span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

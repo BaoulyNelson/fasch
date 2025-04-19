@@ -1,77 +1,83 @@
 from django.contrib import admin
-from .models import Professeur, Cours, Etudiant, Inscription,Annonce,Evenement,Article
-
-
-
-
-admin.site.site_header = "FASCH Administration"
-admin.site.site_title = "FASCH Admin Portal"
-admin.site.index_title = "Bienvenue sur le panneau d'administration de Fasch"
-
-admin.site.register(Annonce)
-admin.site.register(Evenement)
-admin.site.register(Article)
-
-
-
-
-@admin.register(Professeur)
-class ProfesseurAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'specialisation')
-    list_filter = ('specialisation',)
-    search_fields = ('nom', 'specialisation')
-
-
-
-@admin.register(Cours)
-class CoursAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'specialisation', 'capacite_maximale', 'horaire', 'est_ferme', 'est_sature', 'nombre_inscrits')
-    list_filter = ('specialisation', 'horaire', 'est_ferme')
-    search_fields = ('nom', 'specialisation')
-    filter_horizontal = ('professeurs',)
-    ordering = ('specialisation', 'nom')
-    actions = ['ouvrir_cours', 'fermer_cours']
-
-    def est_sature(self, obj):
-        return obj.get_nombre_inscrits() >= obj.capacite_maximale
-    est_sature.boolean = True
-    est_sature.short_description = "Saturé ?"
-
-    def nombre_inscrits(self, obj):
-        return obj.get_nombre_inscrits()
-    nombre_inscrits.short_description = "Inscriptions"
-
-    @admin.action(description="Ouvrir les cours sélectionnés")
-    def ouvrir_cours(self, request, queryset):
-        queryset.update(est_ferme=False)
-        self.message_user(request, f"{queryset.count()} cours ont été ouverts.")
-
-    @admin.action(description="Fermer les cours sélectionnés")
-    def fermer_cours(self, request, queryset):
-        queryset.update(est_ferme=True)
-        self.message_user(request, f"{queryset.count()} cours ont été fermés.")
-
+from .models import Etudiant, Cours, Professeur, HoraireCours, Inscription,DemandeAdmission,Article,Annonce,Evenement,Programme,AxeRecherche, PublicationRecherche,Livre,Personnel
 
 @admin.register(Etudiant)
 class EtudiantAdmin(admin.ModelAdmin):
-    list_display = ('nom', 'prenom', 'niveau', 'email', 'telephone')
-    list_filter = ('niveau',)
-    search_fields = ('nom', 'prenom', 'email', 'telephone')
+    list_display = ("prenom", "nom", "email", "telephone", "niveau")
+    search_fields = ("prenom", "nom", "email")
+    list_filter = ("niveau",)
+
+@admin.register(Cours)
+class CoursAdmin(admin.ModelAdmin):
+    list_display = ("nom",)
+    search_fields = ("nom",)
+
+@admin.register(Professeur)
+class ProfesseurAdmin(admin.ModelAdmin):
+    list_display = ("prenom", "nom")
+    search_fields = ("prenom", "nom")
+
+@admin.register(HoraireCours)
+class HoraireCoursAdmin(admin.ModelAdmin):
+    list_display = ("cours", "professeur", "jour", "heure_debut", "heure_fin", "capacite_max", "est_ferme")
+    list_editable = ("est_ferme",)
+    list_filter = ("jour", "cours", "professeur", "est_ferme")
+    search_fields = ("cours__nom", "professeur__prenom", "professeur__nom")
 
 
 @admin.register(Inscription)
 class InscriptionAdmin(admin.ModelAdmin):
-    list_display = ('etudiant', 'cours', 'date_inscription')
-    list_filter = ('date_inscription', 'cours__nom')
-    search_fields = ('etudiant__nom', 'cours__nom')
+    list_display = ("etudiant", "horaire_cours")
+    list_filter = ("horaire_cours__cours", "etudiant__niveau")
+    search_fields = ("etudiant__prenom", "etudiant__nom", "horaire_cours__cours__nom")
+    
+    
 
-    def save_model(self, request, obj, form, change):
-        # Vérifier si le cours est saturé avant de valider l'inscription
-        if obj.cours.est_sature():
-            self.message_user(
-                request,
-                f"Le cours {obj.cours.nom} est saturé et ne peut plus accepter d'inscriptions.",
-                level="error"
-            )
-        else:
-            super().save_model(request, obj, form, change)
+@admin.register(DemandeAdmission)
+class DemandeAdmissionAdmin(admin.ModelAdmin):
+    list_display = ("nom", "email", "programme", "date_envoi")
+    search_fields = ("nom", "email", "programme")
+    list_filter = ("programme", "date_envoi")
+
+
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'auteur', 'date_publication', 'est_active')
+    search_fields = ('titre', 'contenu')
+    list_filter = ('est_active', 'date_publication')
+
+@admin.register(Annonce)
+class AnnonceAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'date_publication', 'est_active', 'organisateur')
+    search_fields = ('titre', 'contenu')
+    list_filter = ('est_active', 'organisateur')
+
+@admin.register(Evenement)
+class EvenementAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'date_debut', 'date_fin', 'lieu')
+    search_fields = ('titre', 'description')
+    list_filter = ('date_debut', 'lieu')
+    
+admin.site.register(Programme)
+
+
+
+
+@admin.register(AxeRecherche)
+class AxeRechercheAdmin(admin.ModelAdmin):
+    list_display = ("titre",)
+
+@admin.register(PublicationRecherche)
+class PublicationRechercheAdmin(admin.ModelAdmin):
+    list_display = ("titre", "auteurs", "date_publication")
+    search_fields = ("titre", "auteurs")
+    list_filter = ("date_publication",)
+
+admin.site.register(Livre)
+
+
+@admin.register(Personnel)
+class PersonnelAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'poste')
+    list_filter = ('poste',)
+    search_fields = ('nom',)

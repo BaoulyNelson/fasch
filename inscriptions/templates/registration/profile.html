@@ -1,99 +1,64 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block content %}
-{% if messages %}
-<div class="container mt-3">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
-                    <img src="{% static 'images/fac.png' %}" class="rounded-circle img-fluid" alt="Photo de Profil">
-
-                    <h3 class="mt-3">{{ user.username }}</h3>
-                    <p class="text-muted">{{ user.email }}</p>
-                    <a href="{% url 'confirmer_deconnexion' %}" class="btn btn-danger">Se déconnecter</a>
-
-                </div>
-            </div>
+<div class="container mx-auto mt-10 px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Profil utilisateur -->
+        <div class="text-center bg-white shadow-lg rounded-lg p-6">
+            <img src="{% static 'images/fac.png' %}" class="rounded-full w-32 h-32 mx-auto mb-4" alt="Photo de Profil">
+            <h3 class="text-xl font-semibold">{{ user.username }}</h3>
+            <p class="text-gray-500">{{ user.email }}</p>
+            <a href="{% url 'confirmer_deconnexion' %}" class="mt-4 inline-block px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition">Se déconnecter</a>
         </div>
-        
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Informations Personnelles</h4>
+
+        <!-- Informations personnelles -->
+        <div class="col-span-2 bg-white shadow-lg rounded-lg p-6">
+            <h4 class="text-2xl font-semibold mb-4">Informations Personnelles</h4>
+            <form>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Nom d'utilisateur -->
+                    <div class="mb-4">
+                        <label for="username" class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
+                        <input type="text" readonly class="mt-1 p-2 w-full border rounded-md bg-gray-100 text-gray-500" id="username" value="{{ user.username }}">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" readonly class="mt-1 p-2 w-full border rounded-md bg-gray-100 text-gray-500" id="email" value="{{ user.email }}">
+                    </div>
+
+                    <!-- Prénom -->
+                    <div class="mb-4">
+                        <label for="first_name" class="block text-sm font-medium text-gray-700">Prénom</label>
+                        <input type="text" readonly class="mt-1 p-2 w-full border rounded-md bg-gray-100 text-gray-500" id="first_name" value="{{ user.first_name }}">
+                    </div>
+
+                    <!-- Nom -->
+                    <div class="mb-4">
+                        <label for="last_name" class="block text-sm font-medium text-gray-700">Nom</label>
+                        <input type="text" readonly class="mt-1 p-2 w-full border rounded-md bg-gray-100 text-gray-500" id="last_name" value="{{ user.last_name }}">
+                    </div>
+
+                    <!-- Dernière connexion -->
+                    <div class="mb-4">
+                        <label for="last_login" class="block text-sm font-medium text-gray-700">Dernière connexion</label>
+                        <input type="text" readonly class="mt-1 p-2 w-full border rounded-md bg-gray-100 text-gray-500" id="last_login" value="{{ user.last_login }}">
+                    </div>
+
+                    <!-- Date d'inscription -->
+                    <div class="mb-4">
+                        <label for="date_joined" class="block text-sm font-medium text-gray-700">Date d'inscription</label>
+                        <input type="text" readonly class="mt-1 p-2 w-full border rounded-md bg-gray-100 text-gray-500" id="date_joined" value="{{ user.date_joined }}">
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form>
-                        <div class="form-group row mb-3">
-                            <label for="username" class="col-sm-3 col-form-label">Nom d'utilisateur</label>
-                            <div class="col-sm-9">
-                                <input type="text" readonly class="form-control" id="username" value="{{ user.username }}">
-                            </div>
-                        </div>
 
-                        <div class="form-group row mb-3">
-                            <label for="email" class="col-sm-3 col-form-label">Email</label>
-                            <div class="col-sm-9">
-                                <input type="email" readonly class="form-control" id="email" value="{{ user.email }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-3">
-                            <label for="first_name" class="col-sm-3 col-form-label">Prénom</label>
-                            <div class="col-sm-9">
-                                <input type="text" readonly class="form-control" id="first_name" value="{{ user.first_name }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-3">
-                            <label for="last_name" class="col-sm-3 col-form-label">Nom</label>
-                            <div class="col-sm-9">
-                                <input type="text" readonly class="form-control" id="last_name" value="{{ user.last_name }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-3">
-                            <label for="last_login" class="col-sm-3 col-form-label">Dernière connexion</label>
-                            <div class="col-sm-9">
-                                <input type="text" readonly class="form-control" id="last_login" value="{{ user.last_login }}">
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-3">
-                            <label for="date_joined" class="col-sm-3 col-form-label">Date d'inscription</label>
-                            <div class="col-sm-9">
-                                <input type="text" readonly class="form-control" id="date_joined" value="{{ user.date_joined }}">
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Modifier les informations</a>
-                        </div>
-                    </form>
+                <div class="mt-6 text-center">
+                    <a href="{% url 'edit_profile' %}" class="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">Modifier les informations</a>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-

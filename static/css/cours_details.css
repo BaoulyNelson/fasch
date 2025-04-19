@@ -1,0 +1,62 @@
+.course-details-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.course-details-title {
+    color: #333;
+    border-bottom: 2px solid #007BFF;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.course-info {
+    margin-bottom: 20px;
+}
+
+.course-info p {
+    margin: 5px 0;
+    font-size: 1.1em;
+}
+
+.inscription-message {
+    color: green;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.inscription-form {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.inscription-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.inscription-button:hover {
+    background-color: #0056b3;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}

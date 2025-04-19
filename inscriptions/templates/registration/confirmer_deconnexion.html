@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load form_filters %}
 
 {% load static %}
 {% block extra_css %}
@@ -6,17 +7,22 @@
 {% endblock %}
 
 {% block content %}
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
+        <h3 class="text-3xl text-red-600 mb-6">Confirmer la déconnexion</h3>
+        <p class="text-lg mb-6">Êtes-vous sûr de vouloir vous déconnecter ?</p>
 
-<div class="confirmation-container text-center">
-    <h3 class="display-6 text-danger mb-4">Confirmer la déconnexion</h3>
-    <p class="lead">Êtes-vous sûr de vouloir vous déconnecter ?</p>
-
-    <form method="post" class="mt-4">
-        {% csrf_token %}
-        <div class="d-flex justify-content-center gap-3">
-            <button type="submit" class="btn btn-danger btn-lg">Se déconnecter</button>
-            <a href="{% url 'profile' %}" class="btn btn-secondary btn-lg">Annuler</a>
-        </div>
-    </form>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <div class="flex justify-center gap-4">
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-lg text-lg hover:bg-red-700 transition duration-200">
+                    Se déconnecter
+                </button>
+                <a href="{% url 'profile' %}" class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg text-lg hover:bg-gray-400 transition duration-200">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

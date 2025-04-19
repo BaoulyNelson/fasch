@@ -1,74 +1,62 @@
 
-/* Card Styles */
-.card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+.course-list-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
-.card h2 {
-    font-size: 1.8rem;
+.course-list-title {
     color: #333;
-    margin-bottom: 1rem;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
-.card p {
-    font-size: 1.1rem;
-    color: #555;
-    margin: 0.5rem 0;
+.course-list {
+    list-style-type: none;
+    padding: 0;
 }
 
-.card ul {
-    padding-left: 20px;
-}
-
-.card ul li {
-    font-size: 1rem;
-    color: #333;
-}
-
-.card a.btn {
-    display: inline-block;
-    background-color: #007BFF;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    text-decoration: none;
+.course-item {
+    background: #f9f9f9;
+    margin-bottom: 10px;
+    padding: 15px;
     border-radius: 5px;
-    margin-top: 1rem;
-    font-size: 1.1rem;
+    transition: background 0.3s;
+}
+
+.course-item:hover {
+    background: #e9e9e9;
+}
+
+.course-item.closed {
+    background: #f0f0f0;
+    color: grey;
+}
+
+.closed-course {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.closed-tag {
+    color: red;
+    font-weight: bold;
+}
+
+.open-course {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+.open-course:hover {
+    text-decoration: underline;
+}
+
+.no-courses {
     text-align: center;
-    transition: background-color 0.3s;
-}
-
-.card a.btn:hover {
-    background-color: #0056b3;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .container {
-        padding: 0 10px;
-    }
-
-    header h1 {
-        font-size: 2rem;
-    }
-
-    .card {
-        padding: 1rem;
-    }
-
-    .card h2 {
-        font-size: 1.5rem;
-    }
-
-    .card p {
-        font-size: 1rem;
-    }
-
-    .card a.btn {
-        font-size: 1rem;
-    }
+    color: #777;
+    padding: 20px;
 }

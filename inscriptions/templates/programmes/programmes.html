@@ -3,86 +3,50 @@
 {% block title %}Programmes - Faculté des Sciences Humaines{% endblock %}
 
 {% block content %}
-
-<section id="programmes" class="py-5 bg-light">
-    <div class="container">
-        <h2 class="text-center mb-4 text-primary fw-bold">Nos Programmes</h2>
-        <p class="text-center text-muted lead">
-            La Faculté des Sciences Humaines (FASCH), fondée en 1974, forme des universitaires dans quatre domaines : 
-            <span class="fw-semibold">sociologie, psychologie, service social et communication sociale.</span>
-        </p>
- 
-
-        <div class="row">
-            <!-- Programme Sociologie -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title">Sociologie</h3>
-                        <p class="card-text">Explorer les structures sociales et les comportements collectifs.</p>
-                        <a href="{% url 'program_detail' 'sociologie' %}" class="btn btn-secondary">En savoir plus</a>
-                    </div>
-                </div>
+ <!-- Programs Section -->
+    <section id="programmes" class="py-16 md:py-24" style="background-color: rgba(93, 92, 222, 0.05);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold">Nos Programmes Académiques</h2>
+                <div class="w-24 h-1 bg-primary-color mx-auto mt-4 mb-6"></div>
+                <p class="max-w-2xl mx-auto text-lg">Explorez nos programmes de licence, maîtrise dans les domaines de Psychologie, Communication Sociale, Service Social et Sociologie,Maîtrise en population et développement. 
+                </p>
             </div>
-
-            <!-- Programme Psychologie -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title">Psychologie</h3>
-                        <p class="card-text">Préparation à comprendre et intervenir sur les comportements humains.</p>
-                        <a href="{% url 'program_detail' 'psychologie' %}" class="btn btn-secondary">En savoir plus</a>
+    
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {% for programme in programmes %}
+                    <div class="card p-6 rounded-lg shadow-md">
+                        <div class="text-primary-color mb-4">
+                            {% if programme.titre == 'Sociologie' %}
+                                <i class="fas fa-users text-3xl"></i>
+                            {% elif programme.titre == 'Psychologie' %}
+                                <i class="fas fa-brain text-3xl"></i>
+                            {% elif programme.titre == 'Communication Sociale' %}
+                                <i class="fas fa-comments text-3xl"></i>
+                            {% elif programme.titre == 'Service Social' %}
+                                <i class="fas fa-hands-helping text-3xl"></i>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">{{ programme.titre }}</h3>
+                        <p class="mb-4">
+                            {{ programme.description|truncatewords:40 }}
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 text-xs rounded-full bg-opacity-20 bg-primary-color text-primary-color">{{ programme.niveau }}</span>
+                        </div>
+                        <a href="{% url 'programme_detail' programme.pk %}" class="text-primary-color font-medium hover:underline flex items-center">
+                            Détails du programme <i class="fas fa-arrow-right ml-1"></i>
+                        </a>
                     </div>
-                </div>
+                {% endfor %}
             </div>
-
-            <!-- Programme Service Social -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title">Service Social</h3>
-                        <p class="card-text">Accompagner les individus et groupes dans leurs parcours de vie.</p>
-                        <a href="{% url 'program_detail' 'service_social' %}" class="btn btn-secondary">En savoir plus</a>
-                    </div>
-                </div>
+    
+            <div class="mt-12 text-center">
+                <a href="{% url 'programmes' %}" class="btn-primary px-6 py-3 rounded-md shadow-md inline-flex items-center">
+                    Voir tous les programmes <i class="fas fa-arrow-right ml-2"></i>
+                </a>
             </div>
-
-            <!-- Programme Communication Sociale -->
-            <div class="col-md-6 col-lg-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <h3 class="card-title">Communication Sociale</h3>
-                        <p class="card-text">Analyser les dynamiques de communication dans la société.</p>
-                        <a href="{% url 'program_detail' 'communication_sociale' %}" class="btn btn-secondary">En savoir plus</a>
-                    </div>
-                </div>
-            </div>
-        </div> <!-- Fin de la rangée des programmes -->
-
-        <!-- Autres cartes -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Liste des Cours</h5>
-                        <p class="card-text">Retrouvez ici tous les cours enseignés par nos professeurs.</p>
-                        <a href="{% url 'cours' %}" class="btn btn-secondary">Voir les Cours</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Autre Carte</h5>
-                        <p class="card-text">Cette carte est un exemple supplémentaire.</p>
-                        <a href="#" class="btn btn-success">Voir Plus</a>
-                    </div>
-                </div>
-            </div>
-        </div> <!-- Fin de la rangée des cartes supplémentaires -->
-
-    </div> <!-- Fin de .container -->
-</section>
-
+        </div>
+    </section>
 {% endblock %}

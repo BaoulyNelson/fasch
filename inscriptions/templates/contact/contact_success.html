@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-screen">
+    <div class="bg-white shadow-lg p-8 text-center rounded-2xl border-0">
+        
+        <!-- Icône de confirmation -->
+        <div class="text-green-500 text-6xl">
+            ✔️
+        </div>
+
+        <h2 class="font-bold text-2xl mt-3">Message envoyé !</h2>
+        <p class="text-gray-500 mt-2">Merci de nous avoir contactés. Nous vous répondrons bientôt.</p>
+
+        <!-- Bouton retour à l'accueil -->
+        <a href="{% url 'home' %}" class="bg-blue-500 text-white py-2 px-6 rounded-md mt-4 hover:bg-blue-600 transition duration-300">Retour à l'accueil</a>
+    </div>
+</div>
+{% endblock %}

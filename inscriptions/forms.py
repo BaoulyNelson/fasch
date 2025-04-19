@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Etudiant
+from .models import Etudiant,DemandeAdmission
 
 
 class CustomUserChangeForm(forms.ModelForm):
@@ -40,7 +40,50 @@ class EtudiantForm(forms.ModelForm):
         return telephone
 
 
+
 class ContactForm(forms.Form):
-    name = forms.CharField(label="Nom", max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    message = forms.CharField(label="Message", widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}))
+    nom = forms.CharField(max_length=100, label="Nom complet")
+    email = forms.EmailField(label="Email")
+    sujet = forms.CharField(max_length=150, label="Sujet")
+    message = forms.CharField(widget=forms.Textarea, label="Message")
+    
+
+
+class DemandeAdmissionForm(forms.ModelForm):
+    class Meta:
+        model = DemandeAdmission
+        fields = ['nom', 'email', 'telephone', 'programme', 'message']
+        widgets = {
+            'nom': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border rounded-md text-base',
+                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-3 py-2 border rounded-md text-base',
+                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            }),
+            'telephone': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border rounded-md text-base',
+                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            }),
+            'programme': forms.Select(
+                choices=[
+                    ('', 'Sélectionnez un programme'),
+                    ('sociologie-l', 'Sociologie (Licence)'),
+                    ('sociologie-m', 'Sociologie (Maîtrise)'),
+                    ('psychologie-l', 'Psychologie (Licence)'),
+                    ('psychologie-m', 'Psychologie (Maîtrise)'),
+                    ('communication-l', 'Communication Sociale (Licence)'),
+                    ('servicesocial-l', 'Service Social (Licence)')
+                ],
+                attrs={
+                    'class': 'w-full px-3 py-2 border rounded-md text-base',
+                    'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+                }
+            ),
+            'message': forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'w-full px-3 py-2 border rounded-md text-base',
+                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            }),
+        }

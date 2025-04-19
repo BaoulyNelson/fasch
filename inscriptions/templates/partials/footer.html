@@ -1,84 +1,67 @@
-{% load static %}
-
-
-<footer class="bg-dark text-white py-4 mt-5">
-  <div class="container">
-    <div class="row text-center text-md-start">
-      <!-- Colonne 1 : Infos sur la FASCH -->
-      <div class="col-md-4 col-lg-3 mb-3">
-        <h5>FASCH - UEH</h5>
-        <p>Faculté des Sciences Humaines, Université d'État d'Haïti.</p>
-        <p><i class="fas fa-map-marker-alt"></i> Avenue Christophe, Port-au-Prince, Haïti</p>
-      </div>
-      <!-- Colonne 2 : Liens dynamiques -->
-      <div class="col-md-4 col-lg-3 mb-3">
-        <h5>Informations légales</h5>
-        <ul class="list-unstyled">
-            <li><a href="{% url 'mentions_legales' %}" class="text-white">
-                <i class="fas fa-scale-balanced me-2"></i>Mentions légales</a></li>
-                
-            <li><a href="{% url 'apropos' %}" class="text-white">
-                <i class="fas fa-users me-2"></i>À propos de nous</a></li>
-                
-            <li><a href="{% url 'politique_confidentialite' %}" class="text-white">
-                <i class="fas fa-user-lock me-2"></i>Politique de confidentialité</a></li>
-                
-            <li><a href="{% url 'conditions_utilisation' %}" class="text-white">
-                <i class="fas fa-file-signature me-2"></i>Conditions d'utilisation</a></li>
-                
-            <li><a href="{% url 'cookies' %}" class="text-white">
-                <i class="fas fa-cookie me-2"></i>Politique des cookies</a></li>
-        </ul>
-    </div>
-    
-    
-      <!-- Colonne 3 : Contact -->
-      <div class="col-md-4 col-lg-3 mb-3">
-        <h5>Contact</h5>
-        <p style="color: white;">
-          <a href="mailto:baouly@fasch.edu.ht" style="color: white;">
-            <i class="fas fa-envelope"></i> baouly@fasch.edu.ht
-          </a>
-        </p>
+<!-- Footer -->
+<footer class="py-12" style="background-color: var(--secondary);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-white text-center md:text-left">
         
-
-        <p><i class="fas fa-phone"></i> +509 4452-1822</p>
-        <a href="{% url 'contact' %}" class="nav-link text-white">
-          <i class="fas fa-comment-dots me-2"></i>Donnez votre feedback
-      </a>
-      
+        <!-- Logo + description -->
+        <div class="flex flex-col items-center md:items-start">
+          <div class="flex items-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60">
+              <text x="0" y="40" font-size="40" font-family="Arial, sans-serif" font-weight="bold">
+                <tspan fill="#E63946">F</tspan>
+                <tspan fill="#F1A208">A</tspan>
+                <tspan fill="#2A9D8F">S</tspan>
+                <tspan fill="#E63946">C</tspan>
+                <tspan fill="#8E44AD">H</tspan>
+              </text>
+            </svg>
+          </div>
+          <p class="text-sm text-gray-300 mb-4 max-w-xs">
+            La Faculté des Sciences Humaines d'Haïti, une institution d'excellence dédiée à la formation et à la recherche en sciences humaines et sociales.
+          </p>
+          <p class="text-xs text-gray-400">&copy; 2025 FASCH Haïti. Tous droits réservés.</p>
+        </div>
+  
+        <!-- Horaires & Contact -->
+        <div class="flex flex-col items-center md:items-start">
+          <h4 class="text-lg font-semibold mb-4">Informations</h4>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li><strong>Adresse :</strong> 123, Avenue Christophe, Port-au-Prince</li>
+            <li><strong>Email :</strong> contact@fasch.edu.ht</li>
+            <li><strong>Téléphone :</strong> +509 1234 5678</li>
+            <li><strong>Heures d’ouverture :</strong> Lun - Ven, 8h - 16h</li>
+          </ul>
+        </div>
+  
+        <!-- Partenaires -->
+        <div class="flex flex-col items-center md:items-start">
+          <h4 class="text-lg font-semibold mb-4">Nos partenaires</h4>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li><a href="#" class="hover:text-white">Université d'État d’Haïti</a></li>
+            <li><a href="#" class="hover:text-white">UNESCO</a></li>
+            <li><a href="#" class="hover:text-white">AFD</a></li>
+            <li><a href="#" class="hover:text-white">Université de Montréal</a></li>
+          </ul>
+        </div>
+  
+        <!-- Ressources -->
+        <div class="flex flex-col items-center md:items-start">
+          <h4 class="text-lg font-semibold mb-4">Ressources</h4>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li><a href="#" class="hover:text-white">Calendrier académique</a></li>
+            <li><a href="#" class="hover:text-white">Bibliothèque</a></li>
+            <li><a href="#" class="hover:text-white">Publications</a></li>
+            <li><a href="#" class="hover:text-white">Espace étudiant</a></li>
+            <li><a href="#" class="hover:text-white">Emplois</a></li>
+            <li><a href="#" class="hover:text-white">FAQ</a></li>
+          </ul>
+        </div>
+  
       </div>
-      <!-- Colonne 4 : Réseaux sociaux -->
-      <div class="col-lg-3 mb-3">
-        <h5>Suivez-nous</h5>
-        <a href="#" class="text-white me-2"><i class="fab fa-facebook fa-lg"></i></a>
-        <a href="#" class="text-white me-2"><i class="fab fa-twitter fa-lg"></i></a>
-        <a href="#" class="text-white me-2"><i class="fab fa-linkedin fa-lg"></i></a>
-        <a href="https://www.instagram.com" class="text-white me-2"><i class="fab fab fa-instagram fa-lg"></i></a>
-          <!-- Bouton pour changer de thème -->
-          <a href="#" id="theme-toggle">
-            <span class="icon" id="icon-sun">
-                <i class="fas fa-sun text-white"></i>
-            </span>
-            <span class="icon" id="icon-moon" style="display: none;">
-                <i class="fas fa-moon text-white"></i>
-            </span>
-          </a>
+  
+      <div class="mt-8 pt-8 border-t border-gray-700 text-center text-xs text-gray-400">
+        <p>Ce site est à des fins éducatives. Tous les contenus sont fictifs.</p>
       </div>
-
     </div>
-    <hr class="bg-light">
-    <div class="text-center">
-      <p>© 2025 FASCH - Tous droits réservés</p>
-      
-    </div>
-  </div>
-
-  <!-- Bouton "Retour en haut" -->
-  <button id="btnScrollTop" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px; display: none;">
-    <i class="bi bi-arrow-up"></i> <!-- Icône Bootstrap -->
-  </button>
-
-  <script src="{% static 'js/monterHaut.js' %}" defer></script>
-
-</footer>
+  </footer>
+  

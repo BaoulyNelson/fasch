@@ -1,184 +1,117 @@
 from django.db import models
 from django.utils import timezone  # Ajouter cette ligne
 from django.contrib.auth.models import User
-
-class Professeur(models.Model):
-    NOM_PROFESSEUR_CHOICES = [
-    ("Charles Vorbe", "Charles Vorbe"),
-    ("Dominique Muscadin", "Dominique MUSCADIN"),
-    ("Emmanuel Milord", "Emmanuel Milord"),
-    ("Etienne Oremil", "Etienne Oremil"),
-    ("Georges Legagneur", "Georges LEGAGNEUR"),
-    ("Hancy Pierre", "Hancy Pierre"),
-    ("Hubermane Ciguino", "Hubermane Ciguino"),
-    ("Janes Louis", "Janes LOUIS"),
-    ("Jean Evrard Jean Charles", "Jean Evrard Jean Charles"),
-    ("Jean Luc Tondreau", "Jean Luc Tondreau"),
-    ("Jean Pierre Ciguino", "Jean Pierre CIGUINO"),
-    ("Jean Ronel Sistanis", "Jean Ronel Sistanis"),
-    ("Jean Roy FAUSTIN", "Jean Roy FAUSTIN"),
-    ("Jerome M", "Jerome M"),
-    ("Job Silver", "Job SILVER"),
-    ("Julio Elisna", "Julio Elisna"),
-    ("Kenaz Brunis", "Kénaz BRUNIS"),
-    ("Kenley Brutus", "Kenley Brutus"),
-    ("Max Lubin", "Max Lubin"),
-    ("Murielle Antoine", "Murielle ANTOINE"),
-    ("Roosevelt Millard", "Roosevelt Millard"),
-    ("Schmied Saint Fleur", "Schmied Saint Fleur"),
-    ("Simeon Francois", "Siméon FRANCOIS"),
-    ("Vosh Dathus", "Vosh Dathus"),
-]
-
-
-    SPECIALISATION_CHOICES = [
-        ("Mathematiques", "Mathématiques"),
-        ("Philosophie", "Philosophie"),
-        ("Histoire", "Histoire"),
-        ("Droit", "Droit"),
-        ("Economie", "Économie"),
-        ("Francais", "Français"),
-        ("Creole", "Créole"),
-        ("OTI", "Organisation du Travail"),
-        ("Caraibe", "Monde Caraïbe"),
-        ("Intro Aux Sc Hum", "Intro Aux Sc Hum"),
-        ("HIPS", "Histoire Des Idees Politiques et Sociales"),
-    ]
-
-    nom = models.CharField(max_length=100, choices=NOM_PROFESSEUR_CHOICES)
-    specialisation = models.CharField(max_length=100, choices=SPECIALISATION_CHOICES)
-
-    def __str__(self):
-        return f"{self.nom} ({self.specialisation})"
-
-
-class Cours(models.Model):
-    NOM_COURS_CHOICES = [
-        ("HIPS", "Histoire des Idées Politiques et Sociales (HIPS)"),
-        ("CREOLE", "Créole: Expression Écrite et Orale"),
-        ("MATHS", "Mathématiques"),
-        ("ECONOMIE", "Introduction à l'Économie"),
-        ("Intro Aux SC HUM", "Introduction aux Sciences Humaines"),
-        ("PHILO", "Introduction à la Philosophie"),
-        ("OTI", "Organisation du Travail Intellectuel"),
-        ("DROIT", "Introduction au Droit"),
-        ("FRANCAIS", "Français: Expression Écrite et Orale"),
-        ("CARAIBE", "Monde Caraïbe"),
-        ("HISTOIRE D'HAITI", "Histoire d'Haïti"),
-    ]
-
-    SPECIALISATION_CHOICES = [
-        ("Mathematiques", "Mathématiques"),
-        ("Philosophie", "Philosophie"),
-        ("Histoire", "Histoire"),
-        ("Droit", "Droit"),
-        ("Economie", "Économie"),
-        ("Francais", "Français"),
-        ("Creole", "Créole"),
-        ("OTI", "Organisation du Travail Intellectuel"),
-        ("Caraibe", "Monde Caraïbe"),
-        ("Intro Aux SC Hum", "Intro Aux SC Hum"),
-        ("HIPS", "Histoire des idées Politiques et Sociales"),
-    ]
-
-    HORAIRE_CHOICES = [
-        ("Lundi 7H-10H", "Lundi 7H:00 - 10H:00"),
-        ("Lundi 10H-1H", "Lundi 10H:00 - 1H:00"),
-        ("Lundi 1H-4H", "Lundi 1H:00 - 4H:00"),
-        ("Mardi 7H-10H", "Mardi 7H:00 - 10H:00"),
-        ("Mardi 10H-1H", "Mardi 10H:00 - 1H:00"),
-        ("Mardi 1H-4H", "Mardi 1H:00 - 4H:00"),
-        ("Mercredi 7H-10H", "Mercredi 7H:00 - 10H:00"),
-        ("Mercredi 10H-1H", "Mercredi 10H:00 - 1H:00"),
-        ("Mercredi 1H-4H", "Mercredi 1H:00 - 4H:00"),
-        ("Jeudi 7H-10H", "Jeudi 7H:00 - 10H:00"),
-        ("Jeudi 10H-1H", "Jeudi 10H:00 - 1H:00"),
-        ("Jeudi 1H-4H", "Jeudi 1H:00 - 4H:00"),
-        ("Vendredi 7H-10H", "Vendredi 7H:00 - 10H:00"),
-        ("Vendredi 10H-1H", "Vendredi 10H:00 - 1H:00"),
-        ("Vendredi 1H-4H", "Vendredi 1H:00 - 4H:00"),
-        ("Samedi 7H-10H", "Samedi 7H:00 - 10H:00"),
-        ("Samedi 10H-1H", "Samedi 10H:00 - 1H:00"),
-        ("Samedi 1H-4H", "Samedi 1H:00 - 4H:00"),
-    ]
-
-    nom = models.CharField(max_length=200, choices=NOM_COURS_CHOICES)
-    specialisation = models.CharField(max_length=100, choices=SPECIALISATION_CHOICES)
-    professeurs = models.ManyToManyField(Professeur, related_name="cours")
-    capacite_maximale = models.PositiveIntegerField()
-    horaire = models.CharField(max_length=50, choices=HORAIRE_CHOICES)
-    est_ferme = models.BooleanField(default=False)
-    date_creation = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.nom} ({self.specialisation}) - {self.horaire}"
-
-    def get_nombre_inscrits(self):
-        return self.inscriptions.count()
-
-    def est_sature(self):
-        """Vérifie si le cours est saturé."""
-        return self.inscriptions.count() >= self.capacite_maximale
-
-    def ajouter_professeur(self, professeur):
-        """Ajoute un professeur au cours, en validant la spécialisation."""
-        if professeur.specialisation != self.specialisation:
-            raise ValueError(
-                f"Le professeur {professeur.nom} ne peut pas enseigner ce cours ({self.nom}) : spécialisation incompatible."
-            )
-        self.professeurs.add(professeur)
-
-
-
-
-
+from django.core.exceptions import ValidationError
 
 class Etudiant(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='etudiants')  # Un utilisateur peut avoir plusieurs étudiants
-
-    nom = models.CharField(max_length=100)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     prenom = models.CharField(max_length=100)
-    niveau = models.CharField(
-        max_length=50,
-        choices=[
-            ("Preparatoire", "Préparatoire"),
-            ("Premiere Annee", "Première Année"),
-            ("Deuxieme Annee", "Deuxième Année"),
-            ("Troisieme Annee", "Troisième Année"),
-            ("Quatrieme Annee", "Quatrième Année"),
-        ],
-        default="Preparatoire",
-    )
-    email = models.EmailField(unique=True)  # Email unique
-    telephone = models.CharField(max_length=15, unique=True)  # Ajout de l'unicité
+    nom = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    telephone = models.CharField(max_length=20, blank=True)
+
+    NIVEAU_CHOICES = [
+        ("Preparatoire", "Préparatoire"),
+        ("Premiere Annee", "Première Année"),
+        ("Deuxieme Annee", "Deuxième Année"),
+        ("Troisieme Annee", "Troisième Année"),
+        ("Quatrieme Annee", "Quatrième Année"),
+    ]
+    niveau = models.CharField(max_length=50, choices=NIVEAU_CHOICES, default="Preparatoire")
 
     def __str__(self):
-        return f"{self.prenom} {self.nom} - {self.niveau}"
+        return f"{self.prenom} {self.nom}"
+    
+class Cours(models.Model):
+    nom = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.nom
+
+class Professeur(models.Model):
+    prenom = models.CharField(max_length=100)
+    nom = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.prenom} {self.nom}"
+
+class HoraireCours(models.Model):
+    JOUR_CHOICES = [
+        ("LUNDI", "Lundi"),
+        ("MARDI", "Mardi"),
+        ("MERCREDI", "Mercredi"),
+        ("JEUDI", "Jeudi"),
+        ("VENDREDI", "Vendredi"),
+        ("SAMEDI", "Samedi"),
+    ]
+
+    jour = models.CharField(max_length=10, choices=JOUR_CHOICES)
+    heure_debut = models.TimeField()
+    heure_fin = models.TimeField()
+    cours = models.ForeignKey(Cours, on_delete=models.CASCADE)
+    professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE)
+    capacite_max = models.PositiveIntegerField(default=30)  # <- capacité maximale du créneau
+    est_ferme = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.jour} {self.heure_debut}-{self.heure_fin}: {self.cours.nom}"
+
+    
+    def est_sature(self):
+        return self.est_ferme or self.inscription_set.count() >= self.capacite_max
+
 
 
 class Inscription(models.Model):
-    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE, related_name="inscriptions")
-    cours = models.ForeignKey(Cours, on_delete=models.CASCADE, related_name="inscriptions")
-    date_inscription = models.DateTimeField(auto_now_add=True)
+    etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
+    horaire_cours = models.ForeignKey(HoraireCours, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('etudiant', 'cours')  # Empêche l'inscription multiple à un même cours
+        unique_together = ('etudiant', 'horaire_cours')
 
-    def save(self, *args, **kwargs):
-        """Validation avant de sauvegarder une inscription."""
-        if self.cours.est_ferme:
-            raise ValueError(f"Le cours '{self.cours.nom}' est fermé aux inscriptions.")
-        if self.cours.est_sature():
-            raise ValueError(f"Le cours '{self.cours.nom}' est saturé.")
-        if Inscription.objects.filter(etudiant=self.etudiant, cours=self.cours).exists():
-            raise ValueError(f"L'étudiant '{self.etudiant.nom}' est déjà inscrit à ce cours.")
-        super().save(*args, **kwargs)
+    def clean(self):
+        # Max 7 cours
+        if Inscription.objects.filter(etudiant=self.etudiant).count() >= 7:
+            raise ValidationError("Un étudiant ne peut pas s'inscrire à plus de 7 cours.")
+
+        # Cours déjà suivi
+        if Inscription.objects.filter(
+            etudiant=self.etudiant,
+            horaire_cours__cours=self.horaire_cours.cours
+        ).exists():
+            raise ValidationError("L'étudiant est déjà inscrit à ce cours.")
+
+        # Conflit d'horaires
+        conflit = Inscription.objects.filter(
+            etudiant=self.etudiant,
+            horaire_cours__jour=self.horaire_cours.jour,
+            horaire_cours__heure_debut__lt=self.horaire_cours.heure_fin,
+            horaire_cours__heure_fin__gt=self.horaire_cours.heure_debut
+        ).exists()
+        if conflit:
+            raise ValidationError("Conflit d’horaire avec un autre cours.")
+
+        # Capacité max atteinte
+        if self.horaire_cours.est_sature():
+            raise ValidationError("Ce cours est complet (capacité atteinte).")
 
     def __str__(self):
-        return f"{self.etudiant.nom} inscrit à {self.cours.nom}"
+        return f"{self.etudiant} inscrit à {self.horaire_cours}"
 
 
+class DemandeAdmission(models.Model):
+    nom = models.CharField(max_length=255)
+    email = models.EmailField()
+    telephone = models.CharField(max_length=15)
+    programme = models.CharField(max_length=255)
+    message = models.TextField()
 
+    date_envoi = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nom} - {self.programme}"
+   
+    
 class Evenement(models.Model):
     titre = models.CharField(max_length=255)
     description = models.TextField()
@@ -194,6 +127,15 @@ class Evenement(models.Model):
         """Retourne True si l'événement est à venir."""
         return self.date_debut > timezone.now()
     
+# models.py
+class Programme(models.Model):
+    titre = models.CharField(max_length=255)
+    description = models.TextField()
+    niveau = models.CharField(max_length=100, choices=[('Licence', 'Licence'), ('Maîtrise', 'Maîtrise')])
+
+    def __str__(self):
+        return self.titre
+
 
 class Annonce(models.Model):
     titre = models.CharField(max_length=255)
@@ -229,3 +171,64 @@ class Article(models.Model):
     def resume(self):
         """Retourne un extrait de l'article limité à 200 caractères"""
         return self.contenu[:200] + "..." if len(self.contenu) > 200 else self.contenu
+    
+    
+    
+class AxeRecherche(models.Model):
+    titre = models.CharField(max_length=200)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.titre
+
+
+class PublicationRecherche(models.Model):
+    titre = models.CharField(max_length=255)
+    auteurs = models.CharField(max_length=255)
+    description = models.TextField()
+    date_publication = models.DateField()
+    domaines = models.CharField(max_length=255, help_text="Séparer les domaines par des virgules")
+    lien = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return self.titre
+    
+    
+class Livre(models.Model):
+    titre = models.CharField(max_length=200)
+    auteur = models.CharField(max_length=100)
+    annee = models.IntegerField()
+    resume = models.TextField()
+    disponible = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.titre
+
+
+class Personnel(models.Model):
+    POSTE_CHOICES = [
+        ('doyen', 'Doyen'),
+        ('vice_doyen_acad', 'Vice-Doyen Académique'),
+        ('vice_doyen_admin', 'Vice-Doyen Administratif'),
+        ('secretaire', 'Secrétaire Général'),
+        ('agent_admin', 'Agent Administratif'),
+        ('rap', 'Responsable Année Préparatoire'),
+        ('chef_dept_socio', 'Chef de Département de Sociologie'),
+        ('chef_dept_psy', 'Chef de Département de Psychologie'),
+        ('chef_dept_com', 'Chef de Département de Communication Sociale'),
+        ('chef_dept_ss', 'Chef de Département de Service Social'),
+    ]
+
+    poste = models.CharField(max_length=50, choices=POSTE_CHOICES)
+    nom = models.CharField(max_length=100)
+    description = models.TextField()
+    photo = models.ImageField(upload_to='personnel/', blank=True, null=True)
+    description = models.TextField()
+
+    class Meta:
+        verbose_name = "Membre du personnel"
+        verbose_name_plural = "Personnel administratif"
+        ordering = ['poste']
+
+    def __str__(self):
+        return f"{self.nom} - {self.get_poste_display()}"

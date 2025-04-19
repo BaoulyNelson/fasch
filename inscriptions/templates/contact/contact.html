@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load form_filters %}  {# si tu veux ajouter des classes #}
+
+{% block content %}
+
+<!-- Contact Section -->
+<section id="contact" class="py-16 md:py-24 bg-primary-color text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold">Contactez-nous</h2>
+            <div class="w-24 h-1 bg-white mx-auto mt-4 mb-6"></div>
+            <p class="max-w-2xl mx-auto text-lg">Vous avez des questions ? N'hésitez pas à nous contacter. Notre équipe est à votre disposition.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <div class="card p-6 rounded-lg shadow-lg text-gray-800 dark:text-white" style="background-color: var(--card-bg); color: var(--text-primary);">
+                    <h3 class="text-xl font-semibold mb-6">Envoyez-nous un message</h3>
+                    <form method="post" class="space-y-4">
+                        {% csrf_token %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1" for="id_nom">Nom complet</label>
+                                {{ form.nom|add_class:"w-full px-3 py-2 border rounded-md text-base" }}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1" for="id_email">Email</label>
+                                {{ form.email|add_class:"w-full px-3 py-2 border rounded-md text-base" }}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" for="id_sujet">Sujet</label>
+                            {{ form.sujet|add_class:"w-full px-3 py-2 border rounded-md text-base" }}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1" for="id_message">Message</label>
+                            {{ form.message|add_class:"w-full px-3 py-2 border rounded-md text-base" }}
+                        </div>
+                        <div>
+                            <button type="submit" class="btn-primary w-full py-3 rounded-md shadow-md">
+                                Envoyer le message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div>
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Coordonnées</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p>Avenue Christophe<br>Port-au-Prince, Haïti</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p>(+509) 2234-5678</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p>info@fasch.edu.ht</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p>Lundi - Vendredi: 8h00 - 16h30<br>Samedi: 8h00 - 12h00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Suivez-nous</h3>
+                    <div class="flex space-x-4">
+                        <a href="https://facebook.com/fasch" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-white flex items-center justify-center hover:bg-white hover:text-primary-color transition-colors">
+                          <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/fasch" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-white flex items-center justify-center hover:bg-white hover:text-primary-color transition-colors">
+                          <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://instagram.com/fasch" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-white flex items-center justify-center hover:bg-white hover:text-primary-color transition-colors">
+                          <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://linkedin.com/in/fasch" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-white flex items-center justify-center hover:bg-white hover:text-primary-color transition-colors">
+                          <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://youtube.com/@fasch" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-white flex items-center justify-center hover:bg-white hover:text-primary-color transition-colors">
+                          <i class="fab fa-youtube"></i>
+                        </a>
+                      </div>
+                      
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+  
+{% endblock %}

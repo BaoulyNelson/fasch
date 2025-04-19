@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-6 py-10 bg-white shadow-xl rounded-2xl border border-gray-200">
+    <h2 class="text-3xl font-bold text-center text-blue-700 mb-8">📘 Détails du cours</h2>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 text-gray-700 text-base mb-6">
+        <div class="flex items-start gap-2">
+            <span class="font-semibold">📚 Cours :</span> <span>{{ horaire.cours.nom }}</span>
+        </div>
+        <div class="flex items-start gap-2">
+            <span class="font-semibold">📅 Jour :</span> <span>{{ horaire.jour }}</span>
+        </div>
+        <div class="flex items-start gap-2">
+            <span class="font-semibold">🕓 Heure :</span> 
+            <span>{{ horaire.heure_debut }} - {{ horaire.heure_fin }}</span>
+        </div>
+        <div class="flex items-start gap-2">
+            <span class="font-semibold">👨‍🏫 Professeur :</span> <span>{{ horaire.professeur }}</span>
+        </div>
+        <div class="flex items-start gap-2">
+            <span class="font-semibold">👥 Capacité max :</span> <span>{{ horaire.capacite_max }}</span>
+        </div>
+    </div>
+
+    {% if inscrit %}
+        <p class="mt-6 text-green-600 font-medium text-center">✅ Vous êtes déjà inscrit à ce cours.</p>
+    {% else %}
+        <form action="{% url 'inscription_create' horaire.id %}" method="post" class="text-center mt-8">
+            {% csrf_token %}
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold shadow transition-all duration-300">
+                S'inscrire au cours
+            </button>
+        </form>
+    {% endif %}
+
+    <div class="mt-10 border-t pt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-blue-600">
+        <a href="{% url 'mes_cours' %}" class="mb-2 sm:mb-0 hover:underline">📄 Voir mes inscriptions</a>
+        <a href="{% url 'cours_list' %}" class="hover:underline">← Retour à la liste des cours</a>
+    </div>
+</div>
+{% endblock %}

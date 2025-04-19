@@ -12,13 +12,14 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     # Page de connexion
     path('login/', views.login_view, name='login'),
-    
-    # Page de déconnexion
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    # Confirmation avant de se déconnecter
+    path('logout/', views.logout_view, name='logout'),
+
+  # Déconnexion avec confirmation
     path('confirmer-deconnexion/', views.confirmer_deconnexion, name='confirmer_deconnexion'),
+
     
-    path('admission/', views.admission, name='admission'),
+    path('demande-admission/', views.demande_admission, name='demande_admission'),
+
     # Changer de mot de passe
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
@@ -42,30 +43,26 @@ urlpatterns = [
 
     # Profil utilisateur
     path('profile/', views.profile_view, name='profile'),
-    
+    path('create_profile/', views.create_profile, name='create_profile'),
+
     path('profile/edit/', views.edit_profile_view, name='edit_profile'),
     
     # Profil étudiant
-    path('etudiant/profil/', views.etudiant_profil, name='etudiant_profil'),
-    
     path('edit_etudiant/<int:etudiant_id>/', views.edit_info_etudiant, name='edit_info_etudiant'),
 
-    # Inscription aux cours
-    path('inscription/<int:cours_id>/', views.inscription_etudiant, name='inscription_etudiant'),
-    
-    path('etudiants/', views.list_etudiants, name='list_etudiants'),
-   
-    path('professeurs/', views.liste_professeurs, name='liste_professeurs'),
+    path('cours/', views.cours_list, name='cours_list'),
+    path('cours/<int:horaire_id>/', views.cours_detail, name='cours_detail'),
+    path('cours/<int:horaire_id>/inscription/', views.inscription_create, name='inscription_create'),
 
-    path('cours/', views.cours, name='cours'),
-    
-    path('cours/<int:cours_id>/', views.cours_detail, name='cours_detail'),  # Détails d’un cours
-    
-    path('cours_inscrits/',views.cours_inscrits, name='cours_inscrits'),
-    
+    path("mes-cours/", views.mes_cours, name="mes_cours"),
+
+
     # Programmes
+    path('programme/<int:pk>/', views.programme_detail, name='programme_detail'),
+
     path('programmes/', views.programmes, name='programmes'),
-    path('programmes/<str:program_name>/', views.program_detail, name='program_detail'),
+    path('bibliotheques/', views.catalogue, name='catalogue'),
+
 
     # Pages diverses
     path('apropos/', views.apropos, name='apropos'),
@@ -74,26 +71,13 @@ urlpatterns = [
     # Page Témoignages
     path("contact/success/", views.contact_success_view, name="contact_success"),
     # Recherche
-    path('search/', views.search, name='search'),
+    path("publication/", views.recherche_view, name="recherche"),
 
-    # Annonces et événements
-    path('annonces/', views.annonces_list, name='annonces_list'),
-    path('annonce/<int:id>/', views.annonce_detail, name='annonce_detail'),
+    path('publications/', views.publications_list, name='publications'),
 
-    path('evenements/', views.evenements_list, name='evenements_list'),
-    path('evenement/<int:id>/', views.evenement_detail, name='evenement_detail'),
-
-    # Articles
-    path('articles/', views.articles_list, name='articles_list'),
-    path('article/<int:id>/', views.article_detail, name='article_detail'),
-    
-
-    path('mentions-legales/', views.mentions_legales, name='mentions_legales'),
-    path('politique-confidentialite/', views.politique_confidentialite, name='politique_confidentialite'),
-    path('conditions-utilisation/', views.conditions_utilisation, name='conditions_utilisation'),
-    path('cookies/', views.politique_cookies, name='cookies'),
-
-
+    path('article/<int:pk>/', views.article_detail, name='article_detail'),
+    path('annonce/<int:pk>/', views.annonce_detail, name='annonce_detail'),
+    path('evenement/<int:pk>/', views.evenement_detail, name='evenement_detail'),
 ]
 
 # Gestion des fichiers médias en mode développement
