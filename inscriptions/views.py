@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Cours, Inscription, Etudiant,Professeur,Evenement,Article, Cours,HoraireCours, Inscription, Etudiant,Annonce,Programme,PublicationRecherche,AxeRecherche,Livre,Personnel
+from .models import Inscription, Etudiant,Evenement,Article,HoraireCours, Inscription, Etudiant,Annonce,Programme,PublicationRecherche,AxeRecherche,Livre,Personnel
 from .forms import CustomUserChangeForm,DemandeAdmissionForm,EtudiantForm,ContactForm
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.decorators import login_required
@@ -18,6 +18,8 @@ from django.contrib.messages import get_messages
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import logout
 from inscriptions.utils import ajouter_message
+from django.core.exceptions import PermissionDenied
+
 
 
 
@@ -148,7 +150,7 @@ def create_profile(request):
             etudiant.user = request.user  # Lier l'utilisateur à ce profil étudiant
             etudiant.save()
             messages.success(request, "Votre profil étudiant a été créé avec succès ! 🎉")
-            return redirect("profile")  # Rediriger vers la page de profil
+            return redirect("etudiant_profil")  # Rediriger vers la page de profil
         else:
             messages.error(request, "Il y a eu une erreur dans la création de votre profil.")
     else:
@@ -158,21 +160,34 @@ def create_profile(request):
 
 
 @login_required
+def etudiant_profil(request):
+    # On suppose que l'utilisateur est lié à un étudiant via la relation OneToOne
+    try:
+        etudiant = request.user.etudiant
+    except Etudiant.DoesNotExist:
+        return redirect('edit_info_etudiant', etudiant_id=0)  # ou une autre gestion d'erreur
+    
+    return render(request, 'etudiants/etudiant_profil.html', {'etudiant': etudiant})
+
+
+@login_required
 def edit_info_etudiant(request, etudiant_id):
     etudiant = get_object_or_404(Etudiant, id=etudiant_id)
-    
+
+    # Vérifie que l'utilisateur connecté est bien celui associé à l'étudiant
+    if request.user != etudiant.user:
+        raise PermissionDenied("Vous n'avez pas la permission de modifier ce profil.")
+
     if request.method == 'POST':
         form = EtudiantForm(request.POST, instance=etudiant)
         if form.is_valid():
             form.save()
             ajouter_message(request, 'success', '✅ Votre profil a été mis à jour avec succès.')
             return redirect('etudiant_profil')  # Redirection vers la page du profil
-    
     else:
         form = EtudiantForm(instance=etudiant)
-    
-    return render(request, 'etudiants/edit_info_etudiant.html', {'form': form})
 
+    return render(request, 'etudiants/edit_info_etudiant.html', {'form': form})
 
 
 
@@ -256,6 +271,8 @@ def evenement_detail(request, pk):
     evenement = get_object_or_404(Evenement, pk=pk)
     return render(request, 'evenements/evenement_detail.html', {'evenement': evenement})
 
+
+
 def success_page(request):
     try:
         etudiant = request.user.etudiant  # Si l'utilisateur a un profil 'etudiant'
@@ -272,7 +289,7 @@ def contact_view(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             # Traitement ici (ex : envoi d'email)
-            return render(request, "contact_success.html")  # ← page de confirmation
+            return render(request, "contact/contact_success.html")  # ← page de confirmation
     else:
         form = ContactForm()
 

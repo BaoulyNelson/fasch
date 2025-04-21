@@ -1,11 +1,24 @@
 {% load static %}
 <!-- En-tête du site réduit -->
-<div class="site-header d-none d-md-block py-2" style="background-color: #fff;">
+<div
+  class="site-header d-none d-md-block py-3"
+  style="
+    background-color: var(--bg-primary);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  "
+>
   <div class="container">
     <div class="row justify-content-center align-items-center">
-      <div class="col-auto text-center" style="font-family: 'Georgia', serif;">
-        <h1 class="header-logo m-0 typewriter" style="font-size: 1.8rem;">
-          <span id="typewriter-text"></span><span class="cursor">|</span>
+      <div
+        class="col-auto text-center"
+        style="font-family: 'Montserrat', sans-serif"
+      >
+        <h1
+          class="header-logo m-0 typewriter"
+          style="font-size: 2rem; color: var(--text-primary)"
+        >
+          <span id="typewriter-text"></span
+          ><span class="cursor" style="color: var(--accent)">|</span>
         </h1>
       </div>
     </div>
@@ -13,87 +26,481 @@
 </div>
 
 <!-- Navbar -->
-<nav class="sticky top-0 z-50 bg-opacity-90 backdrop-filter backdrop-blur-sm" style="background-color: var(--bg-primary);">
+<nav
+  class="sticky top-0 z-50 bg-white bg-opacity-90 backdrop-filter backdrop-blur-md shadow-sm"
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between h-20">
-      
-      <div class="hidden md:flex md:items-center md:space-x-8">
-        <a href="{% url 'home' %}" class="nav-link active px-2 py-1 text-sm font-medium rounded-md">Accueil</a>
-        <a href="{% url 'apropos' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md">Qui?</a>
-        <a href="{% url 'programmes' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md">Programmes</a>
-        <a href="{% url 'demande_admission' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md">Admissions</a>
-        <a href="{% url 'recherche' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md">Publication</a>
-        
-        <a href="{% url 'cours_list' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md">Cours</a>
+    <div class="flex justify-between h-16">
+      <div class="hidden md:flex md:items-center md:space-x-6">
+        <a
+          href="{% url 'home' %}"
+          class="nav-link active px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+          >Accueil</a
+        >
+        <div class="relative group">
+          <a
+            href="{% url 'apropos' %}"
+            class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+            >Qui?</a
+          >
+          <div
+            class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
+          >
+            <a
+              href="{% url 'contact' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Contact</a
+            >
 
-        <a href="{% url 'contact' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md">Contact</a>
-        <a href="{% url 'catalogue' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md">
-          Bibliothèque
-      </a>
-      
-        {% if user.is_authenticated %}
-        {% if user.is_staff %}
+            <a
+              href="{% url 'catalogue' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Bibliothèque</a
+            >
+
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Histoire</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Mission et Vision</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Administration</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Mot du Doyen</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Galerie</a
+            >
+          </div>
+        </div>
+        <div class="relative group">
+          <a
+            href="{% url 'programmes' %}"
+            class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+            >Programmes</a
+          >
+          <div
+            class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
+          >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Sociologie</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Psychologie</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Communication</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Service Social</a
+            >
+          </div>
+        </div>
+        <div class="relative group">
+          <a
+            href="#"
+            class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+            >Formations</a
+          >
+          <div
+            class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
+          >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Licence</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Master</a
+            >
+
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Formation Continue</a
+            >
+          </div>
+        </div>
+        <a
+          href="{% url 'demande_admission' %}"
+          class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+          >Admissions</a
+        >
+        <div class="relative group">
+          <a
+            href="{% url 'recherche' %}"
+            class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+            >Publication</a
+          >
+          <div
+            class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
+          >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Centres de Recherche</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Publications</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Revues Scientifiques</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Projets en Cours</a
+            >
+          </div>
+        </div>
+        <a
+          href="{% url 'cours_list' %}"
+          class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+          >Cours</a
+        >
+        <div class="relative group">
+          <a
+            href="#"
+            class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+            >Etudiants</a
+          >
+          <div
+            class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
+          >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Associations Étudiantes</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Activités Culturelles</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Services aux Étudiants</a
+            >
+            <a
+              href="#"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Bourses et Aides</a
+            >
+          </div>
+        </div>
+
+        {% if user.is_authenticated %} {% if user.is_staff %}
         <!-- Icône Admin -->
-        <a href="{% url 'admin:index' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md flex items-center gap-1 text-red-600 hover:bg-gray-100">
+        <a
+          href="{% url 'admin:index' %}"
+          class="nav-link px-3 py-2 text-sm font-medium rounded-md flex items-center gap-1 text-red-600 transition duration-300 ease-in-out hover:bg-gray-200"
+        >
           <i class="fas fa-user-shield text-lg"></i>
         </a>
         {% else %}
         <!-- Icône Profil -->
-        <a href="{% url 'profile' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md flex items-center gap-1 hover:bg-gray-100" title="Mon profil">
+        <a
+          href="{% url 'profile' %}"
+          class="nav-link px-3 py-2 text-sm font-medium rounded-md flex items-center gap-1 transition duration-300 ease-in-out hover:bg-gray-200"
+          title="Mon profil"
+        >
           <i class="fas fa-user-circle text-lg"></i>
-       
         </a>
-        {% endif %}
-        {% else %}
+        {% endif %} {% else %}
         <!-- Non connecté -->
-        <a href="{% url 'login' %}" class="nav-link px-2 py-1 text-sm font-medium rounded-md flex items-center gap-1 hover:bg-gray-100">
+        <a
+          href="{% url 'login' %}"
+          class="nav-link px-3 py-2 text-sm font-medium rounded-md flex items-center gap-1 transition duration-300 ease-in-out hover:bg-gray-200"
+        >
           <i class="fas fa-user text-gray-500"></i>
         </a>
-
         {% endif %}
-
       </div>
 
-      <div class="flex items-center md:hidden">
-        <button id="mobile-menu-toggle" class="p-2 rounded-md focus:outline-none">
+      <div class="flex items-center justify-between md:hidden w-full">
+        <button
+          id="mobile-menu-toggle"
+          class="p-2 rounded-md focus:outline-none transition duration-300 ease-in-out hover:bg-gray-200"
+        >
           <i class="fas fa-bars text-xl"></i>
         </button>
-
+        <button
+          id="mobile-search-toggle"
+          class="p-2 rounded-md focus:outline-none transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          <i class="fas fa-search text-xl"></i>
+        </button>
       </div>
     </div>
   </div>
 
   <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden" style="background-color: var(--bg-primary);">
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden"
+    style="background-color: var(--bg-primary)"
+  >
     <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-      <a href="{% url 'home' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">Accueil</a>
-      <a href="{% url 'apropos' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">À propos</a>
-      <a href="{% url 'programmes' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">Programmes</a>
-      <a href="{% url 'demande_admission' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">Admissions</a>
-      <a href="{% url 'recherche' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">Recherche</a>
-      <a href="{% url 'cours_list' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">Cours</a>
-      <a href="{% url 'contact' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">Contact</a>
-      <a href="{% url 'catalogue' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">Bibliothèque</a>
+      <div class="mobile-nav-item">
+        <a
+          href="{% url 'home' %}"
+          class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          Accueil
+        </a>
+      </div>
 
-      {% if user.is_authenticated %}
-      {% if user.is_staff %}
-      <a href="{% url 'admin:index' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-red-600">
+      <div class="mobile-nav-item">
+        <a
+          href="{% url 'apropos' %}"
+          class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          À propos
+          <i
+            class="fas fa-chevron-down ml-2 transition-transform duration-300 submenu-toggle-icon"
+          ></i>
+        </a>
+        <div class="mobile-submenu hidden">
+          <a
+            href="{% url 'contact' %}"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Contact</a
+          >
+          <a
+            href="{% url 'catalogue' %}"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Bibliothèque</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Histoire</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Mission et Vision</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Administration</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Mot du Doyen</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Galerie</a
+          >
+        </div>
+      </div>
+
+      <div class="mobile-nav-item">
+        <a
+          href="{% url 'programmes' %}"
+          class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          Programmes
+          <i
+            class="fas fa-chevron-down ml-2 transition-transform duration-300 submenu-toggle-icon"
+          ></i>
+        </a>
+        <div class="mobile-submenu hidden">
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Sociologie</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Psychologie</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Communication Sociale</a
+          >
+        </div>
+      </div>
+
+      <div class="mobile-nav-item">
+        <a
+          href="#"
+          class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          Formations
+          <i
+            class="fas fa-chevron-down ml-2 transition-transform duration-300 submenu-toggle-icon"
+          ></i>
+        </a>
+        <div class="mobile-submenu hidden">
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Licence</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Master</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Formation Continue</a
+          >
+        </div>
+      </div>
+
+      <a
+        href="{% url 'demande_admission' %}"
+        class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+      >
+        Admissions
+      </a>
+
+      <div class="mobile-nav-item">
+        <a
+          href="{% url 'recherche' %}"
+          class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          Publication
+          <i
+            class="fas fa-chevron-down ml-2 transition-transform duration-300 submenu-toggle-icon"
+          ></i>
+        </a>
+        <div class="mobile-submenu hidden">
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Centres de Recherche</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Publications</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Revues Scientifiques</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Projets en Cours</a
+          >
+        </div>
+      </div>
+
+      <a
+        href="{% url 'cours_list' %}"
+        class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+      >
+        Cours
+      </a>
+
+      <div class="mobile-nav-item">
+        <a
+          href="#"
+          class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          Vie Étudiante
+          <i
+            class="fas fa-chevron-down ml-2 transition-transform duration-300 submenu-toggle-icon"
+          ></i>
+        </a>
+        <div class="mobile-submenu hidden">
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Associations Étudiantes</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Activités Culturelles</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Services aux Étudiants</a
+          >
+          <a
+            href="#"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Bourses et Aides</a
+          >
+        </div>
+      </div>
+
+      {% if user.is_authenticated %} {% if user.is_staff %}
+      <a
+        href="{% url 'admin:index' %}"
+        class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-red-600 transition duration-300 ease-in-out hover:bg-gray-200"
+      >
         <i class="fas fa-user-shield mr-2"></i>Admin
       </a>
       {% else %}
-      <a href="{% url 'profile' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">
+      <a
+        href="{% url 'profile' %}"
+        class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+      >
         <i class="fas fa-user-circle mr-2"></i>Profil
       </a>
-      {% endif %}
-
-      {% else %}
-      <a href="{% url 'login' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium">
-        <i class="fas fa-user text-gray-500"></i>
-        Connexion
+      {% endif %} {% else %}
+      <a
+        href="{% url 'login' %}"
+        class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+      >
+        <i class="fas fa-user text-gray-500 mr-2"></i>Connexion
       </a>
-
       {% endif %}
     </div>
   </div>
 
+  <!-- Mobile search form -->
+  <div
+    id="mobile-search-form"
+    class="hidden md:hidden px-4 py-2 bg-white border-t border-gray-200"
+  >
+    <input
+      type="text"
+      id="mobile-search-input"
+      class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+      placeholder="Rechercher..."
+    />
+  </div>
 </nav>

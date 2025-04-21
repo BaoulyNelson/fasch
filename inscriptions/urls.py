@@ -43,12 +43,13 @@ urlpatterns = [
 
     # Profil utilisateur
     path('profile/', views.profile_view, name='profile'),
-    path('create_profile/', views.create_profile, name='create_profile'),
-
     path('profile/edit/', views.edit_profile_view, name='edit_profile'),
     
     # Profil étudiant
-    path('edit_etudiant/<int:etudiant_id>/', views.edit_info_etudiant, name='edit_info_etudiant'),
+    path('create_profile/', views.create_profile, name='create_profile'),
+    path('profil/', views.etudiant_profil, name='etudiant_profil'),
+    path('profil/modifier/<int:etudiant_id>/', views.edit_info_etudiant, name='edit_info_etudiant'),
+  
 
     path('cours/', views.cours_list, name='cours_list'),
     path('cours/<int:horaire_id>/', views.cours_detail, name='cours_detail'),
