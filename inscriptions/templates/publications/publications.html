@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Publications - Centre de Recherche{% endblock %}
+
+{% block content %}
+<section class="py-16 md:py-24 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold">Toutes les publications</h2>
+      <div class="w-24 h-1 bg-primary-color mx-auto mt-4 mb-6"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for pub in publications %}
+      <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition duration-300 flex flex-col justify-between">
+        <div>
+          <h4 class="font-semibold text-lg text-gray-800">{{ pub.titre }}</h4>
+          <p class="text-sm mt-1 text-gray-600">Par {{ pub.auteurs }}</p>
+          <p class="text-sm mt-2 text-gray-700">{{ pub.description }}</p>
+        </div>
+        <div class="mt-4">
+          <div class="flex flex-wrap gap-2 mb-4">
+            {% for domaine in pub.domaines_list %}
+            <span class="px-2 py-1 text-xs rounded-full bg-primary-color bg-opacity-20 text-primary-color">
+              {{ domaine.strip }}
+            </span>
+            {% endfor %}
+            <span class="px-2 py-1 text-xs rounded-full bg-primary-color bg-opacity-20 text-primary-color">
+              {{ pub.date_publication|date:"Y" }}
+            </span>
+          </div>
+          <a href="{{ pub.lien }}" class="inline-flex items-center text-sm text-primary-color hover:underline" target="_blank">
+            Accéder <i class="fas fa-external-link-alt ml-1"></i>
+          </a>
+        </div>
+      </div>
+      {% empty %}
+      <p class="col-span-full text-center text-gray-500">Aucune publication trouvée.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

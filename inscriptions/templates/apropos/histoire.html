@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Notre Histoire - Faculté des Sciences Humaines{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+  <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+    <h3 class="text-3xl font-bold text-blue-700 mb-6 border-b-2 border-blue-500 pb-2">Notre Histoire</h3>
+    <p class="mb-4 text-gray-700">Fondée en 1974, la Faculté des Sciences Humaines d'Haïti (FASCH) est l'une des institutions académiques les plus respectées du pays. Elle a joué un rôle crucial dans la formation des intellectuels, chercheurs et leaders qui ont contribué au développement social et culturel d'Haïti.</p>
+    <p class="text-gray-700">À travers les décennies, la FASCH a maintenu son engagement envers l'excellence académique tout en s'adaptant aux défis contemporains. Notre faculté a survécu à des périodes difficiles de l'histoire haïtienne, démontrant sa résilience et son importance pour le tissu éducatif national.</p>
+  </div>
+  <div class="timeline-container h-96 overflow-y-auto pr-4">
+    <div class="timeline-item left">
+      <div class="card p-4 rounded-lg shadow-md">
+        <h4 class="font-bold">1974</h4>
+        <p>Fondation de la Faculté des Sciences Humaines d'Haïti</p>
+      </div>
+    </div>
+    <div class="timeline-item right">
+      <div class="card p-4 rounded-lg shadow-md">
+        <h4 class="font-bold">1976</h4>
+        <p>Création des premiers programmes de maîtrise</p>
+      </div>
+    </div>
+    <div class="timeline-item left">
+      <div class="card p-4 rounded-lg shadow-md">
+        <h4 class="font-bold">1986</h4>
+        <p>Restructuration majeure de la faculté</p>
+      </div>
+    </div>
+    <div class="timeline-item right">
+      <div class="card p-4 rounded-lg shadow-md">
+        <h4 class="font-bold">2004</h4>
+        <p>Ouverture du Centre de Recherche en Sciences Humaines</p>
+      </div>
+    </div>
+    <div class="timeline-item left">
+      <div class="card p-4 rounded-lg shadow-md">
+        <h4 class="font-bold">2010</h4>
+        <p>Reconstruction après le séisme</p>
+      </div>
+    </div>
+    <div class="timeline-item right">
+      <div class="card p-4 rounded-lg shadow-md">
+        <h4 class="font-bold">2020</h4>
+        <p>Lancement des programmes d'enseignement à distance</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

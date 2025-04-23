@@ -1,36 +1,30 @@
 {% load static %}
-<!-- En-tête du site réduit -->
-<div
-  class="site-header d-none d-md-block py-3"
-  style="
-    background-color: var(--bg-primary);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  "
->
-  <div class="container">
-    <div class="row justify-content-center align-items-center">
-      <div
-        class="col-auto text-center"
-        style="font-family: 'Montserrat', sans-serif"
-      >
-        <h1
-          class="header-logo m-0 typewriter"
-          style="font-size: 2rem; color: var(--text-primary)"
-        >
-          <span id="typewriter-text"></span
-          ><span class="cursor" style="color: var(--accent)">|</span>
-        </h1>
-      </div>
-    </div>
+<h1 class="header-logo m-0 text-center" style="font-size: 2rem; font-weight: bold;">
+  <div style="display: inline-flex; align-items: center; justify-content: center;">
+    <img src="{% static 'images/favicon.ico' %}" alt="Logo UEH" style="height: 50px; margin-right: 10px;" />
+    <span>
+      <span style="color: blue;">UNIVERSITÉ D'ÉTAT</span>
+      <span style="color: red;"> D'HAÏTI</span>
+    </span>
+
   </div>
+
+  
+</h1>
+
+<div class="ticker-container">
+  <div class="ticker-content" id="ticker-text">Chargement...</div>
 </div>
 
 <!-- Navbar -->
 <nav
   class="sticky top-0 z-50 bg-white bg-opacity-90 backdrop-filter backdrop-blur-md shadow-sm"
 >
+
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
     <div class="flex justify-between h-16">
+      
       <div class="hidden md:flex md:items-center md:space-x-6">
         <a
           href="{% url 'home' %}"
@@ -58,31 +52,12 @@
               >Bibliothèque</a
             >
 
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Histoire</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Mission et Vision</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Administration</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Mot du Doyen</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Galerie</a
-            >
+            <a href="{% url 'histoire' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Histoire</a>
+            <a href="{% url 'mission_vision' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Mission et Vision</a>
+            <a href="{% url 'administration' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Administration</a>
+            <a href="{% url 'mot_doyen' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Mot du Doyen</a>
+            <a href="{% url 'galerie' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Galerie</a>
+            
           </div>
         </div>
         <div class="relative group">
@@ -94,26 +69,11 @@
           <div
             class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
           >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Sociologie</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Psychologie</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Communication</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Service Social</a
-            >
+          <a href="{% url 'sociologie' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sociologie</a>
+          <a href="{% url 'psychologie' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Psychologie</a>
+          <a href="{% url 'communication' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Communication</a>
+          <a href="{% url 'service_social' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Service Social</a>
+          
           </div>
         </div>
         <div class="relative group">
@@ -125,22 +85,10 @@
           <div
             class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
           >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Licence</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Master</a
-            >
-
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Formation Continue</a
-            >
+          <a href="{% url 'licence' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Licence</a>
+          <a href="{% url 'master' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Master</a>
+          <a href="{% url 'formation_continue' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Formation Continue</a>
+          
           </div>
         </div>
         <a
@@ -158,22 +106,22 @@
             class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
           >
             <a
-              href="#"
+              href="{% url 'recherche' %}"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
               >Centres de Recherche</a
             >
             <a
-              href="#"
+              href="{% url 'publications' %}"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
               >Publications</a
             >
             <a
-              href="#"
+              href="{% url 'revues_scientifiques' %}"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
               >Revues Scientifiques</a
             >
             <a
-              href="#"
+              href="{% url 'projets_en_cours' %}"
               class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
               >Projets en Cours</a
             >
@@ -186,33 +134,18 @@
         >
         <div class="relative group">
           <a
-            href="#"
+            href=""
             class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
             >Etudiants</a
           >
           <div
             class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
           >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Associations Étudiantes</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Activités Culturelles</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Services aux Étudiants</a
-            >
-            <a
-              href="#"
-              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-              >Bourses et Aides</a
-            >
+          <a href="{% url 'associations_etudiantes' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Associations Étudiantes</a>
+          <a href="{% url 'activites_culturelles' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Activités Culturelles</a>
+          <a href="{% url 'services_etudiants' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Services aux Étudiants</a>
+          <a href="{% url 'bourses_et_aides' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Bourses et Aides</a>
+          
           </div>
         </div>
 
@@ -299,7 +232,7 @@
             >Bibliothèque</a
           >
           <a
-            href="#"
+            href=""
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Histoire</a
           >
@@ -309,12 +242,12 @@
             >Mission et Vision</a
           >
           <a
-            href="#"
+            href=""
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Administration</a
           >
           <a
-            href="#"
+            href=""
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Mot du Doyen</a
           >
@@ -338,26 +271,31 @@
         </a>
         <div class="mobile-submenu hidden">
           <a
-            href="#"
+            href="{% url 'sociologie' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Sociologie</a
           >
           <a
-            href="#"
+            href="{% url 'psychologie' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Psychologie</a
           >
           <a
-            href="#"
+            href="{% url 'communication' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Communication Sociale</a
+          >
+          <a
+            href="{% url 'service_social' %}"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+            >Service Social</a
           >
         </div>
       </div>
 
       <div class="mobile-nav-item">
         <a
-          href="#"
+          href=""
           class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
         >
           Formations
@@ -367,17 +305,17 @@
         </a>
         <div class="mobile-submenu hidden">
           <a
-            href="#"
+            href="{% url 'licence' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Licence</a
           >
           <a
-            href="#"
+            href="{% url 'master' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Master</a
           >
           <a
-            href="#"
+            href="{% url 'formation_continue' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Formation Continue</a
           >
@@ -403,22 +341,22 @@
         </a>
         <div class="mobile-submenu hidden">
           <a
-            href="#"
+            href="{% url 'recherche' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Centres de Recherche</a
           >
           <a
-            href="#"
+            href="{% url 'publications' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Publications</a
           >
           <a
-            href="#"
+            href="{% url 'revues_scientifiques' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Revues Scientifiques</a
           >
           <a
-            href="#"
+            href="{% url 'projets_en_cours' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Projets en Cours</a
           >
@@ -434,7 +372,7 @@
 
       <div class="mobile-nav-item">
         <a
-          href="#"
+          href=""
           class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
         >
           Vie Étudiante
@@ -444,22 +382,22 @@
         </a>
         <div class="mobile-submenu hidden">
           <a
-            href="#"
+            href="{% url 'associations_etudiantes' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Associations Étudiantes</a
           >
           <a
-            href="#"
+            href="{% url 'activites_culturelles' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Activités Culturelles</a
           >
           <a
-            href="#"
+            href="{% url 'services_etudiants' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Services aux Étudiants</a
           >
           <a
-            href="#"
+            href="{% url 'bourses_et_aides' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Bourses et Aides</a
           >

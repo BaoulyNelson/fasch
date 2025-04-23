@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - Faculté des Sciences Humaines{% endblock %}
+
+{% block content %}
+<div class="card p-6 rounded-lg shadow-lg">
+    <div class="w-12 h-12 bg-primary-color rounded-full flex items-center justify-center mb-4">
+        <i class="fas fa-users-cog text-white text-xl"></i>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700">
+        {% for personne in personnel %}
+          <div class="border p-4 rounded-lg flex items-center gap-4">
+            {% if personne.photo %}
+              <img src="{{ personne.photo.url }}" alt="{{ personne.nom }}" class="w-16 h-16 rounded-full object-cover">
+            {% endif %}
+            <div>
+              <h4 class="font-semibold text-primary-color">{{ personne.get_poste_display }}</h4>
+              <p class="text-gray-900 font-medium">{{ personne.nom }}</p>
+              <p>{{ personne.description }}</p>
+            </div>
+          </div>
+        {% empty %}
+          <p>Aucun membre du personnel enregistré.</p>
+        {% endfor %}
+      </div>
+      
+</div>
+{% endblock %}

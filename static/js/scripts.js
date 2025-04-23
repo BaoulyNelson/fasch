@@ -1,7 +1,19 @@
 // Mobile menu toggle
 document.getElementById('mobile-menu-toggle')?.addEventListener('click', function () {
     const mobileMenu = document.getElementById('mobile-menu');
+    const icon = this.querySelector('i');
+
+    // Toggle the menu visibility
     mobileMenu.classList.toggle('hidden');
+
+    // Toggle the icon between bars and times
+    if (icon.classList.contains('fa-bars')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+    } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+    }
 });
 
 // Smooth scrolling for anchor links
@@ -11,6 +23,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
         // Close mobile menu if open
         document.getElementById('mobile-menu')?.classList.add('hidden');
+
+        // Reset the icon to bars when a link is clicked
+        const menuIcon = document.getElementById('mobile-menu-toggle').querySelector('i');
+        if (menuIcon.classList.contains('fa-times')) {
+            menuIcon.classList.remove('fa-times');
+            menuIcon.classList.add('fa-bars');
+        }
 
         // Scroll to target
         document.querySelector(this.getAttribute('href'))?.scrollIntoView({
@@ -63,8 +82,6 @@ window.addEventListener('scroll', function () {
     });
 });
 
-
-
 // Animate elements on scroll
 const animateOnScroll = () => {
     const elements = document.querySelectorAll('.card, h2, h3, p');
@@ -80,7 +97,3 @@ const animateOnScroll = () => {
 
 window.addEventListener('scroll', animateOnScroll);
 window.addEventListener('load', animateOnScroll);
-
-
-
-

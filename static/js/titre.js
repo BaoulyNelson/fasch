@@ -1,52 +1,28 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const element = document.getElementById('typewriter-text');
-  
-    const texts = [
-      "Université d’État d’Haïti",
-      "Faculté des Sciences Humaines",
-      "Recherche, Savoir, Progrès"
-    ];
-  
-    const colors = [
-      "#D21034",  // rouge Haïti
-      "#0057A6",  // bleu FASCH
-      "#28A745"   // vert pour recherche
-    ];
-  
-    let textIndex = 0;
-    let charIndex = 0;
-    let isDeleting = false;
-  
-    const type = () => {
-      const currentText = texts[textIndex];
-      const currentColor = colors[textIndex];
-  
-      element.style.color = currentColor; // changer couleur
-      if (!isDeleting && charIndex <= currentText.length) {
-        element.textContent = currentText.substring(0, charIndex++);
-      } else if (isDeleting) {
-        element.textContent = currentText.substring(0, charIndex--);
-      }
-  
-      let delay = isDeleting ? 50 : 100;
-  
-      if (!isDeleting && charIndex === currentText.length + 1) {
-        isDeleting = true;
-        delay = 2000;
-      }
-  
-      if (isDeleting && charIndex === 0) {
-        isDeleting = false;
-        textIndex = (textIndex + 1) % texts.length;
-        delay = 1000;
-      }
-  
-      setTimeout(type, delay);
-    };
-  
-    type();
-  });
+const messages = [
+  "Faculté des Sciences Humaines d'Haïti (FASCH)",
+  "Former, Rechercher, Innover",
+  "Excellence, Éthique, Engagement"
+];
 
+const colors = [
+  "darkblue",    // Couleur pour le 1er message
+  "green",       // Couleur pour le 2e
+  "crimson"      // Couleur pour le 3e
+];
 
+const ticker = document.getElementById("ticker-text");
+let index = 0;
 
-  
+function showMessage() {
+  ticker.style.animation = 'none'; // Reset l'animation
+  void ticker.offsetWidth;         // Force le reflow
+
+  ticker.textContent = messages[index];
+  ticker.style.color = colors[index]; // 💡 Appliquer la couleur
+  ticker.style.animation = 'scroll-left 10s linear forwards';
+
+  index = (index + 1) % messages.length;
+}
+
+showMessage();
+setInterval(showMessage, 10000);

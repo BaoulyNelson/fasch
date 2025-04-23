@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Projets en Cours - Faculté des Sciences Humaines{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-gray-100">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white border border-gray-300 rounded-2xl shadow-md p-8">
+      <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Projets de Recherche en Cours</h1>
+      <div class="w-20 h-1 bg-primary-color mx-auto mb-10 rounded"></div>
+
+      <p class="text-lg mb-6 text-gray-700">
+        Nos équipes de recherche sont activement engagées dans plusieurs projets novateurs ayant un impact local et international.
+      </p>
+
+      <ul class="space-y-6">
+        <li>
+          <h3 class="text-xl font-semibold text-primary-color">Projet 1 : Impact des réseaux sociaux sur le comportement des jeunes</h3>
+          <p class="text-gray-700">En collaboration avec le ministère de l'Éducation, ce projet vise à analyser les effets de l’utilisation des médias sociaux sur les performances scolaires.</p>
+        </li>
+        <li>
+          <h3 class="text-xl font-semibold text-primary-color">Projet 2 : Genre et accès aux services sociaux en milieu rural</h3>
+          <p class="text-gray-700">Étude pluridisciplinaire sur les inégalités de genre dans les zones reculées.</p>
+        </li>
+        <li>
+          <h3 class="text-xl font-semibold text-primary-color">Projet 3 : Mémoire collective et transmission culturelle</h3>
+          <p class="text-gray-700">Recherche anthropologique sur les récits de guerre et les pratiques de mémoire intergénérationnelles.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}

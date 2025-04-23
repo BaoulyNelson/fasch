@@ -64,21 +64,47 @@ urlpatterns = [
     path('programmes/', views.programmes, name='programmes'),
     path('bibliotheques/', views.catalogue, name='catalogue'),
 
-
+    path('sociologie/', views.sociologie, name='sociologie'),
+    path('psychologie/', views.psychologie, name='psychologie'),
+    path('communication/', views.communication, name='communication'),
+    path('service-social/', views.service_social, name='service_social'),
+    
     # Pages diverses
     path('apropos/', views.apropos, name='apropos'),
+    path('histoire/', views.histoire, name='histoire'),
+    path('mission-vision/', views.mission_vision, name='mission_vision'),
+    path('administration/', views.administration, name='administration'),
+    path('mot-du-doyen/', views.mot_doyen, name='mot_doyen'),
+    path('galerie/', views.galerie, name='galerie'),
+
+  
     # Page Contact
     path("contact/", views.contact_view, name="contact"),
     # Page Témoignages
     path("contact/success/", views.contact_success_view, name="contact_success"),
-    # Recherche
+    # publiactions
     path("publication/", views.recherche_view, name="recherche"),
 
     path('publications/', views.publications_list, name='publications'),
+    path('revues-scientifiques/', views.revues_scientifiques, name='revues_scientifiques'),
+    path('projets-en-cours/', views.projets_en_cours, name='projets_en_cours'),
+
 
     path('article/<int:pk>/', views.article_detail, name='article_detail'),
     path('annonce/<int:pk>/', views.annonce_detail, name='annonce_detail'),
     path('evenement/<int:pk>/', views.evenement_detail, name='evenement_detail'),
+    
+    #formations
+    path('licence/', views.licence, name='licence'),
+    path('master/', views.master, name='master'),
+    path('formation-continue/', views.formation_continue, name='formation_continue'),
+    
+    path('associations/', views.associations_etudiantes, name='associations_etudiantes'),
+    path('activites/', views.activites_culturelles, name='activites_culturelles'),
+    path('services/', views.services_etudiants, name='services_etudiants'),
+    path('bourses/', views.bourses_et_aides, name='bourses_et_aides'),
+
+
 ]
 
 # Gestion des fichiers médias en mode développement

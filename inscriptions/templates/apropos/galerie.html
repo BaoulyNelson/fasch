@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Galerie - Faculté des Sciences Humaines{% endblock %}
+{% load static %}
+
+{% block content %}
+<section class="py-16 md:py-24 bg-gray-100">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Galerie Photos</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <img src="{% static 'images/favicon.ico' %}" alt="Photo 1" class="rounded-lg shadow">
+      <img src="{% static 'images/fac.png' %}" alt="Photo 2" class="rounded-lg shadow">
+      <img src="{% static 'images/fas.png' %}" alt="Photo 3" class="rounded-lg shadow">
+      <img src="{% static 'images/fasch.jpg' %}" alt="Photo 4" class="rounded-lg shadow">
+      <img src="{% static 'images/fasch.png' %}" alt="Photo 5" class="rounded-lg shadow">
+      <img src="{% static 'images/haiti.png' %}" alt="Photo 6" class="rounded-lg shadow">
+    </div>
+  </div>
+</section>
+{% endblock %}
