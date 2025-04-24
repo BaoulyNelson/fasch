@@ -91,11 +91,38 @@
           
           </div>
         </div>
-        <a
-          href="{% url 'demande_admission' %}"
-          class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
-          >Admissions</a
-        >
+
+        <div class="relative group">
+          <a
+            href="{% url 'admission_section' section='all' %}"
+            class="nav-link px-3 py-2 text-sm font-medium rounded-md transition duration-300 ease-in-out hover:bg-gray-200"
+            >Admissions</a
+          >
+          <div
+            class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg"
+          >
+            <a
+              href="{% url 'admission_section' section='conditions' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Conditions d'admission</a
+            >
+            <a
+              href="{% url 'admission_section' section='calendrier' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Calendrier</a
+            >
+            <a
+              href="{% url 'admission_section' section='demande' %}"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+              >Demande d'admission</a
+            >
+     
+          </div>
+        </div>
+
+
+
+
         <div class="relative group">
           <a
             href="{% url 'recherche' %}"
@@ -232,27 +259,27 @@
             >Bibliothèque</a
           >
           <a
-            href=""
+            href="{% url 'histoire' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Histoire</a
           >
           <a
-            href="#"
+            href="{% url 'mission_vision' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Mission et Vision</a
           >
           <a
-            href=""
+            href="{% url 'administration' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Administration</a
           >
           <a
-            href=""
+            href="{% url 'mot_doyen' %} "
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Mot du Doyen</a
           >
           <a
-            href="#"
+            href="{% url 'galerie' %}"
             class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
             >Galerie</a
           >
@@ -322,12 +349,34 @@
         </div>
       </div>
 
-      <a
-        href="{% url 'demande_admission' %}"
-        class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
-      >
-        Admissions
-      </a>
+      <div class="mobile-nav-item">
+        <a
+          href="{% url 'admission_section' section='all' %}"
+          class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200"
+        >
+          Admissions
+          <i class="fas fa-chevron-down ml-2 transition-transform duration-300 submenu-toggle-icon"></i>
+        </a>
+        <div class="mobile-submenu hidden">
+          <a
+            href="{% url 'admission_section' section='all' %}"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+          >Tous</a>
+          <a
+            href="{% url 'admission_section' section='calendrier' %}"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+          >Calendrier d'admission</a>
+          <a
+            href="{% url 'admission_section' section='demande' %}"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+          >Demande d'admission</a>
+          <a
+            href="{% url 'admission_section' section='conditions' %}"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+          >Conditions d'admission</a>
+        </div>
+      </div>
+      
 
       <div class="mobile-nav-item">
         <a

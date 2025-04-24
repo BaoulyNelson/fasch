@@ -1,0 +1,39 @@
+<div class="card p-6 rounded-lg shadow-md mb-8">
+    <h3 class="text-xl font-semibold mb-4">Calendrier d'admission</h3>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y" style="border-color: var(--border-color);">
+            <thead>
+                <tr>
+                    <th class="px-4 py-3 text-left text-sm font-medium">Étape</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium">Date de début</th>
+                    <th class="px-4 py-3 text-left text-sm font-medium">Date limite</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y" style="border-color: var(--border-color);">
+                {% for etape in etapes %}
+                    <tr>
+                        <td class="px-4 py-3 text-sm">{{ etape.nom }}</td>
+                        <td class="px-4 py-3 text-sm">
+                            {% if etape.date_debut %}
+                                {{ etape.date_debut|date:"j F Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-sm">
+                            {% if etape.date_limite %}
+                                {{ etape.date_limite|date:"j F Y" }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-sm py-4">Aucune étape disponible.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

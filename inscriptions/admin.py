@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Etudiant, Cours, Professeur, HoraireCours, Inscription,DemandeAdmission,Article,Annonce,Evenement,Programme,AxeRecherche, PublicationRecherche,Livre,Personnel
+from .models import Etudiant, Cours, Professeur, HoraireCours, Inscription,DemandeAdmission,Article,Annonce,Evenement,Programme,AxeRecherche, PublicationRecherche,Livre,Personnel,EtapeAdmission
 
 @admin.register(Etudiant)
 class EtudiantAdmin(admin.ModelAdmin):
@@ -81,3 +81,8 @@ class PersonnelAdmin(admin.ModelAdmin):
     list_display = ('nom', 'poste')
     list_filter = ('poste',)
     search_fields = ('nom',)
+
+
+
+
+admin.site.register(EtapeAdmission)

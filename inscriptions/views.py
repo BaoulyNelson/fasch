@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Inscription, Etudiant,Evenement,Article,HoraireCours, Inscription, Etudiant,Annonce,Programme,PublicationRecherche,AxeRecherche,Livre,Personnel
+from .models import Inscription, Etudiant,Evenement,Article,HoraireCours, Inscription, Etudiant,Annonce,Programme,PublicationRecherche,AxeRecherche,Livre,Personnel,EtapeAdmission
 from .forms import CustomUserChangeForm,DemandeAdmissionForm,EtudiantForm,ContactForm
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.decorators import login_required
@@ -200,8 +200,9 @@ def edit_info_etudiant(request, etudiant_id):
 
 @login_required
 def cours_list(request):
-    horaires = HoraireCours.objects.select_related('cours', 'professeur')
-    paginator = Paginator(horaires, 9)  # 10 cours par page
+    horaires = HoraireCours.objects.select_related('cours', 'professeur') \
+                                   .order_by('jour', 'heure_debut')
+    paginator = Paginator(horaires, 9)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     return render(request, "cours/liste.html", {"page_obj": page_obj})
@@ -329,17 +330,38 @@ def catalogue(request):
 
 
 
-def demande_admission(request):
-    if request.method == "POST":
-        form = DemandeAdmissionForm(request.POST)
+
+
+def admission(request, section="demande"):
+    etapes = EtapeAdmission.objects.all().order_by('date_debut', 'date_limite')
+    section_templates = {
+        "demande": "admissions/admission_form.html",
+        "conditions": "admissions/conditions.html",
+        "calendrier": "admissions/calendrier.html"
+    }
+
+    form = DemandeAdmissionForm(request.POST or None)
+
+    if request.method == "POST" and section in ["demande", "all"]:
         if form.is_valid():
             form.save()
-            # Ajoutez 'request' dans l'appel de render pour la page de confirmation
-            return render(request, 'admissions/confirmation_admission.html')  # redirige vers une page de remerciement
-    else:
-        form = DemandeAdmissionForm()
+            ajouter_message(request, 'success', "Votre demande a bien été envoyée ✅.")
+            return redirect('admission_section', section=section)
+        else:
+            ajouter_message(request, 'error', "Veuillez corriger les erreurs dans le formulaire ❌.")
 
-    return render(request, 'admissions/demande_admission.html', {'form': form})
+    if section == "all":
+        return render(request, 'admissions/admission_all.html', {
+            'form': form,
+            'etapes': etapes,
+        })
+
+    return render(request, 'admissions/admission_base.html', {
+        'section_template': section_templates.get(section, "admissions/table_faculte.html"),
+        'form': form,
+        'etapes': etapes
+    })
+
 
 
 def recherche_view(request):
@@ -364,6 +386,8 @@ def publications_list(request):
         pub.domaines_list = pub.domaines.split(",")  # Diviser les domaines en une liste
 
     return render(request, 'publications/publications.html', {'publications': publications})
+
+
 
 def revues_scientifiques(request):
     return render(request, 'publications/revues_scientifiques.html')
@@ -393,8 +417,10 @@ def administration(request):
     return render(request, 'apropos/administration.html',
     {'personnel': personnel})
 
+
 def mot_doyen(request):
     return render(request, 'apropos/mot_doyen.html')
+
 
 def galerie(request):
     return render(request, 'apropos/galerie.html')

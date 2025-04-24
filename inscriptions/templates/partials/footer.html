@@ -24,38 +24,69 @@
   
         <!-- Horaires & Contact -->
         <div class="flex flex-col items-center md:items-start">
-          <h4 class="text-lg font-semibold mb-4">Informations</h4>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li><strong>Adresse :</strong> 123, Avenue Christophe, Port-au-Prince</li>
-            <li><strong>Email :</strong> contact@fasch.edu.ht</li>
-            <li><strong>Téléphone :</strong> +509 1234 5678</li>
-            <li><strong>Heures d’ouverture :</strong> Lun - Ven, 8h - 16h</li>
+          <h4 class="text-lg font-semibold text-white mb-4">Informations</h4>
+          <ul class="space-y-3 text-sm text-gray-400">
+            <li class="flex items-start gap-2">
+              <i class="fas fa-map-marker-alt mt-1 text-primary-color"></i>
+              <span>123, Avenue Christophe, Port-au-Prince</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-envelope mt-1 text-primary-color"></i>
+              <span><a href="mailto:contact@fasch.edu.ht" class="hover:underline">contact@fasch.edu.ht</a></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-phone mt-1 text-primary-color"></i>
+              <span><a href="tel:+50912345678" class="hover:underline">+509 1234 5678</a></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-clock mt-1 text-primary-color"></i>
+              <span>Lun - Ven, 8h - 16h</span>
+            </li>
           </ul>
         </div>
+        
   
         <!-- Partenaires -->
         <div class="flex flex-col items-center md:items-start">
-          <h4 class="text-lg font-semibold mb-4">Nos partenaires</h4>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li><a href="#" class="hover:text-white">Université d'État d’Haïti</a></li>
-            <li><a href="#" class="hover:text-white">UNESCO</a></li>
-            <li><a href="#" class="hover:text-white">AFD</a></li>
-            <li><a href="#" class="hover:text-white">Université de Montréal</a></li>
+          <h4 class="text-lg font-semibold text-white mb-4">Nos partenaires</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>
+              <a href="#" class="hover:text-white transition-colors duration-200">
+                🎓 Université d'État d’Haïti
+              </a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors duration-200">
+                🌐 UNESCO
+              </a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors duration-200">
+                💶 AFD
+              </a>
+            </li>
+            <li>
+              <a href="#" class="hover:text-white transition-colors duration-200">
+                🍁 Université de Montréal
+              </a>
+            </li>
           </ul>
         </div>
+        
   
         <!-- Ressources -->
         <div class="flex flex-col items-center md:items-start">
-          <h4 class="text-lg font-semibold mb-4">Ressources</h4>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li><a href="#" class="hover:text-white">Calendrier académique</a></li>
-            <li><a href="#" class="hover:text-white">Bibliothèque</a></li>
-            <li><a href="#" class="hover:text-white">Publications</a></li>
-            <li><a href="#" class="hover:text-white">Espace étudiant</a></li>
-            <li><a href="#" class="hover:text-white">Emplois</a></li>
-            <li><a href="#" class="hover:text-white">FAQ</a></li>
+          <h4 class="text-lg font-semibold text-white mb-4">Ressources</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="{% url 'admission_section' section='calendrier' %}" class="transition-colors duration-200 hover:text-white">📅 Calendrier académique</a></li>
+            <li><a href="{% url 'catalogue' %}" class="transition-colors duration-200 hover:text-white">📚 Bibliothèque</a></li>
+            <li><a href="{% url 'publications' %}" class="transition-colors duration-200 hover:text-white">📝 Publications</a></li>
+            <li><a href="{% url 'associations_etudiantes' %}" class="transition-colors duration-200 hover:text-white">👨‍🎓 Espace étudiant</a></li>
+            <li><a href="{% url 'bourses_et_aides' %}" class="transition-colors duration-200 hover:text-white">💼 Emplois</a></li>
+            <li><a href="#" class="transition-colors duration-200 hover:text-white">❓ FAQ</a></li>
           </ul>
         </div>
+        
   
       </div>
   

@@ -98,7 +98,16 @@ class Inscription(models.Model):
     def __str__(self):
         return f"{self.etudiant} inscrit à {self.horaire_cours}"
 
+class EtapeAdmission(models.Model):
+    nom = models.CharField(max_length=255)
+    date_debut = models.DateField(null=True, blank=True)
+    date_limite = models.DateField(null=True, blank=True)
 
+    def __str__(self):
+        return self.nom
+    
+    
+    
 class DemandeAdmission(models.Model):
     nom = models.CharField(max_length=255)
     email = models.EmailField()
@@ -126,7 +135,8 @@ class Evenement(models.Model):
     def is_coming_up(self):
         """Retourne True si l'événement est à venir."""
         return self.date_debut > timezone.now()
-    
+
+ 
 # models.py
 class Programme(models.Model):
     titre = models.CharField(max_length=255)

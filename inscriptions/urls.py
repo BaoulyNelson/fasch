@@ -17,8 +17,10 @@ urlpatterns = [
   # Déconnexion avec confirmation
     path('confirmer-deconnexion/', views.confirmer_deconnexion, name='confirmer_deconnexion'),
 
-    
-    path('demande-admission/', views.demande_admission, name='demande_admission'),
+    #admissions
+    path('admissions/<str:section>/', views.admission, name='admission_section'),
+    path('admissions/', views.admission, name='demande_admission'),
+
 
     # Changer de mot de passe
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),

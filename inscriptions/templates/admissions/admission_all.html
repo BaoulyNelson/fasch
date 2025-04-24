@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Admissions{% endblock %}
+
+{% block content %}
+
+
+<section id="admissions" class="py-16 md:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold">Admissions</h2>
+            <div class="w-24 h-1 bg-primary-color mx-auto mt-4 mb-6"></div>
+            <p class="max-w-2xl mx-auto text-lg">Informations sur le processus d'admission, les conditions d'entrée et les démarches à suivre pour rejoindre notre faculté.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-12">
+                {% include "admissions/calendrier.html" %}
+                {% include "admissions/conditions.html" %}
+            </div>
+            <div>
+                {% include "admissions/admission_form.html" %}
+            </div>
+        </div>
+        
+</section>
+{% endblock %}
