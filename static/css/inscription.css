@@ -8,26 +8,26 @@
     max-width: 600px;
     justify-content: center;
     align-items: center;
-}
-
-/* Titre du formulaire */
-h1 {
+  }
+  
+  /* Titre du formulaire */
+  h1 {
     text-align: center;
     color: #004d7a;
     margin-bottom: 20px;
-}
-
-/* Style des labels */
-label {
+  }
+  
+  /* Style des labels */
+  label {
     font-size: 1.1rem;
     margin-bottom: 8px;
     display: inline-block;
-}
-
-/* Style des champs de saisie */
-input[type="text"],
-input[type="email"],
-select {
+  }
+  
+  /* Style des champs de saisie */
+  input[type="text"],
+  input[type="email"],
+  select {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -35,18 +35,18 @@ select {
     border-radius: 4px;
     font-size: 1rem;
     transition: border-color 0.3s;
-}
-
-/* Focus des champs */
-input[type="text"]:focus,
-input[type="email"]:focus,
-select:focus {
+  }
+  
+  /* Focus des champs */
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  select:focus {
     border-color: #006b8f;
     outline: none;
-}
-
-/* Style du bouton */
-button {
+  }
+  
+  /* Style du bouton */
+  button {
     background-color: #004d7a;
     color: white;
     padding: 12px 20px;
@@ -56,12 +56,10 @@ button {
     cursor: pointer;
     width: 100%;
     transition: background-color 0.3s;
-}
-
-/* Effet de survol du bouton */
-button:hover {
+  }
+  
+  /* Effet de survol du bouton */
+  button:hover {
     background-color: #006b8f;
-}
-
-
-
+  }
+  

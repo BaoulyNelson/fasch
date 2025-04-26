@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone  # Ajouter cette ligne
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 class Etudiant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -242,3 +243,15 @@ class Personnel(models.Model):
 
     def __str__(self):
         return f"{self.nom} - {self.get_poste_display()}"
+
+
+
+
+class SearchableMixin:
+    @classmethod
+    def search(cls, query):
+        fields = getattr(cls, 'search_fields', [])
+        filters = Q()
+        for field in fields:
+            filters |= Q(**{f"{field}__icontains": query})
+        return cls.objects.filter(filters)

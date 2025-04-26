@@ -1,42 +1,44 @@
 {% load static %}
 
-<div class="card p-6 rounded-lg shadow-md sticky top-24">
-    <h3 class="text-xl font-semibold mb-4">Commencer votre candidature</h3>
+<div class="flex justify-center">
+  <div class="card p-6 rounded-lg shadow-md sticky top-24">
+      <h3 class="text-xl font-semibold mb-4 text-center">Commencer votre candidature</h3>
 
-    <div class="max-w-2xl mx-auto px-4 py-8">
-        <form method="post" class="space-y-4">
-            {% csrf_token %}
-            <div>
-                <label class="block text-sm font-medium mb-1" for="id_nom">Nom complet</label>
-                {{ form.nom }}
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1" for="id_email">Email</label>
-                {{ form.email }}
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1" for="id_telephone">Téléphone</label>
-                {{ form.telephone }}
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1" for="id_programme">Programme d'intérêt</label>
-                {{ form.programme }}
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-1" for="id_message">Message / Questions</label>
-                {{ form.message }}
-            </div>
-            <div>
-                <button type="submit" class="btn-primary w-full py-3 rounded-md shadow-md">
-                    Soumettre ma demande d'information
-                </button>
-            </div>
-        </form>
-    </div>
+      <div class="max-w-2xl mx-auto px-4 py-8">
+          <form method="post" class="space-y-4">
+              {% csrf_token %}
+              <div>
+                  <label class="block text-sm font-medium mb-1" for="id_nom">Nom complet</label>
+                  {{ form.nom }}
+              </div>
+              <div>
+                  <label class="block text-sm font-medium mb-1" for="id_email">Email</label>
+                  {{ form.email }}
+              </div>
+              <div>
+                  <label class="block text-sm font-medium mb-1" for="id_telephone">Téléphone</label>
+                  {{ form.telephone }}
+              </div>
+              <div>
+                  <label class="block text-sm font-medium mb-1" for="id_programme">Programme d'intérêt</label>
+                  {{ form.programme }}
+              </div>
+              <div>
+                  <label class="block text-sm font-medium mb-1" for="id_message">Message / Questions</label>
+                  {{ form.message }}
+              </div>
+              <div>
+                  <button type="submit" class="btn-primary w-full py-3 rounded-md shadow-md">
+                      Soumettre ma demande d'information
+                  </button>
+              </div>
+          </form>
+      </div>
 
-    <div class="mt-4 text-center">
-        <a href="{% static 'documents/Guide.pdf' %}" download class="text-primary-color text-sm hover:underline">
-            <i class="fas fa-file-download mr-1"></i> Télécharger le guide d'admission complet
-        </a>
-    </div>
+      <div class="mt-4 text-center">
+          <a href="{% static 'documents/Guide.pdf' %}" download class="text-primary-color text-sm hover:underline">
+              <i class="fas fa-file-download mr-1"></i> Télécharger le guide d'admission complet
+          </a>
+      </div>
+  </div>
 </div>

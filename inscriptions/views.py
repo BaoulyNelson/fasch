@@ -1,25 +1,23 @@
-from django.shortcuts import render, redirect
-from .models import Inscription, Etudiant,Evenement,Article,HoraireCours, Inscription, Etudiant,Annonce,Programme,PublicationRecherche,AxeRecherche,Livre,Personnel,EtapeAdmission
-from .forms import CustomUserChangeForm,DemandeAdmissionForm,EtudiantForm,ContactForm
-from django.contrib.auth import login,authenticate
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone  # Ajouter cette ligne
-from django.shortcuts import render, get_object_or_404
-from django.core.mail import send_mail
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-from django.utils.timezone import now
-from django.db import transaction
-from django.db.models import Q
-from django.utils.html import mark_safe
-import re
-from django.db import IntegrityError
-from django.core.paginator import Paginator
 from django.contrib.messages import get_messages
-from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
-from django.contrib.auth import logout
-from inscriptions.utils import ajouter_message
+from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
+from django.utils import timezone
+from django.apps import apps
 
+from .models import (
+    Inscription, Etudiant, Evenement, Article, HoraireCours,
+    Annonce, Programme, PublicationRecherche, AxeRecherche,
+    Livre, Personnel, EtapeAdmission
+)
+from .forms import CustomUserChangeForm, DemandeAdmissionForm, EtudiantForm, ContactForm
+from .search_config import search_config
+from inscriptions.utils import ajouter_message
 
 
 
@@ -29,7 +27,8 @@ def login_view(request):
     for _ in storage:
         pass  # Cette boucle vide supprime tous les anciens messages
 
-    next_url = request.GET.get("next", "profile")  # Récupérer 'next' ou rediriger vers 'profile' par défaut
+    # Récupérer 'next' ou rediriger vers 'profile' par défaut
+    next_url = request.GET.get("next", "profile")
 
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
@@ -40,14 +39,17 @@ def login_view(request):
 
             if user is not None:
                 login(request, user)
-                messages.success(request, f"Bienvenue {username} ! 😊 Vous êtes connecté.")
+                messages.success(
+                    request, f"Bienvenue {username} ! 😊 Vous êtes connecté.")
 
                 if request.POST.get("remember_me"):
                     request.session.set_expiry(1209600)  # 2 semaines
 
-                return redirect(request.POST.get("next", next_url))  # Redirige vers next
+                # Redirige vers next
+                return redirect(request.POST.get("next", next_url))
             else:
-                messages.error(request, "Nom d'utilisateur ou mot de passe incorrect.")
+                messages.error(
+                    request, "Nom d'utilisateur ou mot de passe incorrect.")
         else:
             messages.error(request, "Veuillez vérifier vos informations.")
     else:
@@ -57,23 +59,26 @@ def login_view(request):
 
 
 def signup_view(request):
-    next_url = request.GET.get("next", "home")  # Récupérer la page demandée ou rediriger vers 'home' par défaut
+    # Récupérer la page demandée ou rediriger vers 'home' par défaut
+    next_url = request.GET.get("next", "home")
 
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)  # Connecter directement après l'inscription
-            messages.success(request, "Inscription réussie ! 🎉 Bienvenue sur notre plateforme.")
+            messages.success(
+                request, "Inscription réussie ! 🎉 Bienvenue sur notre plateforme.")
 
-            return redirect(request.POST.get("next", next_url))  # Rediriger vers la page prévue
+            # Rediriger vers la page prévue
+            return redirect(request.POST.get("next", next_url))
         else:
-            messages.error(request, "Une erreur est survenue lors de l'inscription. Vérifiez les informations.")
+            messages.error(
+                request, "Une erreur est survenue lors de l'inscription. Vérifiez les informations.")
     else:
         form = UserCreationForm()
 
     return render(request, "registration/signup.html", {"form": form, "next": next_url})
-
 
 
 @login_required
@@ -87,12 +92,13 @@ def edit_profile_view(request):
         form = CustomUserChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            ajouter_message(request, 'success', '✅ Votre profil a été mis à jour avec succès.')
+            ajouter_message(request, 'success',
+                            '✅ Votre profil a été mis à jour avec succès.')
             return redirect('profile')  # Redirection vers la page du profil
-    
+
     else:
         form = CustomUserChangeForm(instance=request.user)
-    
+
     return render(request, 'registration/edit_profile.html', {'form': form})
 
 
@@ -109,16 +115,19 @@ def confirmer_deconnexion(request):
 
 def home(request):
     # Articles actifs avec pagination
-    articles_list = Article.objects.filter(est_active=True).order_by('-date_publication')
+    articles_list = Article.objects.filter(
+        est_active=True).order_by('-date_publication')
     paginator = Paginator(articles_list, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     # Événements à venir (prochains événements)
-    evenements = Evenement.objects.filter(date_debut__gte=timezone.now()).order_by('date_debut')
+    evenements = Evenement.objects.filter(
+        date_debut__gte=timezone.now()).order_by('date_debut')
 
     # Annonces actives (peut aussi filtrer par date_evenement si nécessaire)
-    annonces = Annonce.objects.filter(est_active=True).order_by('-date_publication')  # ou '-date_evenement'
+    annonces = Annonce.objects.filter(est_active=True).order_by(
+        '-date_publication')  # ou '-date_evenement'
 
     context = {
         'articles': page_obj,
@@ -129,8 +138,6 @@ def home(request):
 
     return render(request, 'index.html', context)
 
-    
-    
 
 @login_required
 def create_profile(request):
@@ -150,7 +157,6 @@ def create_profile(request):
             etudiant = form.save(commit=False)
             etudiant.user = request.user
             etudiant.save()
-            
 
             # Récupérer l’URL de retour
             next_url = request.session.pop("next_url", None)
@@ -158,12 +164,12 @@ def create_profile(request):
                 return redirect(next_url)
             return redirect("etudiant_profil")
         else:
-            messages.error(request, "Il y a eu une erreur dans la création de votre profil.")
+            messages.error(
+                request, "Il y a eu une erreur dans la création de votre profil.")
     else:
         form = EtudiantForm()
 
     return render(request, "etudiants/create_profile.html", {"form": form})
-
 
 
 @login_required
@@ -172,8 +178,9 @@ def etudiant_profil(request):
     try:
         etudiant = request.user.etudiant
     except Etudiant.DoesNotExist:
-        return redirect('edit_info_etudiant', etudiant_id=0)  # ou une autre gestion d'erreur
-    
+        # ou une autre gestion d'erreur
+        return redirect('edit_info_etudiant', etudiant_id=0)
+
     return render(request, 'etudiants/etudiant_profil.html', {'etudiant': etudiant})
 
 
@@ -183,25 +190,26 @@ def edit_info_etudiant(request, etudiant_id):
 
     # Vérifie que l'utilisateur connecté est bien celui associé à l'étudiant
     if request.user != etudiant.user:
-        raise PermissionDenied("Vous n'avez pas la permission de modifier ce profil.")
+        raise PermissionDenied(
+            "Vous n'avez pas la permission de modifier ce profil.")
 
     if request.method == 'POST':
         form = EtudiantForm(request.POST, instance=etudiant)
         if form.is_valid():
             form.save()
-            ajouter_message(request, 'success', '✅ Votre profil a été mis à jour avec succès.')
-            return redirect('etudiant_profil')  # Redirection vers la page du profil
+            ajouter_message(request, 'success',
+                            '✅ Votre profil a été mis à jour avec succès.')
+            # Redirection vers la page du profil
+            return redirect('etudiant_profil')
     else:
         form = EtudiantForm(instance=etudiant)
 
     return render(request, 'etudiants/edit_info_etudiant.html', {'form': form})
 
 
-
 @login_required
 def cours_list(request):
-    horaires = HoraireCours.objects.select_related('cours', 'professeur') \
-                                   .order_by('jour', 'heure_debut')
+    horaires = HoraireCours.objects.select_related('cours', 'professeur').order_by('jour', 'heure_debut')
     paginator = Paginator(horaires, 9)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -209,12 +217,13 @@ def cours_list(request):
 
 
 
+
 @login_required
 def cours_detail(request, horaire_id):
     horaire = get_object_or_404(HoraireCours, id=horaire_id)
-    inscrit = Inscription.objects.filter(etudiant__user=request.user, horaire_cours=horaire).exists()
+    inscrit = Inscription.objects.filter(
+        etudiant__user=request.user, horaire_cours=horaire).exists()
     return render(request, "cours/detail.html", {"horaire": horaire, "inscrit": inscrit})
-
 
 
 @login_required
@@ -222,13 +231,13 @@ def mes_cours(request):
     try:
         etudiant = Etudiant.objects.get(user=request.user)
     except Etudiant.DoesNotExist:
-        ajouter_message(request, 'error', "Aucun profil étudiant lié à ce compte.")
+        ajouter_message(request, 'error',
+                        "Aucun profil étudiant lié à ce compte.")
         return redirect("create_profile")
 
-    inscriptions = Inscription.objects.filter(etudiant=etudiant).select_related("horaire_cours", "horaire_cours__cours", "horaire_cours__professeur")
+    inscriptions = Inscription.objects.filter(etudiant=etudiant).select_related(
+        "horaire_cours", "horaire_cours__cours", "horaire_cours__professeur")
     return render(request, "cours/mes_cours.html", {"etudiant": etudiant, "inscriptions": inscriptions})
-
-
 
 
 @login_required
@@ -240,7 +249,8 @@ def inscription_create(request, horaire_id):
     except Etudiant.DoesNotExist:
         # Sauvegarder l'URL actuelle pour revenir après création du profil
         request.session["next_url"] = request.path
-        ajouter_message(request, 'error', "Aucun profil étudiant lié à ce compte. Veuillez compléter votre profil.")
+        ajouter_message(
+            request, 'error', "Aucun profil étudiant lié à ce compte. Veuillez compléter votre profil.")
         return redirect("create_profile")
 
     # Continuer avec l'inscription
@@ -258,41 +268,65 @@ def inscription_create(request, horaire_id):
 
 def programmes(request):
     programmes = Programme.objects.all()  # Récupérer tous les programmes
-    return render(request, 'programmes/programmes.html', {'programmes': programmes})  # Rendre le template 'programmes.html'
+    # Rendre le template 'programmes.html'
+    return render(request, 'programmes/programmes.html', {'programmes': programmes})
+
+
+
+
+
+def programme_view(request, programme):
+    templates = {
+        'sociologie': 'programmes/sociologie.html',
+        'psychologie': 'programmes/psychologie.html',
+        'communication': 'programmes/communication.html',
+        'service_social': 'programmes/service_social.html',
+    }
+
+    template_name = templates.get(programme)
+
+    if template_name:
+        titre_map = {
+            'sociologie': 'Sociologie',
+            'psychologie': 'Psychologie',
+            'communication': 'Communication Sociale',
+            'service_social': 'Service Social',
+        }
+        prog_obj = Programme.objects.filter(titre__iexact=titre_map[programme]).first()
+        return render(request, template_name, {'programme': prog_obj})
+    else:
+        return render(request, '404.html')
+
 
 def programme_detail(request, pk):
+    # La logique de type dynamique peut être utilisée ici
     programme = get_object_or_404(Programme, pk=pk)
+    
+    # Ici, on renvoie le programme comme détail
     return render(request, 'programmes/program_detail.html', {'programme': programme})
 
-def sociologie(request):
-    return render(request, 'programmes/sociologie.html')
 
-def psychologie(request):
-    return render(request, 'programmes/psychologie.html')
+def detail_view(request, type_detail, pk):
+    if type_detail == 'article':
+        detail = get_object_or_404(Article, pk=pk)
+        template_name = 'articles/article_detail.html'
+        autres = Article.objects.exclude(pk=pk).order_by('-date_publication')[:3]
+        context = {
+            'article': detail,
+            'autres_articles': autres
+        }
+    elif type_detail == 'annonce':
+        detail = get_object_or_404(Annonce, pk=pk)
+        template_name = 'annonces/annonces_details.html'
+        context = {'detail': detail}
+    elif type_detail == 'evenement':
+        detail = get_object_or_404(Evenement, pk=pk)
+        template_name = 'evenements/evenement_detail.html'
+        context = {'detail': detail}
+    else:
+        return render(request, '404.html')
 
-def communication(request):
-    return render(request, 'programmes/communication.html')
-
-def service_social(request):
-    return render(request, 'programmes/service_social.html')
-
-
-def article_detail(request, pk):
-    article = get_object_or_404(Article, pk=pk)
-    autres_articles = Article.objects.exclude(pk=pk).order_by('-date_publication')[:3]  # les 3 plus récents sauf celui-ci
-    return render(request, 'articles/article_detail.html', {
-        'article': article,
-        'autres_articles': autres_articles
-    })
-
-def annonce_detail(request, pk):
-    annonce = get_object_or_404(Annonce, pk=pk)
-    return render(request, 'annonces/annonces_details.html', {'annonce': annonce})
-
-def evenement_detail(request, pk):
-    evenement = get_object_or_404(Evenement, pk=pk)
-    return render(request, 'evenements/evenement_detail.html', {'evenement': evenement})
-
+    return render(request, template_name, context)
 
 
 def success_page(request):
@@ -300,10 +334,10 @@ def success_page(request):
         etudiant = request.user.etudiant  # Si l'utilisateur a un profil 'etudiant'
     except AttributeError:
         # Si l'utilisateur n'a pas de profil étudiant, rediriger ou gérer ce cas
-        return redirect('cours')  # Ou une autre page qui indique que l'étudiant n'est pas trouvé
-    
-    return render(request, 'success_page.html', {'etudiant': etudiant})
+        # Ou une autre page qui indique que l'étudiant n'est pas trouvé
+        return redirect('cours')
 
+    return render(request, 'success_page.html', {'etudiant': etudiant})
 
 
 def contact_view(request):
@@ -311,7 +345,8 @@ def contact_view(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             # Traitement ici (ex : envoi d'email)
-            return render(request, "contact/contact_success.html")  # ← page de confirmation
+            # ← page de confirmation
+            return render(request, "contact/contact_success.html")
     else:
         form = ContactForm()
 
@@ -322,14 +357,9 @@ def contact_success_view(request):
     return render(request, "contact/contact_success.html")
 
 
-
-
 def catalogue(request):
     livres = Livre.objects.all()
     return render(request, 'bibliotheque/catalogue.html', {'livres': livres})
-
-
-
 
 
 def admission(request, section="demande"):
@@ -345,10 +375,12 @@ def admission(request, section="demande"):
     if request.method == "POST" and section in ["demande", "all"]:
         if form.is_valid():
             form.save()
-            ajouter_message(request, 'success', "Votre demande a bien été envoyée ✅.")
+            ajouter_message(request, 'success',
+                            "Votre demande a bien été envoyée ✅.")
             return redirect('admission_section', section=section)
         else:
-            ajouter_message(request, 'error', "Veuillez corriger les erreurs dans le formulaire ❌.")
+            ajouter_message(
+                request, 'error', "Veuillez corriger les erreurs dans le formulaire ❌.")
 
     if section == "all":
         return render(request, 'admissions/admission_all.html', {
@@ -363,89 +395,136 @@ def admission(request, section="demande"):
     })
 
 
-
 def recherche_view(request):
     axes_recherche = AxeRecherche.objects.all()
-    publications = PublicationRecherche.objects.order_by('-date_publication')[:5]
-    
+    publications = PublicationRecherche.objects.order_by(
+        '-date_publication')[:5]
+
     # Préparer les domaines pour chaque publication
     for pub in publications:
-        pub.domaines_list = pub.domaines.split(",")  # Diviser les domaines en une liste
+        pub.domaines_list = pub.domaines.split(
+            ",")  # Diviser les domaines en une liste
 
     return render(request, 'publications/centre_recherche.html', {
         'axes_recherche': axes_recherche,
         'publications': publications
     })
 
-    
+
 def publications_list(request):
     publications = PublicationRecherche.objects.all()
-    
+
     # Préparer les domaines pour chaque publication
     for pub in publications:
-        pub.domaines_list = pub.domaines.split(",")  # Diviser les domaines en une liste
+        pub.domaines_list = pub.domaines.split(
+            ",")  # Diviser les domaines en une liste
 
     return render(request, 'publications/publications.html', {'publications': publications})
 
 
+def publications_view(request, type_publication):
+    # Dictionnaire pour mapper les types de publications aux templates
+    templates = {
+        'revues_scientifiques': 'publications/revues_scientifiques.html',
+        'projets_en_cours': 'publications/projets_en_cours.html',
+    }
 
-def revues_scientifiques(request):
-    return render(request, 'publications/revues_scientifiques.html')
+    template_name = templates.get(type_publication)
 
+    if template_name:  # Vérifie si le type de publication est valide
+        return render(request, template_name)
+    else:
+        # Affiche une page 404 si le type n'est pas trouvé
+        return render(request, '404.html')
 
-def projets_en_cours(request):
-    return render(request, 'publications/projets_en_cours.html')
 
 def recherche(request):
     return render(request, 'search/recherche.html')
 
 
+def recherche_globale(request):
+    query = request.GET.get('q', '')
+    resultats = []
+
+    if query:
+        for nom_modele, champs in search_config.items():
+            try:
+                # Remplace 'inscriptions' par le nom de ton app
+                modele = apps.get_model('inscriptions', nom_modele)
+                filtres = Q()
+                for champ in champs:
+                    filtres |= Q(**{f"{champ}__icontains": query})
+                objets = modele.objects.filter(filtres)
+
+                # Ajouter les objets au résultat global
+                # Utilise extend pour ne pas créer une liste de listes
+                resultats.extend(objets)
+            except Exception as e:
+                # Si un modèle ou un champ est invalide, on l'ignore
+                print(f"Erreur avec {nom_modele}: {e}")
+                continue
+
+    return render(request, 'search/recherche.html', {
+        'query': query,
+        'resultats': resultats
+    })
 
 
-def apropos(request):
-    personnel = Personnel.objects.all()
-    return render(request, 'apropos/apropos.html', {'personnel': personnel})
+def apropos_view(request, section):
+    # Dictionnaire pour mapper les sections aux templates
+    templates = {
+        'apropos': 'apropos/apropos.html',
+        'histoire': 'apropos/histoire.html',
+        'mission_vision': 'apropos/mission_vision.html',
+        'administration': 'apropos/administration.html',
+        'mot_doyen': 'apropos/mot_doyen.html',
+        'galerie': 'apropos/galerie.html',
+    }
 
-def histoire(request):
-    return render(request, 'apropos/histoire.html')
+    template_name = templates.get(section)
 
-def mission_vision(request):
-    return render(request, 'apropos/mission_vision.html')
+    # Vérification si la section nécessite des données supplémentaires
+    context = {}
+    if section in ['apropos', 'administration']:
+        context['personnel'] = Personnel.objects.all()
 
-def administration(request):
-    personnel = Personnel.objects.all()
-    return render(request, 'apropos/administration.html',
-    {'personnel': personnel})
-
-
-def mot_doyen(request):
-    return render(request, 'apropos/mot_doyen.html')
-
-
-def galerie(request):
-    return render(request, 'apropos/galerie.html')
-
-
-def licence(request):
-    return render(request, 'formations/licence.html')
-
-def master(request):
-    return render(request, 'formations/master.html')
-
-def formation_continue(request):
-    return render(request, 'formations/formation_continue.html')
+    if template_name:  # Vérifie si la section est valide
+        return render(request, template_name, context)
+    else:
+        # Affiche une page 404 si la section n'est pas trouvée
+        return render(request, '404.html')
 
 
-def associations_etudiantes(request):
-    return render(request, 'etudiants/association.html')
+def formation_view(request, niveau):
+    # Dictionnaire pour mapper les niveaux aux templates
+    templates = {
+        'licence': 'formations/licence.html',
+        'master': 'formations/master.html',
+        'formation_continue': 'formations/formation_continue.html',
+    }
 
-def activites_culturelles(request):
-    return render(request, 'etudiants/activite.html')
+    template_name = templates.get(niveau)
 
-def services_etudiants(request):
-    return render(request, 'etudiants/services.html')
+    if template_name:  # Vérification si le niveau est valide
+        return render(request, template_name)
+    else:
+        # Affiche une page 404 si le niveau n'est pas trouvé
+        return render(request, '404.html')
 
-def bourses_et_aides(request):
-    return render(request, 'etudiants/bourse.html')
 
+def etudiant_view(request, section):
+    # Dictionnaire pour mapper les sections aux templates
+    templates = {
+        'associations': 'etudiants/association.html',
+        'activites': 'etudiants/activite.html',
+        'services': 'etudiants/services.html',
+        'bourses': 'etudiants/bourse.html',
+    }
 
+    template_name = templates.get(section)
+
+    if template_name:  # Vérifie si la section est valide
+        return render(request, template_name)
+    else:
+        # Affiche une page 404 si la section n'est pas trouvée
+        return render(request, '404.html')

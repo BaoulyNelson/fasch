@@ -35,9 +35,10 @@
                   <h3 class="text-md font-bold">{{ a.titre }}</h3>
                   <p class="text-sm text-gray-600 mb-1">{{ a.date_publication|date:"d M Y" }}</p>
                   <p class="text-sm text-gray-500 mb-2">Auteur : {{ a.auteur }}</p> <!-- Affichage de l'auteur -->
-                  <a href="{% url 'article_detail' a.id %}" class="text-primary-color text-sm hover:underline flex items-center">
-                      Lire l'article <i class="fas fa-arrow-right ml-1"></i>
+                  <a href="{% url 'detail_view' 'article' a.id %}" class="text-primary-color text-sm hover:underline flex items-center">
+                    Lire l'article <i class="fas fa-arrow-right ml-1"></i>
                   </a>
+                  
               </li>
           {% endfor %}
       </ul>

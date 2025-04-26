@@ -99,9 +99,10 @@
                 Publié le <span class="font-semibold">{{ article.date_publication|date:"d M Y" }}</span> par 
                 <span class="italic text-indigo-800">{{ article.auteur }}</span>
               </p>
-              <a href="{% url 'article_detail' article.id %}" class="text-primary-color font-medium hover:underline flex items-center text-sm">
+              <a href="{% url 'detail_view' 'article' article.id %}" class="text-primary-color font-medium hover:underline flex items-center text-sm">
                 Lire la suite <i class="fas fa-arrow-right ml-1"></i>
               </a>
+              
             </div>
           {% endfor %}
   
