@@ -21,6 +21,10 @@ body {
   overflow-x: hidden;
 }
 
+html{
+  overflow-x: hidden;
+}
+
 .dark {
   --bg-primary: var(--dark);
   --text-primary: var(--light);

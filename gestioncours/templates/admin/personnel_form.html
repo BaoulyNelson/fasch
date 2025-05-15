@@ -1,0 +1,25 @@
+
+{% extends 'admin/base.html' %}
+
+{% load static %}
+{% block content %}
+<div class="container mx-auto p-6 max-w-lg">
+  <h2 class="text-2xl font-semibold mb-4">Membre du Personnel</h2>
+  <form method="post" enctype="multipart/form-data" action="{% url 'add_personnel' %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}
+          <p class="text-red-500 text-sm">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+      Enregistrer
+    </button>
+  </form>
+</div>
+{% endblock %}

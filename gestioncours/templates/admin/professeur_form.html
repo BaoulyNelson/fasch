@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+<title>{% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %} un Professeur</title>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/professeur_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto px-4 py-10">
+        <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-xl p-8 md:p-10">
+            <h1 class="text-3xl font-bold text-gray-700 mb-8 text-center">
+                <i class="fas fa-user-tie mr-2 text-blue-500"></i>
+                {% if form.instance.pk %}Modifier les Informations du Professeur{% else %}Ajouter un Nouveau Professeur{% endif %}
+            </h1>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Prénom -->
+                    <div>
+                        <label for="{{ form.prenom.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Prénom <span class="text-red-500">*</span></label>
+                        {{ form.prenom }}
+                        {% if form.prenom.errors %}
+                            {% for error in form.prenom.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <!-- Nom -->
+                    <div>
+                        <label for="{{ form.nom.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Nom <span class="text-red-500">*</span></label>
+                        {{ form.nom }}
+                        {% if form.nom.errors %}
+                            {% for error in form.nom.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-6">
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Téléphone -->
+                <div class="mb-6">
+                    <label for="{{ form.telephone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                    {{ form.telephone }}
+                    {% if form.telephone.errors %}
+                        {% for error in form.telephone.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <!-- Spécialité -->
+                <div class="mb-8">
+                    <label for="{{ form.specialite.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">Spécialité / Domaine d'expertise</label>
+                    {{ form.specialite }}
+                    {% if form.specialite.errors %}
+                        {% for error in form.specialite.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <p class="text-xs text-gray-500 mt-1">Ex: Intelligence Artificielle, Droit des Affaires, Littérature Comparée...</p>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-gray-200 flex items-center justify-end space-x-4">
+                    <a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-gray-800 px-4 py-2 rounded-md text-sm font-medium">
+                        Annuler
+                    </a>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        <i class="fas fa-save mr-2"></i>
+                        Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Ajout des classes Tailwind aux champs de formulaire Django
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea');
+            textInputs.forEach(input => {
+                input.classList.add('mt-1', 'block', 'w-full', 'px-3', 'py-2', 'border', 'border-gray-300', 'rounded-md', 'shadow-sm', 'focus:outline-none', 'sm:text-sm', 'form-input');
+                if (input.tagName.toLowerCase() === 'textarea') {
+                    input.classList.remove('py-2');
+                    input.classList.add('py-2', 'form-textarea'); // Textarea might need different padding
+                }
+            });
+
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                select.classList.add('mt-1', 'block', 'w-full', 'pl-3', 'pr-10', 'py-2', 'border', 'border-gray-300', 'rounded-md', 'shadow-sm', 'focus:outline-none', 'sm:text-sm', 'form-select');
+            });
+        });
+    </script>
+
+</body>
+{% endblock %}

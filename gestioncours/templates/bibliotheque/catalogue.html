@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/catalogue.css' %}" />
+
+<style>
+    /* Styles pour s'assurer que la police Poppins est bien appliquée si ce n'est pas global */
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .book-card-image-placeholder {
+        background-color: #e0e7ff; /* indigo-100 */
+        color: #4338ca; /* indigo-700 */
+        /* Vous pouvez ajouter une image de fond SVG par défaut ici si vous le souhaitez */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8 md:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <header class="mb-10 md:mb-12 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-700">
+                <i class="fas fa-swatchbook mr-3"></i>Notre Catalogue de Livres
+            </h1>
+            <p class="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
+                Découvrez notre collection soigneusement sélectionnée. Trouvez votre prochaine lecture ici !
+            </p>
+        </header>
+
+     
+        <div class="mb-8 p-4 bg-white rounded-lg shadow">
+            <p class="text-center text-gray-500">Zone de filtres et de recherche (à venir)</p>
+        </div> 
+      
+
+        {% if livres %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                {% for livre in livres %}
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1">
+                        
+                 
+                        <div class="h-56 w-full bg-cover bg-center book-card-image-placeholder flex items-center justify-center">
+                       
+                             <i class="fas fa-book-open fa-4x opacity-50"></i>
+                        </div>
+
+                        <div class="p-5 md:p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-semibold text-blue-600 mb-2 leading-tight">
+                                {{ livre.titre|truncatewords:10 }}
+                            </h3>
+                            
+                            <div class="text-sm text-gray-500 mb-3">
+                                <p><i class="fas fa-user-edit w-4 mr-1 text-gray-400"></i><span class="font-medium">Auteur :</span> {{ livre.auteur }}</p>
+                                <p><i class="fas fa-calendar-alt w-4 mr-1 text-gray-400"></i><span class="font-medium">Année :</span> {{ livre.annee }}</p>
+                            </div>
+
+                            <p class="text-gray-700 text-sm mb-4 flex-grow leading-relaxed">
+                                {{ livre.resume|truncatewords_html:25|safe }}
+                            </p>
+
+                            <div class="mt-auto pt-3 border-t border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <p class="text-sm font-medium">Disponibilité :</p>
+                                    {% if livre.disponible %}
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1.5 mt-0.5"></i>Disponible
+                                        </span>
+                                    {% else %}
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            <i class="fas fa-times-circle mr-1.5 mt-0.5"></i>Indisponible
+                                        </span>
+                                    {% endif %}
+                                </div>
+                       
+                                <a href="#" class="mt-4 block w-full text-center bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-150">
+                                    Voir détails
+                                </a>
+                              
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+         
+            <div class="mt-12 text-center">
+                <p class="text-gray-500">Pagination (à venir)</p>
+            </div>
+          
+
+        {% else %}
+            <div class="text-center py-12">
+                <div class="inline-block bg-yellow-100 text-yellow-700 p-6 rounded-lg shadow">
+                    <i class="fas fa-book-reader fa-3x mb-4"></i>
+                    <h3 class="text-2xl font-semibold mb-2">Oups ! Aucun livre ici pour le moment.</h3>
+                    <p class="text-yellow-600">
+                        Notre catalogue est actuellement vide ou les livres que vous cherchez ne sont pas disponibles.
+                        Revenez bientôt ou contactez-nous pour plus d'informations.
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

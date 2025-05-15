@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ annonce.titre }} | Annonces{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/detail_annonce.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-12 px-4">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="flex space-x-2">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-blue-500 hover:text-blue-700">Annonces</a></li>
+      <li class="breadcrumb-item active text-gray-500" aria-current="page">{{ annonce.titre }}</li>
+    </ol>
+  </nav>
+
+  <!-- Announcement Header -->
+  <div class="announcement-header p-4 sm:p-5 mb-5 bg-gray-800 text-white rounded-lg">
+    {% if annonce.est_active %}
+      <span class="announcement-badge inline-block bg-green-500 text-white px-2 py-1 rounded">Active</span>
+    {% else %}
+      <span class="announcement-badge inline-block bg-gray-500 text-white px-2 py-1 rounded">Archivée</span>
+    {% endif %}
+
+    <div class="announcement-content">
+      <p class="mb-2 text-gray-300">
+        <i class="far fa-clock mr-1"></i> Publié le {{ annonce.date_publication|date:"d F Y" }}
+      </p>
+      <h1 class="text-4xl font-bold mb-4">{{ annonce.titre }}</h1>
+
+      {% if annonce.organisateur %}
+        <div class="author-badge flex items-center mt-4">
+          <div class="author-avatar mr-3">
+            <i class="fas fa-building"></i>
+          </div>
+          <div>
+            <div class="text-sm text-gray-300">Organisateur</div>
+            <div class="font-bold">{{ annonce.organisateur }}</div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="flex flex-wrap -mx-4">
+    <!-- Main Content -->
+    <div class="w-full lg:w-2/3 px-4">
+      <!-- Announcement Image -->
+      {% if annonce.image %}
+        <div class="mb-5">
+          <img src="{{ annonce.image.url }}" alt="{{ annonce.titre }}" class="announcement-image w-full h-auto max-h-128 object-cover rounded-lg">
+        </div>
+      {% endif %}
+
+      <!-- Announcement Details -->
+      <div class="bg-white shadow-sm rounded-lg mb-5 p-4 md:p-5">
+        <h2 class="text-2xl mb-4">Détails de l'annonce</h2>
+
+        <div class="flex flex-wrap -mx-2 mb-4">
+          <!-- Event Date -->
+          {% if annonce.date_evenement %}
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <div class="announcement-meta-card p-3 bg-gray-100 rounded-lg">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <i class="fas fa-calendar-day text-green-500 text-2xl"></i>
+                  </div>
+                  <div class="ml-3">
+                    <div class="text-sm text-gray-500">Date de l'événement</div>
+                    <div class="font-bold">{{ annonce.date_evenement|date:"d F Y à H:i" }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Location -->
+          {% if annonce.lieu %}
+            <div class="w-full md:w-1/2 px-2 mb-4">
+              <div class="announcement-meta-card p-3 bg-gray-100 rounded-lg">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <i class="fas fa-map-marker-alt text-green-500 text-2xl"></i>
+                  </div>
+                  <div class="ml-3">
+                    <div class="text-sm text-gray-500">Lieu</div>
+                    <div class="font-bold">{{ annonce.lieu }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="announcement-content-text">
+          {{ annonce.contenu|linebreaks }}
+        </div>
+
+        <!-- Tags if you have them -->
+        
+      </div>
+
+      <!-- Call to Action -->
+      <div class="bg-green-100 rounded-lg mb-5 p-4 text-center">
+        <h3 class="text-xl mb-3">Intéressé(e) par cette annonce ?</h3>
+        <p class="mb-4">Pour plus d'informations, n'hésitez pas à nous contacter ou à partager l'annonce.</p>
+        <div class="flex justify-center space-x-3">
+          <a href="{% url 'contact' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <i class="fas fa-envelope mr-2"></i>Nous contacter
+          </a>
+          <a href="#" class="border border-green-500 hover:bg-green-500 text-green-500 hover:text-white font-bold py-2 px-4 rounded">
+            <i class="fas fa-share-alt mr-2"></i>Partager
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="w-full lg:w-1/3 px-4">
+      <!-- Share -->
+      <div class="bg-white shadow-sm rounded-lg mb-4 p-4">
+        <h3 class="text-xl mb-3">Partager cette annonce</h3>
+        <div class="flex space-x-2">
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ annonce.titre }}" target="_blank" class="bg-blue-400 hover:bg-blue-500 text-white p-2 rounded">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ annonce.titre }}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white p-2 rounded">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="https://wa.me/?text={{ annonce.titre }}%20-%20{{ request.build_absolute_uri }}" target="_blank" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      {% if annonce.date_evenement %}
+        <div class="bg-white shadow-sm rounded-lg mb-4 p-4">
+          <h3 class="text-xl mb-3">Ajouter à votre agenda</h3>
+          <div class="grid grid-cols-1 gap-2">
+            <a href="#" class="border border-blue-500 hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 rounded">
+              <i class="fab fa-google mr-2"></i>Google Calendar
+            </a>
+            <a href="#" class="border border-blue-500 hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 rounded">
+              <i class="far fa-calendar-alt mr-2"></i>iCal / Outlook
+            </a>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Contact -->
+      <div class="bg-white shadow-sm rounded-lg mb-4 p-4">
+        <h3 class="text-xl mb-3">Contact</h3>
+        <ul class="space-y-3">
+          <li>
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <i class="fas fa-envelope text-green-500"></i>
+              </div>
+              <div class="ml-3">
+                <div class="text-sm text-gray-500">Email</div>
+                <div>contact@fasch.fr</div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <i class="fas fa-phone text-green-500"></i>
+              </div>
+              <div class="ml-3">
+                <div class="text-sm text-gray-500">Téléphone</div>
+                <div>+509 44521822</div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <i class="fas fa-globe text-green-500"></i>
+              </div>
+              <div class="ml-3">
+                <div class="text-sm text-gray-500">Site web</div>
+                <div>www.fasch.fr</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Related Announcements -->
+<div class="bg-white shadow-sm rounded-lg p-4">
+  <h3 class="text-xl mb-3">Annonces similaires</h3>
+  {% if autres_annonces %}
+    {% for autre in autres_annonces %}
+      <div class="mb-3">
+        <div class="relative">
+          {% if autre.image %}
+            <img src="{{ autre.image.url }}" alt="{{ autre.titre }}"
+                 class="w-full h-32 object-cover rounded-lg">
+          {% endif %}
+          <span class="absolute top-2 left-2 {% if autre.est_active %}bg-green-500{% else %}bg-gray-500{% endif %} text-white px-2 py-1 rounded">
+            {% if autre.est_active %}Active{% else %}Archivée{% endif %}
+          </span>
+        </div>
+        <div class="p-3">
+          <h5 class="text-lg mb-1">{{ autre.titre }}</h5>
+          {% if autre.date_evenement %}
+            <p class="text-sm text-gray-500 mb-2">
+              <i class="far fa-calendar mr-1"></i> {{ autre.date_evenement|date:"d F Y" }}
+            </p>
+          {% endif %}
+          <a href="{% url 'detail' 'annonce' autre.slug %}" class="text-green-500 hover:text-green-700">
+            Voir plus
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>Aucune autre annonce pour le moment.</p>
+  {% endif %}
+</div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

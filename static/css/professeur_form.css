@@ -1,0 +1,8 @@
+ body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Custom focus ring color to match a potential theme */
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: #3b82f6; /* Tailwind's blue-500 */
+            box-shadow: 0 0 0 2px #93c5fd; /* Tailwind's blue-300 */
+        }

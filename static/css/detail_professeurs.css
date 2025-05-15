@@ -1,0 +1,13 @@
+body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .profile-avatar-initials {
+            width: 100px;
+            height: 100px;
+        }
+        @media (min-width: 768px) {
+            .profile-avatar-initials {
+                width: 120px;
+                height: 120px;
+            }
+        }

@@ -1,0 +1,69 @@
+{% extends "base.html" %} {% load static %} {% block title %}Programmes -
+Faculté des Sciences Humaines{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/programmes.css' %}" />
+{% endblock %} 
+{% block content %}
+
+<!-- Programs Section -->
+<section
+  id="programmes"
+  class="py-16 md:py-24"
+  style="background-color: rgba(93, 92, 222, 0.05)"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold">Nos Programmes Académiques</h2>
+      <div class="w-24 h-1 bg-primary-color mx-auto mt-4 mb-6"></div>
+      <p class="max-w-2xl mx-auto text-lg">
+        Explorez nos programmes de licence, maîtrise dans les domaines de
+        Psychologie, Communication Sociale, Service Social et
+        Sociologie,Maîtrise en population et développement.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {% for programme in programmes %}
+      <div class="card p-6 rounded-lg shadow-md">
+        <div class="text-primary-color mb-4">
+          {% if programme.titre == 'Sociologie' %}
+          <i class="fas fa-users text-3xl"></i>
+          {% elif programme.titre == 'Psychologie' %}
+          <i class="fas fa-brain text-3xl"></i>
+          {% elif programme.titre == 'Communication Sociale' %}
+          <i class="fas fa-comments text-3xl"></i>
+          {% elif programme.titre == 'Service Social' %}
+          <i class="fas fa-hands-helping text-3xl"></i>
+          {% endif %}
+        </div>
+        <h3 class="text-xl font-semibold mb-2">{{ programme.titre }}</h3>
+        <p class="mb-4">{{ programme.description|truncatewords:40 }}</p>
+
+        <div class="border-t border-gray-200 pt-4 mt-2">
+          <h4 class="font-semibold text-gray-700 mb-2">Niveaux d'études</h4>
+          <ul class="space-y-1 text-gray-600">
+            <li class="flex items-center">
+              <i class="fas fa-check-circle text-sociologie mr-2"></i>
+              Préparatoire
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-check-circle text-sociologie mr-2"></i>
+              Première à Quatrième Année
+            </li>
+          </ul>
+        </div>
+
+        <a
+          href="{% url 'programme_detail' programme.pk %}"
+          class="text-primary-color font-medium hover:underline flex items-center"
+        >
+          Détails du programme <i class="fas fa-arrow-right ml-1"></i>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

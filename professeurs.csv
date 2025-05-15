@@ -1,27 +1,36 @@
-Jour, Heure, Cours,prenom,nom
-LUNDI, 7h-10h, Histoire des idées politiques et sociales (HIPS), Simeon, FRANCOIS  
-LUNDI, 10h-13h, Philosophie, Janes, LOUIS  
-LUNDI, 10h-13h, Organisation du travail intellectuel, Roosevelt, MILLARD  
-MARDI, 7h-10h, Mathématiques, Jean Roy, FAUSTIN  
-MARDI, 7h-10h, Créole : expression écrite et orale, Job, SILVER  
-MARDI, 10h-13h, Histoire des idées politiques et sociales (HIPS), Kenaz, BRUNIS  
-MARDI, 13h-16h, Organisation du travail intellectuel, Julio, ELISNA  
-MERCREDI, 7h-10h, Mathématiques, Hubermane, CIGUINO  
-MERCREDI, 10h-13h, Introduction au droit, Charles, VORBE  
-MERCREDI, 10h-13h, Philosophie, Kenaz, BRUNIS  
-MERCREDI, 13h-16h, Créole : expression écrite et orale, Jean Evrard, JEAN CHARLES  
-JEUDI, 7h-10h, Introduction à l’économie, Georges, LEGAGNEUR  
-JEUDI, 7h-10h, Français I : expression écrite et orale, Murielle, ANTOINE  
-JEUDI, 10h-13h, Français I : expression écrite et orale, Etienne, OREMIL  
-JEUDI, 10h-13h, Monde Caraïbe, Hancy, PIERRE  
-JEUDI, 13h-16h, Introduction au droit, Jean Ronel, SISTANIS  
-VENDREDI, 7h-10h, Créole : expression écrite et orale, Max, LUBIN  
-VENDREDI, 7h-10h, Organisation du travail intellectuel, Dominique, MUSCADIN  
-VENDREDI, 10h-13h, Monde Caraïbe, Vosh, DATHUS  
-VENDREDI, 10h-13h, Mathématiques, Schmied Saint, FLEUR  
-VENDREDI, 13h-16h, Introduction aux Sciences Humaines, Roosevelt, MILLARD  
-VENDREDI, 13h-16h, Organisation du travail intellectuel, Roosevelt, MILLARD  
-SAMEDI, 10h-13h, Créole : expression écrite et orale, Kensley, BRUTUS  
-SAMEDI, 10h-13h, Histoire d’Haïti, Emmanuel, MILORD  
-SAMEDI, 10h-13h, Mathématiques, Jerome, M  
-SAMEDI, 13h-16h, Français I : expression écrite et orale, Jean Luc, TONDREAU  
+Jour,Heure,Cours,prenom,nom,code,credits,niveau,session
+LUNDI,07:00-10:00,Histoire des idées politiques et sociales (HIPS),Simeon,FRANCOIS,HIPS101,3,Premiere Annee,session2
+LUNDI,10:00-13:00,Philosophie,Janes,LOUIS,PHIL101,3,Premiere Annee,session2
+LUNDI,10:00-13:00,Organisation du travail intellectuel,Roosevelt,MILLARD,OT101,3,Premiere Annee,session1
+LUNDI,07:00-10:00,Introduction au Droit,Chenet,Jean Baptiste,DROIT101,3,Premiere Annee,session1
+LUNDI,10:00-13:00,Créole,Kenson’n,Danjou,CREO101,3,Premiere Annee,session1
+LUNDI,13:00-16:00,Économie,Yves,Barthélémy,ECO101,3,Premiere Annee,session2
+MARDI,07:00-10:00,Mathématiques,Jean Roy,FAUSTIN,MATH101,3,Premiere Annee,session2
+MARDI,07:00-10:00,Créole : expression écrite et orale,Job,SILVER,CREO101,3,Premiere Annee,session1
+MARDI,13:00-16:00,Organisation du travail intellectuel,Julio,ELISNA,OT101,3,Premiere,session1
+MARDI,07:00-10:00,Organisation de Travail Intellectuel,Roosevelt,Millard,OT101,3,Premiere Annee,session1
+MARDI,10:00-13:00,Histoire des idées politiques et sociales (HIPS),Kenaz,BRUNIS,HIPS101,3,Premiere Annee,session2
+MARDI,13:00-16:00,Introduction au Droit,Julio,Elisna,DROIT101,3,Premiere Annee,session1
+MERCREDI,07:00-10:00,Mathématiques,Hubermane,CIGUINO,MATH101,3,Premiere Annee,session2
+MERCREDI,10:00-13:00,Introduction au droit,Charles,VORBE,DROIT101,3,Premiere Annee,session1
+MERCREDI,10:00-13:00,Philosophie,Kenaz,BRUNIS,PHIL101,3,Premiere Annee,session2
+MERCREDI,13:00-16:00,Créole : expression écrite et orale,Jean Evrard,JEAN CHARLES,CREO101,3,Premiere Annee,session1
+MERCREDI,07:00-10:00,Histoire des Idées Pol. et Sociales,Chenet,Jean Baptiste,HIPS101,3,Premiere Annee,session2
+MERCREDI,13:00-16:00,Histoire d’Haïti,Dérynx,Petit Jean,HH101,3,Premiere Annee,session2
+JEUDI,07:00-10:00,Introduction à l’économie,Georges,LEGAGNEUR,ECO101,3,Premiere Annee,session2
+JEUDI,07:00-10:00,Français I : expression écrite et orale,Murielle,ANTOINE,FR101,3,Premiere Annee,session1
+JEUDI,10:00-13:00,Monde Caraïbe,Hancy,PIERRE,MC101,3,Premiere Annee,session2
+JEUDI,13:00-16:00,Introduction au droit,Jean Ronel,SISTANIS,DROIT101,3,Premiere Annee,session1
+JEUDI,10:00-13:00,Français I : expression écrite et orale,Etienne,OREMIL,FR101,3,Premiere Annee,session1
+VENDREDI,07:00-10:00,Créole : expression écrite et orale,Max,LUBIN,CREO101,3,Premiere Annee,session1
+VENDREDI,07:00-10:00,Organisation du travail intellectuel,Dominique,MUSCADIN,OT101,3,Premiere Annee,session1
+VENDREDI,10:00-13:00,Monde Caraïbe,Vosh,DATHUS,MC101,3,Premiere Annee,session2
+VENDREDI,10:00-13:00,Mathématiques,Schmied Saint,FLEUR,MATH101,3,Premiere Annee,session2
+VENDREDI,13:00-16:00,Introduction aux Sciences Humaines,Roosevelt,MILLARD,SH101,3,Premiere Annee,session1
+VENDREDI,13:00-16:00,Organisation du travail intellectuel,Roosevelt,MILLARD,OT101,3,Premiere Annee,session1
+VENDREDI,13:00-16:00,Philosophie,Janes,Louis,PHIL101,3,Premiere Annee,session2
+SAMEDI,10:00-13:00,Créole : expression écrite et orale,Kensley,BRUTUS,CREO101,3,Premiere Annee,session1
+SAMEDI,10:00-13:00,Histoire d’Haïti,Emmanuel,MILORD,HH101,3,Premiere Annee,session2
+SAMEDI,13:00-16:00,Français I : expression écrite et orale,Jean Luc,TONDREAU,FR101,3,Premiere Annee,session1
+SAMEDI,07:00-10:00,Histoire d’Haïti,Siméon,François,HH101,3,Premiere Annee,session2
+SAMEDI,10:00-13:00,Mathématiques,Jérôme,Millard,MATH101,3,Premiere Annee,session2

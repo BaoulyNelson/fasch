@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ evenement.titre }} | Événements{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/detail_evenements.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-12 px-4">
+  <!-- Breadcrumbs -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="flex space-x-2">
+
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-blue-500 hover:text-blue-700">Événements</a></li>
+      <li class="breadcrumb-item active text-gray-500" aria-current="page">{{ evenement.titre }}</li>
+    </ol>
+  </nav>
+
+  <!-- Event Header -->
+  <div class="event-header p-4 sm:p-5 mb-4 bg-gray-800 text-white rounded-lg">
+    {% if evenement.is_coming_up %}
+    <div class="status-badge inline-block bg-green-500 text-white px-3 py-2 rounded">À venir</div>
+    {% else %}
+    <div class="status-badge inline-block bg-gray-500 text-white px-3 py-2 rounded">Passé</div>
+    {% endif %}
+
+    <div class="event-content">
+      <h1 class="text-4xl font-bold mb-3">{{ evenement.titre }}</h1>
+
+      <div class="date-badge inline-block py-2 px-4 mb-4 bg-gray-700 rounded">
+        <i class="fas fa-calendar-alt mr-2"></i>
+        {% if evenement.date_debut.date == evenement.date_fin.date %}
+        {{ evenement.date_debut|date:"d F Y" }} • {{ evenement.date_debut|date:"H:i" }} - {{ evenement.date_fin|date:"H:i" }}
+        {% else %}
+        Du {{ evenement.date_debut|date:"d F Y à H:i" }} au {{ evenement.date_fin|date:"d F Y à H:i" }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap -mx-4">
+    <!-- Left Column: Event Details -->
+    <div class="w-full lg:w-2/3 px-4">
+      <!-- Event Image -->
+      {% if evenement.image %}
+      <div class="mb-4">
+        <img src="{{ evenement.image.url }}" alt="{{ evenement.titre }}" class="event-image w-full h-auto max-h-128 object-cover rounded-lg">
+      </div>
+      {% endif %}
+
+      <!-- Event Information -->
+      <div class="bg-white shadow-sm rounded-lg mb-4 p-4">
+        <h2 class="text-2xl mb-4">À propos de l'événement</h2>
+        <div class="event-description">
+          {{ evenement.description|linebreaks }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Sidebar -->
+    <div class="w-full lg:w-1/3 px-4">
+      <!-- Event Metadata -->
+      <div class="bg-white shadow-sm rounded-lg mb-4 p-4">
+        <h3 class="text-xl mb-4">Détails</h3>
+
+        <div class="event-meta-item flex items-center mb-3 p-3 bg-gray-100 rounded-lg">
+          <div class="flex-shrink-0">
+            <i class="fas fa-map-marker-alt text-blue-500 text-xl"></i>
+          </div>
+          <div class="ml-3">
+            <div class="text-sm text-gray-500">Lieu</div>
+            <div class="font-bold">{{ evenement.lieu|default:"Non précisé" }}</div>
+          </div>
+        </div>
+
+        <div class="event-meta-item flex items-center mb-3 p-3 bg-gray-100 rounded-lg">
+          <div class="flex-shrink-0">
+            <i class="fas fa-clock text-blue-500 text-xl"></i>
+          </div>
+          <div class="ml-3">
+            <div class="text-sm text-gray-500">Durée</div>
+            <div class="font-bold">
+              {% with duration=evenement.date_fin|timeuntil:evenement.date_debut %}
+              {{ duration }}
+              {% endwith %}
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {% if evenement.is_coming_up %}
+      <!-- Countdown -->
+      <div class="bg-white shadow-sm rounded-lg mb-4 p-4">
+        <h3 class="text-xl mb-3">Compte à rebours</h3>
+        <div class="countdown-container p-3">
+          <div class="flex -mx-1">
+            <div class="w-1/4 px-1 countdown-item text-center">
+              <p class="countdown-number text-2xl" id="days">--</p>
+              <span class="countdown-label">Jours</span>
+            </div>
+            <div class="w-1/4 px-1 countdown-item text-center">
+              <p class="countdown-number text-2xl" id="hours">--</p>
+              <span class="countdown-label">Heures</span>
+            </div>
+            <div class="w-1/4 px-1 countdown-item text-center">
+              <p class="countdown-number text-2xl" id="minutes">--</p>
+              <span class="countdown-label">Minutes</span>
+            </div>
+            <div class="w-1/4 px-1 countdown-item text-center">
+              <p class="countdown-number text-2xl" id="seconds">--</p>
+              <span class="countdown-label">Secondes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Share -->
+      <div class="bg-white shadow-sm rounded-lg mb-4 p-4">
+        <h3 class="text-xl mb-3">Partager</h3>
+        <div class="flex space-x-2">
+          <a href="https://wa.me/?text={{ annonce.titre }}%20-%20{{ request.build_absolute_uri }}" target="_blank" class="bg-green-500 hover:bg-green-600 text-white p-2 rounded">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ evenement.titre }}" target="_blank" class="bg-blue-400 hover:bg-blue-500 text-white p-2 rounded">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ evenement.titre }}" target="_blank" class="bg-blue-700 hover:bg-blue-800 text-white p-2 rounded">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="mailto:?subject={{ evenement.titre }}&body={{ request.build_absolute_uri }}" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded">
+            <i class="fas fa-envelope"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="bg-gray-100 rounded-lg mb-4 p-4 text-center">
+        <h3 class="text-xl mb-3">Intéressé(e) par l'événement ?</h3>
+        <div class="grid grid-cols-1 gap-2">
+          <a href="#" class="border border-blue-500 hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 rounded">
+            <i class="far fa-calendar-plus mr-2"></i>Ajouter à mon agenda
+          </a>
+          <a href="#" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+            <i class="fas fa-user-plus mr-2"></i>S'inscrire
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Events Section -->
+  <div class="mt-5">
+    <h2 class="fs-2 mb-4">Autres événements qui pourraient vous intéresser</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% if autres_evenements %}
+      {% for evt in autres_evenements %}
+      <div class="col">
+        <div class="card h-100 border-0 shadow-sm">
+          {% if evt.image %}
+          <img src="{{ evt.image.url }}" class="card-img-top" alt="{{ evt.titre }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ evt.titre }}</h5>
+            <p class="card-text">{{ evt.date_debut|date:"d F Y" }}</p>
+          </div>
+          <div class="card-footer bg-transparent border-0">
+            <a href="{% url 'detail' 'evenement' evenement.slug %}" class="btn btn-sm btn-outline-primary">
+              Voir les détails
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <p>Aucun autre événement à venir.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% block extra_js %}
+<script>
+  // Compte à rebours
+  {% if evenement.is_coming_up %}
+    // Date de l'événement
+    const eventDate = new Date("{{ evenement.date_debut|date:'Y-m-d H:i:s' }}");
+    
+    // Mettre à jour le compte à rebours chaque seconde
+    const countdown = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = eventDate - now;
+      
+      // Calcul des jours, heures, minutes et secondes
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+      // Affichage du résultat
+      document.getElementById("days").innerHTML = days;
+      document.getElementById("hours").innerHTML = hours;
+      document.getElementById("minutes").innerHTML = minutes;
+      document.getElementById("seconds").innerHTML = seconds;
+      
+      // Si le compte à rebours est terminé
+      if (distance < 0) {
+        clearInterval(countdown);
+        document.getElementById("days").innerHTML = "0";
+        document.getElementById("hours").innerHTML = "0";
+        document.getElementById("minutes").innerHTML = "0";
+        document.getElementById("seconds").innerHTML = "0";
+      }
+    }, 1000);
+  {% endif %}
+</script>
+{% endblock %}
+{% endblock %}

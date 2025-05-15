@@ -1,0 +1,165 @@
+  .announcement-header {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .announcement-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("{% static 'images/dots-pattern.svg' %}") center/cover;
+    opacity: 0.1;
+    z-index: 0;
+  }
+  
+  .announcement-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .announcement-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 2;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  
+  .announcement-image {
+    object-fit: cover;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .announcement-image:hover {
+    transform: scale(1.02);
+  }
+  
+  .announcement-meta-card {
+    border-left: 4px solid #11998e;
+    transition: all 0.3s ease;
+  }
+  
+  .announcement-meta-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .announcement-content-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+  
+  .btn-action {
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+    box-shadow: 0 5px 15px rgba(17, 153, 142, 0.3);
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #0f8a80 0%, #32d56f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(17, 153, 142, 0.4);
+  }
+  
+  .share-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    margin-right: 0.5rem;
+  }
+  
+  .share-btn:hover {
+    transform: translateY(-3px);
+  }
+  
+  .author-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    margin-top: 1rem;
+  }
+  
+  .author-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    color: #11998e;
+    font-weight: bold;
+  }
+  
+  .related-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+  
+  .related-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+  
+  .related-card-img-wrapper {
+    height: 160px;
+    overflow: hidden;
+  }
+  
+  .related-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s ease;
+  }
+  
+  .related-card:hover .related-card-img {
+    transform: scale(1.1);
+  }
+  
+  .related-card-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+  }
+  
+  @media (max-width: 768px) {
+    .announcement-header {
+      border-radius: 0;
+    }
+    
+    .announcement-image {
+      height: 250px;
+    }
+  }

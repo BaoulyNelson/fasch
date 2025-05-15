@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+ <!-- Hero Section -->
+ <section id="accueil" class="relative overflow-hidden">
+  <div class="absolute inset-0 hero-pattern"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+     
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    
+          
+          <div class="animate-fade-in">
+              <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+                  <span class="block">Faculté des</span>
+                  <span class="block text-primary-color">Sciences Humaines</span>
+                  <span class="block">d'Haïti </span>
+              </h1>
+              <p class="text-lg md:text-xl max-w-lg mb-8">
+                  Excellence académique, pensée critique et engagement social pour former les leaders de demain.
+              </p>
+              <div class="flex flex-wrap gap-4">
+             
+                  <a href="{% url 'programmes' %}" class="btn-primary px-5 py-3 text-base font-medium rounded-md shadow-md">
+                      Nos Programmes
+                  </a>
+                  <a href="{% url 'contact' %}" class="px-5 py-3 border border-gray-300 text-base font-medium rounded-md shadow-md" style="border-color: var(--primary); color: var(--primary);">
+                      Nous Contacter
+                  </a>
+              </div>
+          </div>
+          <div class="animate-fade-in hidden md:block">
+              <div class="relative h-96 w-full rounded-lg overflow-hidden shadow-2xl">
+
+                <div class="absolute inset-0 w-full h-full">
+                    <img src="{% static 'images/logo.png' %}" alt="Fond décoratif" class="w-full h-full" />
+                </div>
+                
+                  
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<!-- Key Stats -->
+<section class="py-12 bg-primary-color text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div class="p-4">
+              <div class="text-4xl font-bold mb-2">1974</div>
+              <div class="text-sm uppercase tracking-wider">Année de fondation</div>
+          </div>
+          <div class="p-4">
+              <div class="text-4xl font-bold mb-2">2000+</div>
+              <div class="text-sm uppercase tracking-wider">Étudiants</div>
+          </div>
+          <div class="p-4">
+              <div class="text-4xl font-bold mb-2">150+</div>
+              <div class="text-sm uppercase tracking-wider">Professeurs</div>
+          </div>
+          <div class="p-4">
+              <div class="text-4xl font-bold mb-2">4</div>
+              <div class="text-sm uppercase tracking-wider">Départements</div>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+
+<!-- Actualités et Événements -->
+<section id="actualites" class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Titre de section -->
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold">Actualités et Événements</h2>
+        <div class="w-24 h-1 bg-primary-color mx-auto mt-4 mb-6"></div>
+        <p class="max-w-2xl mx-auto text-lg">Restez informé des dernières nouvelles, événements et activités de notre faculté.</p>
+      </div>
+  
+      <!-- Contenu en colonnes -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+  
+        <!-- Colonne principale : Articles -->
+        <div class="lg:col-span-2 space-y-8">
+          {% for article in articles %}
+            <div class="bg-white rounded-lg shadow p-6 hover:shadow-md transition">
+              {% if article.image %}
+                <img src="{{ article.image.url }}" alt="{{ article.titre }}" class="w-full h-64 object-cover rounded mb-4">
+              {% endif %}
+              <h3 class="text-2xl font-semibold mb-2">{{ article.titre }}</h3>
+              <p class="text-gray-700">{{ article.resume }}</p>
+              <p class="text-indigo-600 text-sm font-medium mb-2 flex items-center gap-2 mt-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M6 2a1 1 0 00-1 1v1h10V3a1 1 0 00-1-1H6zM4 6v10a2 2 0 002 2h8a2 2 0 002-2V6H4zm2 2h8v2H6V8z" />
+                </svg>
+                Publié le <span class="font-semibold">{{ article.date_publication|date:"d M Y" }}</span> par 
+                <span class="italic text-indigo-800">{{ article.auteur }}</span>
+              </p>
+          <a href="{% url 'article_detail' slug=article.slug %}" class="text-primary-color font-medium hover:underline flex items-center text-sm">
+    Lire la suite <i class="fas fa-arrow-right ml-1"></i>
+</a>
+
+
+              
+            </div>
+          {% endfor %}
+  
+          <!-- Pagination -->
+          <div class="flex justify-center space-x-2">
+            {% if articles.has_previous %}
+              <a href="?page={{ articles.previous_page_number }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">← Précédent</a>
+            {% endif %}
+            <span class="px-4 py-2 bg-gray-300 rounded">{{ articles.number }} / {{ articles.paginator.num_pages }}</span>
+            {% if articles.has_next %}
+              <a href="?page={{ articles.next_page_number }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Suivant →</a>
+            {% endif %}
+          </div>
+        </div>
+  
+        <!-- Colonne secondaire : Événements + Annonces + evenements passes-->
+        <div class="space-y-8">
+  
+          <!-- Événements -->
+          <div>
+            <h4 class="text-xl font-semibold text-primary-color mb-4">Événements à venir</h4>
+            <ul class="space-y-4">
+              {% for evenement in evenements %}
+                <li class="bg-white p-4 rounded shadow hover:shadow-md">
+                  <h5 class="text-md font-bold">{{ evenement.titre }}</h5>
+                  <p class="text-sm text-gray-600">{{ evenement.date_debut|date:"d M Y H:i" }} — {{ evenement.lieu }}</p>
+                 <a href="{% url 'evenement_detail' slug=evenement.slug %}" class="text-primary-color font-medium hover:underline flex items-center text-sm mt-2">
+    Lire la suite <i class="fas fa-arrow-right ml-1"></i>
+</a>
+
+                </li>
+              {% empty %}
+                <p class="text-sm text-gray-500">Aucun événement à venir.</p>
+              {% endfor %}
+            </ul>
+          </div>
+  
+          <!-- Annonces -->
+          <div>
+            <h4 class="text-xl font-semibold text-primary-color mb-4">Annonces</h4>
+            <ul class="space-y-4">
+              {% for annonce in annonces %}
+                <li class="bg-white p-4 rounded shadow hover:shadow-md">
+                  <h5 class="text-md font-bold">{{ annonce.titre }}</h5>
+                  <p class="text-sm text-gray-600">{{ annonce.date_publication|date:"d M Y" }} — {{ annonce.lieu }}</p>
+                  <p class="text-sm text-gray-700">{{ annonce.contenu|truncatechars:100 }}</p>
+                  <a href="{% url 'annonce_detail' slug=annonce.slug %}" class="text-primary-color font-medium hover:underline flex items-center text-sm mt-2">
+                    Lire la suite <i class="fas fa-arrow-right ml-1"></i>
+                  </a>
+                </li>
+              {% empty %}
+                <p class="text-sm text-gray-500">Aucune annonce active.</p>
+              {% endfor %}
+            </ul>
+          </div>
+  <!-- Événements passés -->
+<div>
+  <h4 class="text-xl font-semibold text-primary-color mb-4">Événements passés</h4>
+  <ul class="space-y-4">
+    {% for evenement in evenements_passes %}
+      <li class="bg-gray-100 p-4 rounded shadow hover:shadow-md">
+        <h5 class="text-md font-bold">{{ evenement.titre }}</h5>
+        <p class="text-sm text-gray-600">{{ evenement.date_debut|date:"d M Y H:i" }} — {{ evenement.lieu }}</p>
+        <a href="{% url 'detail_evenement' slug=evenement.slug %}" class="text-primary-color font-medium hover:underline flex items-center text-sm mt-2">
+  Voir les détails <i class="fas fa-arrow-right ml-1"></i>
+</a>
+
+      </li>
+    {% empty %}
+      <p class="text-sm text-gray-500">Aucun événement passé trouvé.</p>
+    {% endfor %}
+  </ul>
+</div>
+
+        </div>
+      </div>
+       
+    </div>
+
+   
+  </section>
+  
+ 
+
+{% endblock %}

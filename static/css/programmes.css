@@ -1,0 +1,29 @@
+        .programme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .bg-sociologie {
+            background-color: #4F46E5; /* Indigo-600 */
+        }
+        .text-sociologie {
+            color: #4F46E5;
+        }
+        .bg-psychologie {
+            background-color: #7C3AED; /* Purple-600 */
+        }
+        .text-psychologie {
+            color: #7C3AED;
+        }
+        .bg-communication {
+            background-color: #2563EB; /* Blue-600 */
+        }
+        .text-communication {
+            color: #2563EB;
+        }
+        .bg-service-social {
+            background-color: #0891B2; /* Cyan-600 */
+        }
+        .text-service-social {
+            color: #0891B2;
+        }
+   

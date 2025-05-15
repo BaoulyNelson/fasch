@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Mission et Vision - Faculté des Sciences Humaines{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Styles personnalisés si nécessaire, ou pour simuler l'extension de base.html */
+        body {
+            font-family: 'Inter', sans-serif; /* Une police moderne et lisible */
+        }
+        /* Simuler un header et un footer de base.html */
+        .mock-header {
+            background-color: #1a365d; /* Un bleu nuit pour le header */
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        .mock-footer {
+            background-color: #e2e8f0; /* Gris clair pour le footer */
+            color: #4a5568; /* Gris foncé pour le texte du footer */
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+        /* Pour s'assurer que le contenu prend au moins la hauteur de l'écran moins header/footer */
+        .main-content-area {
+            min-height: calc(100vh - 100px - 100px); /* Ajustez ces valeurs si votre header/footer ont des hauteurs différentes */
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <main class="main-content-area">
+        <div class="container mx-auto px-4 py-12 md:py-20">
+
+            <header class="text-center mb-12 md:mb-16">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4" style="font-family: 'Lora', serif;">
+                    Notre <span class="text-blue-700">Mission</span> et Notre <span class="text-blue-700">Vision</span>
+                </h1>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Au cœur de la société haïtienne, la Faculté des Sciences Humaines s'engage à éclairer le présent et à façonner l'avenir par la connaissance, la réflexion critique et l'action engagée.
+                </p>
+            </header>
+
+            <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
+
+                <!-- Section Mission -->
+                <section class="bg-white p-6 md:p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div class="flex items-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-blue-600 mr-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
+                        </svg>
+                        <h2 class="text-3xl font-semibold text-gray-700" style="font-family: 'Lora', serif;">Notre Mission</h2>
+                    </div>
+                    <div class="space-y-4 text-gray-600 leading-relaxed">
+                        <p>
+                            La Faculté des Sciences Humaines d'Haïti s'engage à offrir une éducation de premier plan, à promouvoir la recherche innovante et à cultiver la pensée critique chez ses étudiants. Nous nous consacrons à l'étude approfondie des langues, des cultures, de l'histoire et des sociétés, en mettant un accent particulier sur la richesse du patrimoine haïtien et les dynamiques caribéennes.
+                        </p>
+                        <p>
+                            Notre mission est de former des citoyens éclairés, des professionnels compétents et des acteurs de changement capables de contribuer activement au développement social, culturel, économique et intellectuel d'Haïti, tout en favorisant une compréhension nuancée des enjeux globaux. [2, 10]
+                        </p>
+                    </div>
+                </section>
+
+                <!-- Section Vision -->
+                <section class="bg-white p-6 md:p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div class="flex items-center mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-blue-600 mr-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.262 2.007 2.007 0 00-1.664-.949H9.664a2.007 2.007 0 00-1.664.949A17.902 17.902 0 006.34 16.626c-.04.62.47.1124 1.09 1.124h1.125" />
+                        </svg>
+                        <h2 class="text-3xl font-semibold text-gray-700" style="font-family: 'Lora', serif;">Notre Vision</h2>
+                    </div>
+                    <div class="space-y-4 text-gray-600 leading-relaxed">
+                        <p>
+                            Nous aspirons à être un pôle d'excellence et une référence incontournable en sciences humaines en Haïti et dans la Caraïbe, reconnu pour la qualité de son enseignement, la pertinence de sa recherche et son engagement envers la communauté.
+                        </p>
+                        <p>
+                            Notre vision est celle d'une faculté dynamique et inclusive, un carrefour intellectuel stimulant le débat d'idées, la créativité et l'innovation. Nous œuvrons pour un avenir où nos diplômés sont des leaders éclairés, contribuant à une société haïtienne plus juste, résiliente et prospère, fière de son identité et ouverte sur le monde. [5, 8]
+                        </p>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+    </main>
+
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Petite animation subtile à l'apparition des sections (optionnel)
+        const sections = document.querySelectorAll('section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fadeIn');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        sections.forEach(section => {
+            section.classList.add('opacity-0'); // Initialement invisible
+            observer.observe(section);
+        });
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.7s ease-out forwards;
+        }
+        .opacity-0 {
+            opacity: 0;
+        }
+    </style>
+
+
+{% endblock %}

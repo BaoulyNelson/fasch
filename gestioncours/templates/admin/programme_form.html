@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.id %}Modifier le Programme{% else %}Nouveau Programme{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow-xl rounded-xl p-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+            {% if form.instance.id %}Modifier le Programme{% else %}Nouveau Programme{% endif %}
+        </h2>
+
+        <form method="post" novalidate class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="{{ form.titre.id_for_label }}" class="block text-sm font-medium text-gray-700">Titre</label>
+                {{ form.titre }}
+                {% for error in form.titre.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label for="{{ form.niveau.id_for_label }}" class="block text-sm font-medium text-gray-700">Niveau</label>
+                {{ form.niveau }}
+                {% for error in form.niveau.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">Description</label>
+                {{ form.description }}
+                {% for error in form.description.errors %}
+                    <p class="text-sm text-red-600 mt-1">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                {% if form.instance.id %}
+                    <a href="{% url 'programme_detail' form.instance.id %}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                        <i class="fas fa-times mr-2"></i> Annuler
+                    </a>
+                {% else %}
+                    <a href="{% url 'programme_list' %}" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition">
+                        <i class="fas fa-times mr-2"></i> Annuler
+                    </a>
+                {% endif %}
+
+                <button type="submit"
+                    class="inline-flex items-center px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition">
+                    <i class="fas fa-save mr-2"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
