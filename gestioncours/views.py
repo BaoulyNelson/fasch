@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.timezone import now
 from django.apps import apps
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -15,16 +16,18 @@ from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from django.views.generic import DeleteView
 from django.views.generic import DetailView
+import calendar
+from datetime import date
 
 from .models import (
     Inscription, Etudiant, Evenement, Article, HoraireCours,
     Annonce, Programme, PublicationRecherche, AxeRecherche,
-    Livre, Personnel, EtapeAdmission, Cours, Professeur,EtapeAdmission, DemandeAdmission
+    Livre, Personnel, EtapeAdmission, Cours, Professeur,EtapeAdmission, DemandeAdmission,Examen,Departement
 )
 from .forms import (
     CustomUserChangeForm, DemandeAdmissionForm, EtudiantForm,
     ContactForm, CoursForm, ProfesseurForm,
-    EvenementForm, AnnonceForm, ArticleForm, InscriptionForm,HoraireCoursForm,EtapeAdmissionForm,PublicationRechercheForm,AxeRechercheForm,PersonnelForm,LivreForm,ProgrammeForm
+    EvenementForm, AnnonceForm, ArticleForm, InscriptionForm,HoraireCoursForm,EtapeAdmissionForm,PublicationRechercheForm,AxeRechercheForm,PersonnelForm,LivreForm,ProgrammeForm,ExamenForm
 )
 from .search_config import search_config
 from gestioncours.utils import ajouter_message
@@ -156,31 +159,37 @@ def home(request):
 
 @login_required
 def create_profile(request):
+    # 1) Si un Etudiant existe déjà en base AVEC le même email que l'utilisateur
+    #    et que son champ `user` est encore NULL, on l'affecte automatiquement.
     try:
-        # Si le profil existe déjà, on retourne où on devait aller
+        etu = Etudiant.objects.get(email=request.user.email, user__isnull=True)
+        etu.user = request.user
+        etu.save()
+    except Etudiant.DoesNotExist:
+        pass
+
+    # 2) Si le profil est déjà lié à ce user, on le redirige directement
+    try:
         Etudiant.objects.get(user=request.user)
-        next_url = request.session.get("next_url", None)
+        next_url = request.session.get("next_url")
         if next_url:
             return redirect(next_url)
         return redirect("profile")
     except Etudiant.DoesNotExist:
         pass
 
+    # 3) Sinon, on affiche le formulaire de création comme avant
     if request.method == "POST":
         form = EtudiantForm(request.POST)
         if form.is_valid():
             etudiant = form.save(commit=False)
             etudiant.user = request.user
             etudiant.save()
-
-            # Récupérer l’URL de retour
             next_url = request.session.pop("next_url", None)
             if next_url:
                 return redirect(next_url)
             return redirect("etudiant_profil")
-        else:
-            messages.error(
-                request, "Il y a eu une erreur dans la création de votre profil.")
+        messages.error(request, "Il y a eu une erreur dans la création de votre profil.")
     else:
         form = EtudiantForm()
 
@@ -593,6 +602,8 @@ def dashboard_admin(request):
         'nombre_evenements': Evenement.objects.count(),
         'nombre_annonces': Annonce.objects.count(),
         'nombre_articles': Article.objects.count(),
+        'nombre_examens': Examen.objects.count(),
+
 
     }
 
@@ -605,6 +616,7 @@ def dashboard_admin(request):
             .order_by('-date_publication')[:5],
         'derniers_articles': Article.objects
             .order_by('-date_publication')[:5],
+            
     })
 
     # Listes détaillées pour onglets “Gestion”
@@ -621,6 +633,7 @@ def dashboard_admin(request):
         'personnel': Personnel.objects.all().order_by('poste', 'nom'),
         'etapes_admission': EtapeAdmission.objects.all().order_by('date_debut'),
         'demandes_admission': DemandeAdmission.objects.all().order_by('-date_envoi'),
+        'examens': Examen.objects.all().order_by('date'),
     })
 
     # **Ajout du formulaire d'inscription pour le modal**
@@ -630,10 +643,11 @@ def dashboard_admin(request):
     context['inscriptions'] = Inscription.objects.select_related('etudiant', 'horaire_cours').all().order_by('-pk')
     
     context['poste_choices'] = Personnel.POSTE_CHOICES
-    context['programme_form'] = ProgrammeForm()   # <— ajouté !
+    context['programme_form'] = ProgrammeForm() 
+    # AJOUT : charger les départements pour le select
+    context['departements']= Departement.objects.all().order_by('nom')
     
-
-    return render(request, 'admin/dash.html', context)
+    return render(request, 'admin/dashboard.html', context)
 
 
 class CreateWithMessage(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -642,6 +656,17 @@ class CreateWithMessage(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     afficher un message de succès et revenir au dashboard.
     """
     success_url = reverse_lazy('dashboard')
+
+
+
+
+class ExamenCreate(CreateWithMessage, SuccessMessageMixin, CreateView):
+    model = Examen
+    form_class = ExamenForm
+    template_name = 'admin/examen_form.html'
+    success_message = "L'examen « %(titre)s » a été créé avec succès."
+    
+    
 
 # Sous-classes pour chaque formulaire
 class EtudiantCreate(CreateWithMessage):
@@ -729,6 +754,12 @@ class UpdateWithMessage(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy('dashboard')
 
 # Sous-classes pour chaque modèle
+class ExamenUpdate(UpdateWithMessage, SuccessMessageMixin, UpdateView):
+    model = Examen
+    form_class = ExamenForm
+    template_name = 'admin/examen_form.html'
+    success_message = "L'examen « %(titre)s » a été mis à jour."
+
 class EtudiantUpdate(UpdateWithMessage):
     model = Etudiant
     form_class = EtudiantForm
@@ -828,6 +859,11 @@ class DetailWithLogin(LoginRequiredMixin, DetailView):
     # par défaut, context_object_name = '<model>'
 
 # Sous-classes pour chaque modèle
+class ExamenDetail(DetailWithLogin):
+    model = Examen
+    template_name = 'admin/examen_detail.html'
+    context_object_name = 'examen'
+    
 class EtudiantDetail(DetailWithLogin):
     model = Etudiant
     template_name = 'admin/etudiant_detail.html'
@@ -914,6 +950,13 @@ class DeleteWithMessage(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy('dashboard')
 
 # Sous-classes pour chaque modèle
+
+class ExamenDelete(DeleteWithMessage, SuccessMessageMixin, DeleteView):
+    model = Examen
+    template_name = 'admin/examen_confirm_delete.html'
+    success_message = "L'examen a bien été supprimé."
+    
+    
 class EtudiantDelete(DeleteWithMessage):
     model = Etudiant
     template_name = 'admin/etudiant_confirm_delete.html'
@@ -992,6 +1035,63 @@ class DemandeAdmissionDelete(DeleteWithMessage):
 
 
 
+def exam_calendar(request, year=None, month=None):
+    """
+    Affiche un calendrier mensuel des examens pour le staff.
+    """
+    # 1) Détermination de l'année et du mois
+    today = date.today()
+    year = int(year) if year else today.year
+    month = int(month) if month else today.month
+
+    # 2) Construction des dates du mois
+    cal = calendar.Calendar(firstweekday=0)  # lundi=0
+    month_dates = cal.monthdatescalendar(year, month)
+
+    # 3) Récupération et groupement des examens
+    events = Examen.objects.filter(date__year=year, date__month=month)
+    events_by_day = {}
+    for ev in events:
+        events_by_day.setdefault(ev.date.day, []).append(ev)
+
+    # 4) Calcul du mois précédent
+    if month == 1:
+        prev_month, prev_year = 12, year - 1
+    else:
+        prev_month, prev_year = month - 1, year
+
+    # 5) Calcul du mois suivant
+    if month == 12:
+        next_month, next_year = 1, year + 1
+    else:
+        next_month, next_year = month + 1, year
+
+    # 6) Contexte pour le template
+    context = {
+        'month_name': date(year, month, 1).strftime('%B %Y'),
+        'month_dates': month_dates,
+        'events_by_day': events_by_day,
+        'current_month': month,
+        'current_year': year,
+        'day_names': ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+        'prev_month': prev_month,
+        'prev_year': prev_year,
+        'next_month': next_month,
+        'next_year': next_year,
+        'today': date.today(),  # ← ajoute ceci
+        
+    }
+    
+       
+    # 7) Examens à venir (au-delà d'aujourd'hui)
+    upcoming_exams = Examen.objects.filter(date__gt=now()).order_by('date')
+
+    # Ajout au contexte
+    context['upcoming_exams'] = upcoming_exams
+
+    return render(request, 'calendrier/calendrier.html', context)
+
+ 
 
 
 

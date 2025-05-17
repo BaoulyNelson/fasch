@@ -6,12 +6,23 @@ from django.db.models import Q
 from django.utils.text import slugify
 
 
+class Departement(models.Model):
+    nom = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nom
+    
+    
 class Etudiant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     prenom = models.CharField(max_length=100)
     nom = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    telephone = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(unique=True,  error_messages={'unique': "Cet email appartient déjà à un autre étudiant."}
+)
+    telephone = models.CharField(max_length=20, unique=True,  error_messages={'unique': "Ce numero appartient déjà à un autre étudiant."}
+)
+
+
 
     NIVEAU_CHOICES = [
         ("Preparatoire", "Préparatoire"),
@@ -21,6 +32,7 @@ class Etudiant(models.Model):
         ("Quatrieme Annee", "Quatrième Année"),
     ]
     niveau = models.CharField(max_length=50, choices=NIVEAU_CHOICES, default="Preparatoire")
+    departement = models.ForeignKey(Departement, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.prenom} {self.nom}"
@@ -52,8 +64,10 @@ class Cours(models.Model):
 class Professeur(models.Model):
     prenom = models.CharField(max_length=100)
     nom = models.CharField(max_length=100)
-    email = models.EmailField(blank=True, null=True)
-    telephone = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(unique=True, null=True, error_messages={'unique': "Cet email appartient déjà à un autre professeur."}
+                              )
+    telephone = models.CharField(max_length=20, null=True, unique=True,  error_messages={'unique': "Ce numero appartient déjà à un autre professeur."}
+)
     specialite = models.CharField(max_length=255, blank=True, null=True)  # Champ stocké
 
     def __str__(self):
@@ -142,8 +156,10 @@ class EtapeAdmission(models.Model):
     
 class DemandeAdmission(models.Model):
     nom = models.CharField(max_length=255)
-    email = models.EmailField()
-    telephone = models.CharField(max_length=15)
+    email = models.EmailField(unique=True,  error_messages={'unique': "Cet email appartient déjà à une autre personne."}
+)
+    telephone = models.CharField(max_length=15,unique=True,  error_messages={'unique': "Ce numero appartient déjà à une autre personne."}
+)
     programme = models.CharField(max_length=255)
     message = models.TextField()
 
@@ -316,6 +332,49 @@ class Personnel(models.Model):
     def __str__(self):
         return f"{self.nom} - {self.get_poste_display()}"
 
+
+
+
+class Examen(models.Model):
+    STATUS_CHOICES = [
+        ('completed', 'Terminé'),
+        ('active',    'En cours'),
+        ('upcoming',  'À venir'),
+    ]
+
+    titre       = models.CharField("Intitulé de l'examen", max_length=255)
+    date        = models.DateField("Date de l'examen")
+    description = models.TextField("Description", blank=True)
+    status      = models.CharField(
+        "Statut",
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='upcoming'
+    )
+
+    class Meta:
+        ordering = ['date']
+        verbose_name        = "Examen"
+        verbose_name_plural = "Examens"
+
+    def __str__(self):
+        return f"{self.titre} le {self.date:%d %B %Y}"
+
+    def save(self, *args, **kwargs):
+        """
+        Recalcule automatiquement `status` en fonction de `date` :
+        - date < aujourd'hui  → 'completed'
+        - date == aujourd'hui → 'active'
+        - date > aujourd'hui  → 'upcoming'
+        """
+        today = timezone.localdate()
+        if self.date < today:
+            self.status = 'completed'
+        elif self.date == today:
+            self.status = 'active'
+        else:
+            self.status = 'upcoming'
+        super().save(*args, **kwargs)
 
 
 

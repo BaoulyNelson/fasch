@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ livre.titre }} - Détails{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Fil d'Ariane -->
+    <nav class="flex mb-6" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-4">
+            <li>
+                <a href="{% url 'home' %}" class="text-blue-600 hover:text-blue-800">Accueil</a>
+            </li>
+            <li class="flex items-center">
+                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+                <a href="{% url 'dashboard' %}" class="ml-4 text-blue-600 hover:text-blue-800">Bibliothèque</a>
+            </li>
+            <li class="flex items-center">
+                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="ml-4 text-gray-500 font-medium">{{ livre.titre }}</span>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Carte détaillée du livre -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- En-tête -->
+        <div class="bg-blue-600 px-6 py-4">
+            <h1 class="text-2xl font-bold text-white">{{ livre.titre }}</h1>
+        </div>
+        <!-- Contenu -->
+        <div class="p-6">
+            <div class="md:flex">
+                <!-- Image et statut -->
+                <div class="md:w-1/3 mb-6 md:mb-0">
+                    <div class="bg-gray-100 p-4 rounded-lg text-center">
+                        <img src="{% static 'images/default-book.png' %}" alt="{{ livre.titre }}" class="mx-auto h-auto max-w-full rounded shadow-sm mb-4" onerror="this.src='{% static 'images/default-book.png' %}'">
+                        
+                        <!-- Badge de statut -->
+                        <div class="mt-4">
+                            {% if livre.disponible %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                    <svg class="mr-1.5 h-3 w-3 text-green-600" fill="currentColor" viewBox="0 0 8 8">
+                                        <circle cx="4" cy="4" r="3" />
+                                    </svg>
+                                    Disponible
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                    <svg class="mr-1.5 h-3 w-3 text-red-600" fill="currentColor" viewBox="0 0 8 8">
+                                        <circle cx="4" cy="4" r="3" />
+                                    </svg>
+                                    Non disponible
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informations -->
+                <div class="md:w-2/3 md:pl-8">
+                    <!-- Détails du livre -->
+                    <div class="bg-white overflow-hidden">
+                        <dl class="divide-y divide-gray-200">
+                            <div class="py-4 grid grid-cols-3 gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Auteur</dt>
+                                <dd class="text-sm text-gray-900 col-span-2">{{ livre.auteur }}</dd>
+                            </div>
+                            <div class="py-4 grid grid-cols-3 gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Année</dt>
+                                <dd class="text-sm text-gray-900 col-span-2">{{ livre.annee }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    
+                    <!-- Résumé -->
+                    <div class="mt-6">
+                        <h2 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">Résumé</h2>
+                        <div class="prose max-w-none text-gray-600">
+                            {{ livre.resume|linebreaks }}
+                        </div>
+                    </div>
+                    
+                    <!-- Boutons d'action -->
+                    <div class="mt-8 flex flex-wrap items-center gap-3">
+                        <a href="{% url 'dashboard' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Retour à la liste
+                        </a>
+                        
+                        {% if perms.bibliotheque.change_livre %}
+                        <a href="{% url 'livre_modifier' livre.id %}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                            Modifier
+                        </a>
+                        {% endif %}
+                        
+                        {% if perms.bibliotheque.delete_livre %}
+                        <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" x-data x-on:click="$dispatch('open-modal', 'confirm-delete')">
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                            Supprimer
+                        </button>
+                        {% endif %}
+                        
+                        {% if livre.disponible %}
+                        <a href="" class="ml-auto inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                            </svg>
+                            Emprunter
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+{% if perms.bibliotheque.delete_livre %}
+<div id="confirm-delete" class="fixed inset-0 z-50 overflow-y-auto hidden" x-show="$store.modals.isOpen('confirm-delete')" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" x-cloak>
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" x-on:click="$dispatch('close-modal', 'confirm-delete')" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Confirmer la suppression
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Êtes-vous sûr de vouloir supprimer le livre <strong>{{ livre.titre }}</strong> ?
+                            </p>
+                            <p class="mt-2 text-sm text-red-600">
+                                Cette action est irréversible.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <form action="{% url 'livre_supprimer' livre.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Confirmer la suppression
+                    </button>
+                </form>
+                <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" x-on:click="$dispatch('close-modal', 'confirm-delete')">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

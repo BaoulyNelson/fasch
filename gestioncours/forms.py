@@ -6,9 +6,9 @@ from .models import (
     Cours, Professeur, HoraireCours, Inscription,
     EtapeAdmission, Programme, Evenement,
     Annonce, Article, AxeRecherche, PublicationRecherche,
-    Livre, Personnel
+    Livre, Personnel,Examen
 )
-
+from .widgets import TailwindInput, TailwindTextarea, TailwindSelect, TailwindFileInput, TailwindCheckbox,TailwindEmailInput,TailwindDateInput,TailwindNumberInput
 
 class CustomUserChangeForm(forms.ModelForm):
     class Meta:
@@ -20,19 +20,32 @@ class CustomUserChangeForm(forms.ModelForm):
             'last_name': 'Nom',
             'email': 'Adresse e-mail',
         }
+        widgets = {
+            'username': TailwindInput(),
+            'first_name': TailwindInput(),
+            'last_name': TailwindInput(),
+            'email': TailwindEmailInput(),
+        }
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exclude(id=self.instance.id).exists():
             raise forms.ValidationError("Cet email est déjà utilisé par un autre utilisateur.")
         return email
-
-        
-        
+    
+    
 class EtudiantForm(forms.ModelForm):
     class Meta:
         model = Etudiant
-        fields = ['nom', 'prenom', 'email', 'telephone', 'niveau']
+        fields = ['nom', 'prenom', 'email', 'telephone', 'niveau', 'departement']
+        widgets = {
+            'nom': TailwindInput(),
+            'prenom': TailwindInput(),
+            'email': TailwindEmailInput(),
+            'telephone': TailwindInput(),
+            'niveau': TailwindSelect(),
+            'departement': TailwindSelect(),
+        }
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -61,40 +74,29 @@ class DemandeAdmissionForm(forms.ModelForm):
         model = DemandeAdmission
         fields = ['nom', 'email', 'telephone', 'programme', 'message']
         widgets = {
-            'nom': forms.TextInput(attrs={
-                'class': 'w-full px-3 py-2 border rounded-md text-base',
-                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            'nom': TailwindInput(attrs={
+                'placeholder': 'Votre nom complet'
             }),
-            'email': forms.EmailInput(attrs={
-                'class': 'w-full px-3 py-2 border rounded-md text-base',
-                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            'email': TailwindEmailInput(attrs={
+                'placeholder': 'votre@email.com'
             }),
-            'telephone': forms.TextInput(attrs={
-                'class': 'w-full px-3 py-2 border rounded-md text-base',
-                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            'telephone': TailwindInput(attrs={
+                'placeholder': '+229 90 00 00 00'
             }),
-            'programme': forms.Select(
-                choices=[
-                    ('', 'Sélectionnez un programme'),
-                    ('sociologie-l', 'Sociologie (Licence)'),
-                    ('sociologie-m', 'Sociologie (Maîtrise)'),
-                    ('psychologie-l', 'Psychologie (Licence)'),
-                    ('psychologie-m', 'Psychologie (Maîtrise)'),
-                    ('communication-l', 'Communication Sociale (Licence)'),
-                    ('servicesocial-l', 'Service Social (Licence)')
-                ],
-                attrs={
-                    'class': 'w-full px-3 py-2 border rounded-md text-base',
-                    'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
-                }
-            ),
-            'message': forms.Textarea(attrs={
-                'rows': 3,
-                'class': 'w-full px-3 py-2 border rounded-md text-base',
-                'style': 'border-color: var(--border-color); background-color: var(--bg-primary); color: var(--text-primary);'
+            'programme': TailwindSelect(choices=[
+                ('', 'Sélectionnez un programme'),
+                ('sociologie-l', 'Sociologie (Licence)'),
+                ('sociologie-m', 'Sociologie (Maîtrise)'),
+                ('psychologie-l', 'Psychologie (Licence)'),
+                ('psychologie-m', 'Psychologie (Maîtrise)'),
+                ('communication-l', 'Communication Sociale (Licence)'),
+                ('servicesocial-l', 'Service Social (Licence)')
+            ]),
+            'message': TailwindTextarea(attrs={
+                'rows': 4,
+                'placeholder': 'Expliquez votre motivation ou votre demande...'
             }),
         }
-        
         
         
 class CoursForm(forms.ModelForm):
@@ -102,24 +104,11 @@ class CoursForm(forms.ModelForm):
         model = Cours
         fields = ['code', 'nom', 'credits', 'niveau']
         widgets = {
-            'code': forms.TextInput(attrs={
-                'class': 'block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                'placeholder': 'Code du cours (ex: INF101)'
-            }),
-            'nom': forms.TextInput(attrs={
-                'class': 'block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                'placeholder': 'Nom du cours'
-            }),
-            'credits': forms.NumberInput(attrs={
-                'class': 'block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500',
-                'min': 1,
-                'placeholder': 'Nombre de crédits'
-            }),
-            'niveau': forms.Select(attrs={
-                'class': 'block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500',
-            }),
+            'code': TailwindInput(attrs={'placeholder': 'Code du cours (ex: INF101)'}),
+            'nom': TailwindInput(attrs={'placeholder': 'Nom du cours'}),
+            'credits': TailwindNumberInput(attrs={'min': 1, 'placeholder': 'Nombre de crédits'}),
+            'niveau': TailwindSelect(),
         }
-
       
 class ProfesseurForm(forms.ModelForm):
     cours_enseignes_display = forms.CharField(
@@ -243,18 +232,60 @@ class AxeRechercheForm(forms.ModelForm):
     class Meta:
         model = AxeRecherche
         fields = '__all__'
-
+        widgets = {
+            'titre': TailwindInput(),
+            'description': TailwindTextarea(),
+        }
+        
+class ExamenForm(forms.ModelForm):
+    class Meta:
+        model = Examen
+        fields = '__all__'
+        widgets = {
+            'titre': TailwindInput(),
+            'date': TailwindDateInput(),
+            'lieu': TailwindInput(),
+            # Ajoute d'autres champs selon le modèle
+        }
+        
+        
 class PublicationRechercheForm(forms.ModelForm):
     class Meta:
         model = PublicationRecherche
         fields = '__all__'
+        widgets = {
+            'titre': TailwindInput(),
+            'auteurs': TailwindInput(),
+            'description': TailwindTextarea(),
+            'date_publication': TailwindInput(attrs={'type': 'date'}),
+            'domaines': TailwindInput(),
+            'lien': TailwindInput(attrs={'type': 'url'}),
+        }
 
 class LivreForm(forms.ModelForm):
     class Meta:
         model = Livre
         fields = '__all__'
+        widgets = {
+            'titre': TailwindInput(),
+            'auteur': TailwindInput(),
+            'annee': TailwindInput(),
+            'resume': TailwindTextarea(),
+            'disponible': TailwindCheckbox(),
+        }
 
 class PersonnelForm(forms.ModelForm):
     class Meta:
         model = Personnel
         fields = '__all__'
+        widgets = {
+            'poste': TailwindSelect(),
+            'nom': TailwindInput(),
+            'description': TailwindTextarea(),
+            'photo': TailwindFileInput(),
+        }
+
+
+
+
+

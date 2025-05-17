@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load calendar_extras %}
+
+{% block title %}{{ annonce.titre }} | Calendrier{% endblock %}
+
+
+
+{% block content %}
+<div class="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen py-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <!-- Header du calendrier -->
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8">
+        <h2 class="text-3xl font-bold text-white text-center">Calendrier des Examens</h2>
+        <p class="text-blue-100 text-center mt-2">Regardez vos révisions et examens</p>
+      </div>
+      
+      <!-- Navigation et contrôles du calendrier -->
+      <div class="flex flex-col md:flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
+        <h3 class="text-2xl font-semibold text-gray-800">{{ month_name }}</h3>
+        <div class="flex space-x-4 mt-4 md:mt-0">
+          <button id="prevMonth" 
+                  onclick="window.location.href='{% url 'exam_calendar_month' year=prev_year month=prev_month %}'"
+                  class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition duration-200">
+            <svg class="w-5 h-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Précédent
+          </button>
+          <button id="nextMonth"
+                  onclick="window.location.href='{% url 'exam_calendar_month' year=next_year month=next_month %}'"
+                  class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition duration-200">
+            Suivant
+            <svg class="w-5 h-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Grille du calendrier -->
+      <div class="p-6">
+        <div class="grid grid-cols-7 gap-2">
+          <!-- En-têtes des jours -->
+          {% for day_name in day_names %}
+            <div class="text-center font-medium text-gray-500 py-2">{{ day_name }}</div>
+          {% endfor %}
+          
+          <!-- Cases du mois -->
+          {% for week in month_dates %}
+            {% for day in week %}
+              <div class="h-32 border rounded-lg p-2 {% if day.month != current_month %}bg-gray-50 text-gray-400{% else %}bg-white hover:bg-blue-50 transition duration-200{% endif %}"
+                   data-day="{{ day|date:'D j M' }}">
+               <div class="text-right mb-1 
+                {% if day == today %}bg-blue-500 text-white font-bold rounded-full w-6 h-6 flex items-center justify-center mx-auto{% 
+                elif day.month == current_month %}font-medium{% endif %}">
+              {{ day.day }}
+            </div>
+
+                {% if day.month == current_month and day.day in events_by_day %}
+{% for exam in events_by_day|get_item:day.day %}
+  <div class="px-2 py-1 rounded text-xs mb-1 truncate hover:opacity-90 cursor-pointer transition border border-blue-200 bg-blue-50">
+    
+    {# Titre en bleu #}
+    <span class="text-blue-800 font-semibold block">
+      {{ exam.titre }}
+    </span>
+    
+    {# Statut avec couleur conditionnelle #}
+    {% if exam.status == 'upcoming' %}
+      <span class="text-yellow-600 italic text-[10px] block">
+        {{ exam.get_status_display }}
+      </span>
+    {% elif exam.status == 'active' %}
+      <span class="text-green-600 italic text-[10px] block">
+        {{ exam.get_status_display }}
+      </span>
+    {% elif exam.status == 'completed' %}
+      <span class="text-red-600 italic text-[10px] line-through block">
+        {{ exam.get_status_display }}
+      </span>
+    {% else %}
+      <span class="text-gray-600 italic text-[10px] block">
+        {{ exam.get_status_display }}
+      </span>
+    {% endif %}
+    
+  </div>
+{% endfor %}
+
+
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Légende -->
+   <div class="mt-8 bg-white rounded-xl shadow-lg p-6">
+  <h3 class="text-xl font-semibold text-gray-800 mb-4">Examens à venir</h3>
+  <div class="space-y-4">
+    {% for exam in upcoming_exams %}
+      <div class="flex items-center p-3 border-l-4 border-green-500 bg-green-50 rounded-r-lg">
+        <div class="flex-1">
+          <h4 class="font-medium text-gray-800">{{ exam.titre }}</h4>
+          <p class="text-sm text-gray-600">{{ exam.date|date:"d F Y" }}</p>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-gray-500 italic">Aucun examen n'est prévu pour le moment.</p>
+    {% endfor %}
+  </div>
+</div>
+
+  </div>
+</div>
+
+<script>
+  // Calendar Navigation
+  const prevMonthBtn = document.getElementById('prevMonth');
+  const nextMonthBtn = document.getElementById('nextMonth');
+  const calendarTitle = document.querySelector('.calendar-title');
+  
+  const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  let currentMonthIndex = 5; // Juin
+  let currentYear = 2023;
+  
+  prevMonthBtn.addEventListener('click', () => {
+    currentMonthIndex--;
+    if (currentMonthIndex < 0) {
+      currentMonthIndex = 11;
+      currentYear--;
+    }
+    updateCalendarTitle();
+  });
+  
+  nextMonthBtn.addEventListener('click', () => {
+    currentMonthIndex++;
+    if (currentMonthIndex > 11) {
+      currentMonthIndex = 0;
+      currentYear++;
+    }
+    updateCalendarTitle();
+  });
+  
+  function updateCalendarTitle() {
+    calendarTitle.textContent = `${months[currentMonthIndex]} ${currentYear}`;
+  }
+  
+  // Animation pour les événements du calendrier
+  document.querySelectorAll('.bg-blue-100').forEach(event => {
+    event.addEventListener('mouseover', function() {
+      this.classList.add('transform', 'scale-105');
+    });
+    event.addEventListener('mouseout', function() {
+      this.classList.remove('transform', 'scale-105');
+    });
+  });
+</script>
+{% endblock %}

@@ -8,7 +8,6 @@ urlpatterns = [
     # ------------------- Accueil -------------------
     path('', views.home, name='home'),
    
-
     # ------------------- Authentification -------------------
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
@@ -51,8 +50,10 @@ urlpatterns = [
     path('staff/personnel/add/', views.PersonnelCreate.as_view(), name='add_personnel'),
     path('staff/etape-admission/add/', views.EtapeAdmissionCreate.as_view(), name='add_etape_admission'),
     path('staff/demande-admission/add/', views.DemandeAdmissionCreate.as_view(), name='add_demande_admission'),
+    path('staff/examens/ajouter/', views.ExamenCreate.as_view(), name='add_examen'),
+
     
-    
+
     #pour modifier
     path('staff/etudiant/<int:pk>/edit/', views.EtudiantUpdate.as_view(), name='modifier_etudiant'),
     path('staff/cours/<int:pk>/edit/', views.CoursUpdate.as_view(), name='modifier_cours'),
@@ -69,29 +70,26 @@ urlpatterns = [
     path('personnel/<int:pk>/edit/', views.PersonnelUpdate.as_view(), name='modifier_personnel'),
     path('staff/etape-admission/<int:pk>/edit/', views.EtapeAdmissionUpdate.as_view(), name='modifier_etape_admission'),
     path('staff/demande-admission/<int:pk>/edit/', views.DemandeAdmissionUpdate.as_view(), name='modifier_demande_admission'),
-    
-    
+    path('staff/examens/<int:pk>/modifier/', views.ExamenUpdate.as_view(), name='modifier_examen'),
+
     #details
     path('staff/etudiant/<int:pk>/', views.EtudiantDetail.as_view(), name='detail_etudiant'),
     path('staff/cours/<int:pk>/', views.CoursDetail.as_view(), name='detail_cours'),
     path('staff/professeur/<int:pk>/', views.ProfesseurDetail.as_view(), name='detail_professeur'),
     path('staff/inscription/<int:pk>/', views.InscriptionDetail.as_view(), name='detail_inscription'),
     path('staff/horaire/<int:pk>/', views.HoraireCoursDetail.as_view(), name='detail_horaire'),
-    
     path('staff/cours/<int:pk>/', views.CoursDetail.as_view(), name='detail_cours'),  
     path('staff/article/<int:pk>/', views.ArticleDetail.as_view(), name='detail_article'),
     path('staff/evenement/<int:pk>/', views.EvenementDetail.as_view(), name='detail_evenement'),
     path('staff/annonce/<int:pk>/', views.AnnonceDetail.as_view(), name='detail_annonce'),
-
     path('staff/programme/<int:pk>/', views.ProgrammeDetail.as_view(), name='detail_programme'),
-    
     path('staff/axe-recherche/<int:pk>/', views.AxeRechercheDetail.as_view(), name='detail_axe'),
     path('staff/publication/<int:pk>/', views.PublicationRechercheDetail.as_view(), name='detail_publication'),
     path('staff/livre/<int:pk>/', views.LivreDetail.as_view(), name='detail_livre'),
     path('staff/personnel/<int:pk>/', views.PersonnelDetail.as_view(), name='detail_personnel'),
     path('staff/etape-admission/<int:pk>/', views.EtapeAdmissionDetail.as_view(), name='detail_etape_admission'),
     path('staff/-admission/<int:pk>/', views.DemandeAdmissionDetail.as_view(), name='detail_demande_admission'),
-
+    path('staff/examens/<int:pk>/', views.ExamenDetail.as_view(), name='detail_examen'),
     # ------------------- confirmation de suppression -------------------
     path('staff/etudiant/<int:pk>/delete/', views.EtudiantDelete.as_view(), name='supprimer_etudiant'),
     path('staff/cours/<int:pk>/delete/', views.CoursDelete.as_view(), name='supprimer_cours'),
@@ -108,7 +106,7 @@ urlpatterns = [
     path('staff/personnel/<int:pk>/delete/', views.PersonnelDelete.as_view(), name='supprimer_personnel'),
     path('staff/etape-admission/<int:pk>/delete/', views.EtapeAdmissionDelete.as_view(), name='supprimer_etape_admission'),
     path('staff/demande-admission/<int:pk>/delete/', views.DemandeAdmissionDelete.as_view(), name='supprimer_demande_admission'),
-
+    path('staff/examens/<int:pk>/supprimer/', views.ExamenDelete.as_view(), name='supprimer_examen'),
 
     # ------------------- Admissions -------------------
     path('admissions/', views.admission, name='demande_admission'),
@@ -128,7 +126,10 @@ urlpatterns = [
     # ------------------- Recherche Globale -------------------
     path('recherche/', views.recherche_globale, name='recherche_globale'),
 
-
+    path('calendrier/', views.exam_calendar, name='exam_calendar'),
+    path('calendrier/<int:year>/<int:month>/',
+        views.exam_calendar,name='exam_calendar_month'
+    ),
     # ------------------- Événements -------------------
     path('evenement/<slug:slug>/', views.detail_evenement, name='evenement_detail'),
 

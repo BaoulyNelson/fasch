@@ -38,6 +38,7 @@
     showProfesseurForm: false,
     showHoraireForm: false,
     showInscriptionForm: false,
+    showExamenForm: false,
     showEvenementForm: false,
     showAnnonceForm: false,
     showArticleForm: false,
@@ -48,6 +49,8 @@
     showPersonnelForm: false,
     showEtapeAdmissionForm: false,
     showDemandeAdmissionForm: false,
+    userMenuOpen: false,
+    notificationDropdownOpen: false,
 
     get currentTabTitle() {
       const titles = {
@@ -57,6 +60,7 @@
         professeurs: 'Gestion des Professeurs',
         horaires: 'Gestion des Horaires',
         inscriptions: 'Gestion des Inscriptions',
+        calendrier: 'Gestion des examens',
         evenements: 'Gestion des Événements',
         annonces: 'Gestion des Annonces',
         articles: 'Gestion des Articles',
@@ -81,6 +85,7 @@
           <button @click="sidebarOpen = false" class="text-gray-300 hover:text-white">
             <i class="fas fa-times"></i>
           </button>
+          
         </div>
 
         <div class="flex-1 overflow-y-auto">
@@ -110,6 +115,12 @@
               <button @click="currentTab = 'inscriptions'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'inscriptions' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
                 <i class="fas fa-clipboard-list mr-3"></i>
                 Inscriptions
+              </button>
+              <button @click="currentTab = 'calendrier'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'calendrier' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
+                
+                <i class="fas fa-calendar-alt mr-3"></i>
+
+                Calendrier
               </button>
               <button @click="currentTab = 'evenements'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'evenements' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
                 <i class="fas fa-calendar-alt mr-3"></i>
@@ -204,6 +215,11 @@
                 <i class="fas fa-clipboard-list mr-3"></i>
                 Inscriptions
               </button>
+              <button @click="currentTab = 'calendrier'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'calendrier' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
+              <i class="fas fa-calendar-alt mr-3"></i>
+
+                Calendrier
+              </button>
               <button @click="currentTab = 'evenements'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'evenements' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
                 <i class="fas fa-calendar-alt mr-3"></i>
                 Événements
@@ -270,21 +286,45 @@
         <button @click="sidebarOpen = true" class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-600 lg:hidden">
           <i class="fas fa-bars"></i>
         </button>
+        
         <div class="flex-1 px-4 flex justify-between">
           <div class="flex-1 flex items-center">
             <h1 class="text-2xl font-semibold text-gray-900 self-center" x-text="currentTabTitle"></h1>
           </div>
+
           <div class="ml-4 flex items-center md:ml-6">
             <div class="mx-3">
               <span class="text-gray-700">Admin</span>
             </div>
-            <div class="ml-3 relative">
-              <div>
-                <button class="max-w-xs bg-primary flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid" id="user-menu" aria-label="User menu" aria-haspopup="true">
+               <div class="relative ml-3">
+              <button
+                @click="userMenuOpen = !userMenuOpen"
+                class="max-w-xs bg-primary flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid"
+                id="user-menu"
+                aria-label="User menu"
+                aria-haspopup="true">
+                
                   <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
                     <i class="fas fa-user text-gray-500 p-2"></i>
                   </span>
                 </button>
+                <div
+                x-show="userMenuOpen"
+                @click.away="userMenuOpen = false"
+                x-cloak
+                x-transition
+                class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="user-menu"
+              >
+              <div class="py-1" role="none">
+                  <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profil</a>
+                  <a href="{% url 'home' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Paramètres</a>
+                  <a href="{% url 'confirmer_deconnexion' %}" 
+                     class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Déconnexion</button>
+              </a>
+                </div>
               </div>
             </div>
           </div>
@@ -407,7 +447,7 @@
                   </div>
                 </div>
 
-                <!-- Card pour les contacts -->
+                <!-- Card pour les examens -->
                 <div class="bg-white overflow-hidden shadow rounded-lg">
                   <div class="p-5">
                     <div class="flex items-center">
@@ -417,11 +457,11 @@
                       <div class="ml-5 w-0 flex-1">
                         <dl>
                           <dt class="text-sm font-medium text-gray-500 truncate">
-                            Contacts
+                            Examens
                           </dt>
                           <dd class="flex items-baseline">
                             <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_contacts }}
+                              {{ nombre_examens }}
                             </div>
                           </dd>
                         </dl>
@@ -817,6 +857,17 @@
                                     </option>
                                   </select>
                                 </div>
+
+                                <div>
+  <label for="departement_etudiant" class="block text-sm font-medium text-gray-700">Département</label>
+  <select id="departement_etudiant" name="departement" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
+    <option value="">-- Choisir un département --</option>
+    {% for dep in departements %}
+      <option value="{{ dep.id }}">{{ dep.nom }}</option>
+    {% endfor %}
+  </select>
+</div>
+
                               </div>
                             </div>
                           </div>
@@ -853,6 +904,9 @@
                             Niveau
                           </th>
                           <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Département 
+                          </th>
+                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Actions
                           </th>
                         </tr>
@@ -878,6 +932,12 @@
                           <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-500">
                               {{ etudiant.get_niveau_display }}
+                            </div>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">
+                              {{ etudiant.departement.nom }}
+
                             </div>
                           </td>
 
@@ -1339,10 +1399,10 @@
 
     <!-- Formulaire d'ajout d'une inscription -->
     <div x-show="showInscriptionForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showInscriptionForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div class="flexpx-4 pb-20 text-center sm:block sm:p-0">
         <!-- Overlay -->
         <div x-show="showInscriptionForm"
-             x-transition:enter="ease-out duration-300"
+             x-transition items-center justify-center min-h-screen pt-4 :enter="ease-out duration-300"
              x-transition:enter-start="opacity-0"
              x-transition:enter-end="opacity-100"
              x-transition:leave="ease-in duration-200"
@@ -1437,6 +1497,190 @@
 </div>
 
  
+<!-- Calendrier examen -->
+<div x-show="currentTab === 'calendrier'" x-cloak>
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+      <h2 class="text-lg leading-6 font-medium text-gray-900">
+        Liste des calendriers
+      </h2>
+      <button @click="showExamenForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
+        <i class="fas fa-calendar-plus mr-2"></i> Planifier un examen
+      </button>
+    </div>
+
+    <!-- Formulaire d'ajout d'un examen -->
+    <div x-show="showExamenForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showExamenForm = false">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Overlay -->
+        <div x-show="showExamenForm"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 transition-opacity"
+             aria-hidden="true"
+             @click="showExamenForm = false">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+        <!-- Modal -->
+        <div x-show="showExamenForm"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <form action="{% url 'add_examen' %}" method="post" class="space-y-6">
+  {% csrf_token %}
+  <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+      Ajouter un examen
+    </h3>
+    <div class="grid grid-cols-1 gap-4">
+      <!-- Intitulé -->
+      <div>
+        <label for="titre" class="block text-sm font-medium text-gray-700">
+          Intitulé de l'examen :
+        </label>
+        <input type="text" name="titre" id="titre" required
+               class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label for="date" class="block text-sm font-medium text-gray-700">
+          Date de l'examen :
+        </label>
+        <input type="date" name="date" id="date" required
+               class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700">
+          Description :
+        </label>
+        <textarea name="description" id="description" rows="3" required
+                  class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+      </div>
+
+      <!-- Statut -->
+      <div>
+        <label for="status" class="block text-sm font-medium text-gray-700">
+          Statut :
+        </label>
+        <select name="status" id="status" required
+                class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+          <option value="upcoming">À venir</option>
+          <option value="active">En cours</option>
+          <option value="completed">Terminé</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+    <button type="submit"
+            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
+      Enregistrer
+    </button>
+    <button type="button" @click="showExamenForm = false"
+            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+      Annuler
+    </button>
+  </div>
+</form>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des éxamens -->
+    <div class="px-4 py-5 sm:px-6">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+  <thead class="bg-gray-50">
+    <tr>
+      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
+      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+    </tr>
+  </thead>
+  <tbody class="bg-white divide-y divide-gray-200">
+    {% for exam in examens %}
+      <tr>
+        <!-- Titre de l'examen -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{ exam.titre }}
+        </td>
+
+        <!-- Date formatée -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{ exam.date|date:"d/m/Y" }}
+        </td>
+
+        <!-- Description (on peut tronquer si trop longue) -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          {{ exam.description|truncatechars:50 }}
+        </td>
+
+        <!-- Libellé du statut (get_FOO_display pour afficher le label) -->
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="
+            inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full
+            {% if exam.status == 'upcoming' %}bg-blue-100 text-blue-800
+            {% elif exam.status == 'active' %}bg-green-100 text-green-800
+            {% else %}bg-gray-100 text-gray-800{% endif %}
+          ">
+            {{ exam.get_status_display }}
+          </span>
+        </td>
+
+        <!-- Liens d'action -->
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <a href="{% url 'detail_examen' exam.id %}" class="text-indigo-600 hover:text-indigo-900">
+            Voir
+          </a>
+          <a href="{% url 'modifier_examen' exam.id %}" class="ml-2 text-blue-600 hover:text-blue-900">
+            Modifier
+          </a>
+          <a href="{% url 'supprimer_examen' exam.id %}"
+             class="ml-2 text-red-600 hover:text-red-900"
+             onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet examen ?')">
+            Supprimer
+          </a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+          Aucun examen enregistré.
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
 <!-- Événements -->
 <div x-show="currentTab === 'evenements'" x-cloak>
   <div class="bg-white shadow overflow-hidden sm:rounded-lg">

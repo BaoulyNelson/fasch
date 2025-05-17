@@ -1,12 +1,21 @@
 from django.contrib import admin
-from .models import Etudiant, Cours, Professeur, HoraireCours, Inscription,DemandeAdmission,Article,Annonce,Evenement,Programme,AxeRecherche, PublicationRecherche,Livre,Personnel,EtapeAdmission
+from .models import Etudiant, Cours, Professeur, HoraireCours, Inscription,DemandeAdmission,Article,Annonce,Evenement,Programme,AxeRecherche, PublicationRecherche,Livre,Personnel,EtapeAdmission,Departement,Examen
 
+
+@admin.register(Examen)
+class ExamenAdmin(admin.ModelAdmin):
+    list_display  = ('titre', 'date', 'status')
+    list_filter   = ('date', 'status')
+    search_fields = ('titre',)
+    
 @admin.register(Etudiant)
 class EtudiantAdmin(admin.ModelAdmin):
-    list_display = ("prenom", "nom", "email", "telephone", "niveau")
+    list_display = ("prenom", "nom", "email", "telephone", "niveau", "departement")
     search_fields = ("prenom", "nom", "email")
     list_filter = ("niveau",)
 
+
+admin.site.register(Departement)
 @admin.register(Cours)
 class CoursAdmin(admin.ModelAdmin):
     list_display = ("nom",)
