@@ -76,7 +76,11 @@
       {% endblock %}
     </div>
 
-    {% include "partials/footer.html" %}
+   <footer>
+  {% include "partials/footer.html" %}
+  {% block footer %}{% endblock %}
+</footer>
+
     <script src="{% static 'js/scripts.js' %}" defer></script>
     
   </body>

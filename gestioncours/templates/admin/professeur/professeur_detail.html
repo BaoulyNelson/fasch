@@ -1,0 +1,94 @@
+{% extends 'admin/dashboard.html' %}
+
+{% load static %}
+
+<title>Profil de {{ professeur.prenom }} {{ professeur.nom }}</title>
+    
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/professeur_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto px-4 py-10">
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
+            
+            <!-- En-tête du Profil -->
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 p-8 md:p-10 text-white">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="profile-avatar-initials rounded-full bg-white bg-opacity-30 text-blue-700 flex items-center justify-center text-5xl md:text-6xl font-bold mb-4 md:mb-0 md:mr-8 flex-shrink-0">
+                        {{ professeur.prenom|first|upper }}{{ professeur.nom|first|upper }}
+
+                    </div>
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold text-center md:text-left">{{ professeur.prenom }} {{ professeur.nom }}</h1>
+                        {% if professeur.specialite %}
+                        <p class="text-lg text-blue-100 mt-1 text-center md:text-left">
+                            <i class="fas fa-star mr-1 opacity-75"></i> {{ professeur.specialite }}
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Détails du Profil -->
+            <div class="p-8 md:p-10">
+                <h2 class="text-xl font-semibold text-gray-700 mb-6 border-b pb-3">
+                    <i class="fas fa-info-circle mr-2 text-blue-500"></i>Informations Détaillées
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <!-- Email -->
+                    {% if professeur.email %}
+                    <div class="flex items-start">
+                        <i class="fas fa-envelope text-blue-500 w-5 h-5 mr-3 mt-1 flex-shrink-0"></i>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Email</p>
+                            <a href="mailto:{{ professeur.email }}" class="text-gray-700 hover:text-blue-600 break-all">{{ professeur.email }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Téléphone -->
+                    {% if professeur.telephone %}
+                    <div class="flex items-start">
+                        <i class="fas fa-phone-alt text-blue-500 w-5 h-5 mr-3 mt-1 flex-shrink-0"></i>
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium">Téléphone</p>
+                            <p class="text-gray-700">{{ professeur.telephone }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Cours Enseignés -->
+                {% with cours_liste=professeur.cours_enseignes %}
+                {% if cours_liste %}
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-3">
+                        <i class="fas fa-chalkboard-teacher mr-2 text-blue-500"></i>Cours Enseignés
+                    </h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        {{ cours_liste }}
+                    </p>
+                    
+                {% endif %}
+                {% endwith %}
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-10 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4">
+                    <a href="{% url 'professeurs_list' %}" class="w-full sm:w-auto text-center bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-lg transition duration-150 ease-in-out">
+                        <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+                    </a>
+                    <a href="{% url 'modifier_professeur' professeur.pk %}" class="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                        <i class="fas fa-edit mr-2"></i>Modifier le Profil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+{% endblock %}

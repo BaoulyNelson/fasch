@@ -22,16 +22,18 @@
           <div class="flex flex-wrap gap-2 mb-4">
             {% for domaine in pub.domaines_list %}
             <span class="px-2 py-1 text-xs rounded-full bg-primary-color bg-opacity-20 text-primary-color">
-              {{ domaine.strip }}
+              {{ domaine }}
             </span>
             {% endfor %}
             <span class="px-2 py-1 text-xs rounded-full bg-primary-color bg-opacity-20 text-primary-color">
               {{ pub.date_publication|date:"Y" }}
             </span>
           </div>
+          {% if pub.lien %}
           <a href="{{ pub.lien }}" class="inline-flex items-center text-sm text-primary-color hover:underline" target="_blank">
             Accéder <i class="fas fa-external-link-alt ml-1"></i>
           </a>
+          {% endif %}
         </div>
       </div>
       {% empty %}

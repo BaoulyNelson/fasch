@@ -64,7 +64,8 @@
         <div class="relative group">
           <a href="{% url 'admission_section' section='all' %}" class="px-3 py-2 text-sm font-medium rounded-md transition hover:bg-gray-200">Admissions</a>
           <div class="absolute left-0 mt-2 hidden group-hover:block bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[12rem]">
-            <a href="{% url 'exam_calendar' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Calendrier d'Examen</a>
+          <a href="{% url 'calendrier_examen' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Calendrier d'Examen</a>
+
             <a href="{% url 'admission_section' section='conditions' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Conditions d’admission</a>
             <a href="{% url 'admission_section' section='calendrier' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Calendrier</a>
             <a href="{% url 'admission_section' section='demande' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Demande d’admission</a>
@@ -202,7 +203,7 @@
         <div class="mobile-submenu hidden">
           <a href="{% url 'admission_section' section='all' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Tous</a>
           <a href="{% url 'admission_section' section='calendrier' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Calendrier d'admission</a>
-          <a href="{% url 'exam_calendar' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Calendrier d'Examen'</a>
+          <a href="{% url 'calendrier_examen' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Calendrier d'Examen'</a>
           <a href="{% url 'admission_section' section='demande' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Demande d'admission</a>
           <a href="{% url 'admission_section' section='conditions' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">Conditions d'admission</a>
         </div>
@@ -222,7 +223,7 @@
       </div>
 
 <div class="mobile-nav-item">
-  <a href="{% url 'cours_list' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200">
+  <a href="{% url 'list_cours' %}" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition duration-300 ease-in-out hover:bg-gray-200">
     Cours
     <i class="fas fa-chevron-down ml-2 transition-transform duration-300 submenu-toggle-icon"></i>
   </a>

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Calendrier {{ annee }}{% endblock %}
+
+{% block header %}
+  <div class="text-center">
+    <h1 class="text-4xl font-extrabold tracking-tight">{{ annee }}</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header du calendrier -->
+<div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-8">
+  <h2 class="text-4xl font-extrabold text-white text-center">{{ annee }}</h2>
+  <p class="text-blue-100 text-center mt-2">Calendrier des Examens de l'année académique</p>
+</div>
+
+<!-- Navigation entre années -->
+<div class="flex flex-col md:flex-row justify-between items-center px-6 py-4 border-b border-gray-200">
+  <div></div> <!-- placeholder pour garder l’alignement -->
+  <div class="flex space-x-4 mt-4 md:mt-0">
+    <a href="{% url 'calendrier_examen' annee_precedente %}"
+       class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition duration-200">
+      <svg class="w-5 h-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+      {{ annee_precedente }} – {{ annee }}
+    </a>
+    <a href="{% url 'calendrier_examen' annee_suivante %}"
+       class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition duration-200">
+      {{ annee }} – {{ annee_suivante }}
+      <svg class="w-5 h-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+      </svg>
+    </a>
+  </div>
+</div>
+
+{# grille 3 colonnes sur medium+, 1 colonne sur mobile pour coller à l'image #}
+<div class="max-w-5xl mx-auto">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    {% for mois in mois_donnees %}
+      <div class="p-4">
+        {# Nom du mois, centré, léger et gris #}
+        <div class="text-center text-lg font-semibold text-gray-600 mb-3">{{ mois.nom }}</div>
+
+        {# entête des jours de la semaine (L M M J V S D) #}
+        <div class="grid grid-cols-7 gap-0 text-center text-xs tracking-wider text-gray-500 mb-1">
+          {% for j in jours_noms %}
+            <div class="py-0.5">{{ j }}</div>
+          {% endfor %}
+        </div>
+
+        {# grille des jours ; on force 6 lignes max pour garder alignement #}
+        <div class="grid grid-rows-6 gap-y-1">
+          {% for semaine in mois.semaines %}
+            <div class="grid grid-cols-7 gap-0 text-center text-sm">
+              {% for jour in semaine %}
+                {% if not jour.est_mois_courant %}
+                  {# jours hors mois : petites chiffres gris clair #}
+                  <div class="py-1 text-xs text-gray-300">{{ jour.day }}</div>
+                {% else %}
+                  <div class="relative py-1">
+                    {# Jour courant : rond noir avec texte blanc #}
+                    <div class="inline-flex items-center justify-center w-6 h-6 mx-auto">
+                      {% if jour.est_aujourd %}
+                        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-black text-white">
+                          {{ jour.day }}
+                        </span>
+                      {% else %}
+                        {# Dimanche en rouge, les autres en gris foncé #}
+                        {% if jour.weekday == 6 %}
+                          <span class="inline-flex items-center justify-center w-6 h-6 text-red-500">
+                            {{ jour.day }}
+                          </span>
+                        {% else %}
+                          <span class="inline-flex items-center justify-center w-6 h-6 text-gray-800">
+                            {{ jour.day }}
+                          </span>
+                        {% endif %}
+                      {% endif %}
+                    </div>
+
+                    {# indicateur d'examens (petit badge rouge en bas à droite) #}
+
+
+                            {% if jour.evenements %}
+                            <div class="absolute bottom-0 right-0 transform translate-x-1/2 translate-y-1/2">
+                                {% for exam in jour.evenements %}
+                                {% if exam.status == 'upcoming' %}
+                                    <span class="text-[8px] bg-yellow-500 text-white px-1 py-0 rounded">
+                                    {{ exam.get_status_display }}
+                                    </span>
+                                {% elif exam.status == 'active' %}
+                                    <span class="text-[8px] bg-green-600 text-white px-1 py-0 rounded">
+                                    {{ exam.get_status_display }}
+                                    </span>
+                                {% elif exam.status == 'completed' %}
+                                    <span class="text-[8px] bg-red-600 text-white px-1 py-0 rounded line-through">
+                                    {{ exam.get_status_display }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-[8px] bg-gray-400 text-white px-1 py-0 rounded">
+                                    {{ exam.get_status_display }}
+                                    </span>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+
+
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="mt-12 max-w-3xl mx-auto">
+  <div class="bg-white shadow-md rounded-xl p-6 border border-gray-100">
+    <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2 mb-4">
+      <span class="text-blue-600">📅</span>
+      <span>Examens à venir</span>
+    </h2>
+
+    <ul class="divide-y divide-gray-100">
+      {% for ex in examens_a_venir %}
+        <li class="py-3 flex items-center justify-between hover:bg-gray-50 rounded-lg px-2 transition">
+          <div class="text-left">
+            <p class="text-sm font-medium text-gray-900">{{ ex.titre }}</p>
+            <p class="text-xs text-gray-500">{{ ex.date|date:"d M Y" }}</p>
+          </div>
+          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+            {{ ex.date|date:"D" }}
+          </span>
+        </li>
+      {% empty %}
+        <li class="py-3 text-sm text-gray-500 italic text-center">
+          Aucun examen à venir
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% endblock %}
+

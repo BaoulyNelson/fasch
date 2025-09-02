@@ -3,6 +3,9 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from django.urls import re_path
+from .views import calendrier_examen
+
 
 urlpatterns = [
     # ------------------- Accueil -------------------
@@ -52,7 +55,54 @@ urlpatterns = [
     path('staff/demande-admission/add/', views.DemandeAdmissionCreate.as_view(), name='add_demande_admission'),
     path('staff/examens/ajouter/', views.ExamenCreate.as_view(), name='add_examen'),
 
-    
+        
+    # ------------------ Étudiants ------------------
+    path('staff/etudiant/', views.EtudiantListView.as_view(), name='etudiants_list'),
+
+    # ------------------ Cours ------------------
+    path('staff/cours/', views.CoursListView.as_view(), name='cours_list'),
+
+    # ------------------ Professeurs ------------------
+    path('staff/professeur/', views.ProfesseurListView.as_view(), name='professeurs_list'),
+
+    # ------------------ Inscriptions ------------------
+    path('staff/inscription/', views.InscriptionListView.as_view(), name='inscriptions_list'),
+
+    # ------------------ Horaires ------------------
+    path('staff/horaire/', views.HoraireCoursListView.as_view(), name='horaires_list'),
+
+    # ------------------ Articles ------------------
+    path('staff/article/', views.ArticleListView.as_view(), name='articles_list'),
+
+    # ------------------ Événements ------------------
+    path('staff/evenement/', views.EvenementListView.as_view(), name='evenements_list'),
+
+    # ------------------ Annonces ------------------
+    path('staff/annonce/', views.AnnonceListView.as_view(), name='annonces_list'),
+
+    # ------------------ Programmes ------------------
+    path('staff/programme/', views.ProgrammeListView.as_view(), name='programmes_list'),
+
+    # ------------------ Axes de recherche ------------------
+    path('staff/axe-recherche/', views.AxeRechercheListView.as_view(), name='axes_list'),
+
+    # ------------------ Publications ------------------
+    path('staff/publication/', views.PublicationRechercheListView.as_view(), name='publications_list'),
+
+    # ------------------ Livres ------------------
+    path('staff/livre/', views.LivreListView.as_view(), name='livres_list'),
+
+    # ------------------ Personnel ------------------
+    path('staff/personnel/', views.PersonnelListView.as_view(), name='personnels_list'),
+
+    # ------------------ Étapes d'admission ------------------
+    path('staff/etape-admission/', views.EtapeAdmissionListView.as_view(), name='etapes_admission_list'),
+
+    # ------------------ Demandes d'admission ------------------
+    path('staff/demande-admission/', views.DemandeAdmissionListView.as_view(), name='demandes_admission_list'),
+
+    # ------------------ Examens ------------------
+    path('staff/examens/', views.ExamenListView.as_view(), name='examens_list'),
 
     #pour modifier
     path('staff/etudiant/<int:pk>/edit/', views.EtudiantUpdate.as_view(), name='modifier_etudiant'),
@@ -90,6 +140,7 @@ urlpatterns = [
     path('staff/etape-admission/<int:pk>/', views.EtapeAdmissionDetail.as_view(), name='detail_etape_admission'),
     path('staff/-admission/<int:pk>/', views.DemandeAdmissionDetail.as_view(), name='detail_demande_admission'),
     path('staff/examens/<int:pk>/', views.ExamenDetail.as_view(), name='detail_examen'),
+    
     # ------------------- confirmation de suppression -------------------
     path('staff/etudiant/<int:pk>/delete/', views.EtudiantDelete.as_view(), name='supprimer_etudiant'),
     path('staff/cours/<int:pk>/delete/', views.CoursDelete.as_view(), name='supprimer_cours'),
@@ -125,11 +176,12 @@ urlpatterns = [
 
     # ------------------- Recherche Globale -------------------
     path('recherche/', views.recherche_globale, name='recherche_globale'),
+    # urls.py
+    path('search/', views.global_search, name='global_search'),
 
-    path('calendrier/', views.exam_calendar, name='exam_calendar'),
-    path('calendrier/<int:year>/<int:month>/',
-        views.exam_calendar,name='exam_calendar_month'
-    ),
+    # accepte /calendrier/  et /calendrier/2025/
+    re_path(r'^calendrier(?:/(?P<annee>\d{4}))?/$', calendrier_examen, name='calendrier_examen'),
+
     # ------------------- Événements -------------------
     path('evenement/<slug:slug>/', views.detail_evenement, name='evenement_detail'),
 
@@ -153,10 +205,9 @@ urlpatterns = [
     path('publication/', views.recherche_view, name='recherche'),
     path('publications/', views.publications_list, name='publications'),
     path('publications/<str:type_publication>/', views.publications_view, name='publications_view'),
-    path('cours/', views.cours_list, name='cours_list'),
-    path('cours/', views.cours_list,           name='cours_tous'),
-    path('horaire/<int:horaire_id>/cours/',
-    views.cours_detail,name='cours_detail'
+    path('cours/', views.list_cours, name='list_cours'),
+    path('cours/', views.list_cours, name='cours_tous'),
+    path('horaire/<int:horaire_id>/cours/',views.cours_detail,name='cours_detail'
 ),
     path('cours/<str:session>/', views.cours_par_session, name='cours_par_session'),
 
@@ -164,7 +215,3 @@ urlpatterns = [
     path('mes-cours/', views.mes_cours, name='mes_cours'),
 
 ]
-
-# ------------------- Fichiers médias en développement -------------------
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

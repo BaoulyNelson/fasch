@@ -1,2894 +1,456 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FASCH - Dashboard Administratif</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- Ajout d'Alpine.js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: "#2563eb",
-            secondary: "#1e40af",
-            accent: "#3b82f6",
-          },
-        },
-      },
-    };
-  </script>
-  <style>
-    [x-cloak] {
-      display: none !important;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{% block title %}FASCH -- Espace Admin{% endblock %}</title>
+
+    <!-- Tailwind & FontAwesome via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Google Fonts pour une typographie plus élégante -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    {% block extra_head %}{% endblock %}
+
+    <style>
+        /* Masquer les éléments avant l'init Alpine */
+        [x-cloak] {
+            display: none !important;
+        }
+        /* Typographie de base */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style de la scrollbar pour un look plus pro */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        /* Classe pour le lien actif dans la sidebar */
+        .sidebar-link-active {
+            background-color: #3b82f6; /* bg-blue-600 */
+            color: #ffffff; /* text-white */
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100">
-  <div x-data="{
-    sidebarOpen: false,
-    currentTab: 'dashboard',
-    showEtudiantForm: false,
-    showCoursForm: false,
-    showProfesseurForm: false,
-    showHoraireForm: false,
-    showInscriptionForm: false,
-    showExamenForm: false,
-    showEvenementForm: false,
-    showAnnonceForm: false,
-    showArticleForm: false,
-    showProgrammeForm: false,
-    showAxeForm: false,
-    showPublicationForm: false,
-    showLivreForm: false,
-    showPersonnelForm: false,
-    showEtapeAdmissionForm: false,
-    showDemandeAdmissionForm: false,
-    userMenuOpen: false,
-    notificationDropdownOpen: false,
-
-    get currentTabTitle() {
-      const titles = {
-        dashboard: 'Tableau de bord',
-        etudiants: 'Gestion des Étudiants',
-        cours: 'Gestion des Cours',
-        professeurs: 'Gestion des Professeurs',
-        horaires: 'Gestion des Horaires',
-        inscriptions: 'Gestion des Inscriptions',
-        calendrier: 'Gestion des examens',
-        evenements: 'Gestion des Événements',
-        annonces: 'Gestion des Annonces',
-        articles: 'Gestion des Articles',
-        programmes: 'Gestion des Programmes',
-        axes: 'Gestion des Axes de Recherche',
-        publications: 'Gestion des Publications',
-        livres: 'Gestion des Livres',
-        personnel: 'Gestion du Personnel',
-        etapes_admission: 'Gestion des Étapes d\'Admission',
-        demandes_admission: 'Gestion des Demandes d\'Admission'
-      };
-      return titles[this.currentTab] || 'Tableau de bord';
-    }
-  }" class="flex h-screen overflow-hidden">
-
-    <!-- Sidebar -->
-    <div x-show="sidebarOpen" @click.away="sidebarOpen = false" class="fixed inset-0 z-40 lg:hidden" x-cloak>
-      <div class="absolute inset-0 bg-gray-600 opacity-75"></div>
-      <div class="fixed inset-y-0 left-0 flex flex-col w-64 max-w-xs bg-gray-800 z-50">
-        <div class="flex items-center justify-between p-4 border-b border-gray-700">
-          <h2 class="text-xl font-bold text-white">FASCH Admin</h2>
-          <button @click="sidebarOpen = false" class="text-gray-300 hover:text-white">
-            <i class="fas fa-times"></i>
-          </button>
-          
-        </div>
-
-        <div class="flex-1 overflow-y-auto">
-          <nav class="px-2 py-4">
-            <!-- Navigation Links -->
-            <div class="space-y-1">
-              <button @click="currentTab = 'dashboard'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'dashboard' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-tachometer-alt mr-3"></i>
-                Tableau de bord
-              </button>
-              <button @click="currentTab = 'etudiants'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'etudiants' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-user-graduate mr-3"></i>
-                Étudiants
-              </button>
-              <button @click="currentTab = 'cours'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'cours' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-book mr-3"></i>
-                Cours
-              </button>
-              <button @click="currentTab = 'professeurs'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'professeurs' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                Professeurs
-              </button>
-              <button @click="currentTab = 'horaires'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'horaires' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-clock mr-3"></i>
-                Horaires
-              </button>
-              <button @click="currentTab = 'inscriptions'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'inscriptions' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-clipboard-list mr-3"></i>
-                Inscriptions
-              </button>
-              <button @click="currentTab = 'calendrier'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'calendrier' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                
-                <i class="fas fa-calendar-alt mr-3"></i>
-
-                Calendrier
-              </button>
-              <button @click="currentTab = 'evenements'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'evenements' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-calendar-alt mr-3"></i>
-                Événements
-              </button>
-              <button @click="currentTab = 'annonces'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'annonces' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-bullhorn mr-3"></i>
-                Annonces
-              </button>
-              <button @click="currentTab = 'articles'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'articles' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-newspaper mr-3"></i>
-                Articles
-              </button>
-              <!-- Programmes -->
-              <button @click="currentTab = 'programmes'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'programmes' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-graduation-cap mr-3"></i>
-                Programmes
-              </button>
-
-              <!-- Axes de Recherche -->
-              <button @click="currentTab = 'axes'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'axes' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-lightbulb mr-3"></i>
-                Axes de Recherche
-              </button>
-
-              <!-- Publications de Recherche -->
-              <button @click="currentTab = 'publications'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'publications' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-file-alt mr-3"></i>
-                Publications
-              </button>
-
-              <!-- Livres -->
-              <button @click="currentTab = 'livres'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'livres' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-book mr-3"></i>
-                Livres
-              </button>
-
-              <!-- Personnel -->
-              <button @click="currentTab = 'personnel'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'personnel' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-users-cog mr-3"></i>
-                Personnel
-              </button>
-
-              <!-- Étapes d'Admission -->
-              <button @click="currentTab = 'etapes_admission'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'etapes_admission' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-tasks mr-3"></i>
-                Étapes d'Admission
-              </button>
-
-              <!-- Demandes d'Admission -->
-              <button @click="currentTab = 'demandes_admission'; sidebarOpen = false" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'demandes_admission' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-envelope-open-text mr-3"></i>
-                Demandes d'Admission
-              </button>
-
-            </div>
-          </nav>
-        </div>
+<body class="bg-slate-100 text-slate-800" x-data="{ sidebarOpen: false, userMenuOpen: false, activeAccordion: '' }">
+{% if messages %}
+    <div class="mt-4 space-y-4">
+      {% for message in messages %} {% if message.tags == 'success' %}
+      <div
+        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative text-center"
+        role="alert"
+      >
+        <strong class="font-bold">Succès : </strong> {{ message }}
       </div>
+      {% elif message.tags == 'error' or message.tags == 'danger' %}
+      <div
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center"
+        role="alert"
+      >
+        <strong class="font-bold">Erreur : </strong> {{ message }}
+      </div>
+      {% elif message.tags == 'warning' %}
+      <div
+        class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative text-center"
+        role="alert"
+      >
+        <strong class="font-bold">Attention : </strong> {{ message }}
+      </div>
+      {% else %}
+      <div
+        class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative text-center"
+        role="alert"
+      >
+        {{ message }}
+      </div>
+      {% endif %} {% endfor %}
     </div>
+    {% endif %}
+    <div class="flex min-h-screen">
 
-    <!-- Static sidebar for desktop -->
-    <div class="hidden lg:flex lg:flex-shrink-0">
-      <div class="flex flex-col w-64">
-        <div class="flex flex-col flex-grow bg-gray-800 pt-5 pb-4 overflow-y-auto">
-          <div class="flex items-center flex-shrink-0 px-4">
-            <h2 class="text-xl font-bold text-white">FASCH Admin</h2>
-          </div>
-          <div class="mt-5 flex-1 flex flex-col">
-            <nav class="flex-1 px-2 space-y-1">
-              <button @click="currentTab = 'dashboard'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'dashboard' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-tachometer-alt mr-3"></i>
-                Tableau de bord
-              </button>
-              <button @click="currentTab = 'etudiants'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'etudiants' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-user-graduate mr-3"></i>
-                Étudiants
-              </button>
-              <button @click="currentTab = 'cours'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'cours' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-book mr-3"></i>
-                Cours
-              </button>
-              <button @click="currentTab = 'professeurs'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'professeurs' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-chalkboard-teacher mr-3"></i>
-                Professeurs
-              </button>
-              <button @click="currentTab = 'horaires'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'horaires' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-clock mr-3"></i>
-                Horaires
-              </button>
-              <button @click="currentTab = 'inscriptions'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'inscriptions' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-clipboard-list mr-3"></i>
-                Inscriptions
-              </button>
-              <button @click="currentTab = 'calendrier'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'calendrier' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-              <i class="fas fa-calendar-alt mr-3"></i>
+        <!-- Backdrop pour la sidebar mobile -->
+        <div x-show="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 z-30 bg-black/30 lg:hidden" x-cloak></div>
 
-                Calendrier
-              </button>
-              <button @click="currentTab = 'evenements'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'evenements' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-calendar-alt mr-3"></i>
-                Événements
-              </button>
-              <button @click="currentTab = 'annonces'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'annonces' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-bullhorn mr-3"></i>
-                Annonces
-              </button>
-              <button @click="currentTab = 'articles'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'articles' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-newspaper mr-3"></i>
-                Articles
-              </button>
+        <!-- Sidebar -->
+        <aside 
+            class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-slate-800 text-slate-200 shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0"
+            :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
+        >
+            <!-- Logo -->
+            <div class="flex h-16 shrink-0 items-center justify-center border-b border-slate-700">
+                <a href="{% url 'dashboard' %}" class="text-2xl font-bold text-white tracking-wider">
+                    <i class="fas fa-shield-alt text-blue-500"></i> FASCH
+                </a>
+            </div>
 
-              <!-- Programmes -->
-              <button @click="currentTab = 'programmes'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'programmes' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-graduation-cap mr-3"></i>
-                Programmes
-              </button>
+            <!-- Navigation -->
+            <nav class="flex-1 overflow-y-auto p-4">
+                {% block sidebar %}
+                <ul class="space-y-2">
+                    <li>
+                        <a href="{% url 'dashboard' %}" class="flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-700 transition-colors">
+                            <i class="fas fa-tachometer-alt mr-3 w-5 text-center"></i>
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'home' %}" class="flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-slate-700 transition-colors">
+                            <i class="fas fa-home mr-3 w-5 text-center"></i>
+                            Accueil
+                        </a>
+                    </li>
 
-              <!-- Axes de Recherche -->
-              <button @click="currentTab = 'axes'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'axes' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-lightbulb mr-3"></i>
-                Axes de Recherche
-              </button>
+                    <!-- Section Académique (Accordéon) -->
+                    <li x-data="{ open: activeAccordion === 'academique' }" @click.away="if(open) activeAccordion = ''">
+                        <button @click="activeAccordion = (activeAccordion === 'academique' ? '' : 'academique')" class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium hover:bg-slate-700 transition-colors">
+                            <span class="flex items-center">
+                                <i class="fas fa-university mr-3 w-5 text-center"></i>
+                                Gestion académique
+                            </span>
+                            <i class="fas fa-chevron-down shrink-0 transition-transform" :class="{'rotate-180': activeAccordion === 'academique'}"></i>
+                        </button>
+                        <ul x-show="activeAccordion === 'academique'" x-transition class="mt-1 space-y-1 pl-5" x-cloak>
+                            <li><a href="{% url 'etudiants_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-user-graduate mr-3 w-5 text-center"></i>Étudiants</a></li>
+                            <li><a href="{% url 'cours_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-book mr-3 w-5 text-center"></i>Cours</a></li>
+                            <li><a href="{% url 'professeurs_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-chalkboard-teacher mr-3 w-5 text-center"></i>Professeurs</a></li>
+                            <li><a href="{% url 'horaires_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-clock mr-3 w-5 text-center"></i>Horaires</a></li>
+                            <li><a href="{% url 'inscriptions_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-clipboard-list mr-3 w-5 text-center"></i>Inscriptions</a></li>
+                            <li><a href="{% url 'examens_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-file-signature mr-3 w-5 text-center"></i>Examens</a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Section Contenu (Accordéon) -->
+                    <li x-data="{ open: activeAccordion === 'contenu' }" @click.away="if(open) activeAccordion = ''">
+                        <button @click="activeAccordion = (activeAccordion === 'contenu' ? '' : 'contenu')" class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium hover:bg-slate-700 transition-colors">
+                            <span class="flex items-center">
+                                <i class="fas fa-pen-to-square mr-3 w-5 text-center"></i>
+                                Contenu & événements
+                            </span>
+                            <i class="fas fa-chevron-down shrink-0 transition-transform" :class="{'rotate-180': activeAccordion === 'contenu'}"></i>
+                        </button>
+                        <ul x-show="activeAccordion === 'contenu'" x-transition class="mt-1 space-y-1 pl-5" x-cloak>
+                            <li><a href="{% url 'articles_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-newspaper mr-3 w-5 text-center"></i>Articles</a></li>
+                            <li><a href="{% url 'evenements_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-calendar-alt mr-3 w-5 text-center"></i>Événements</a></li>
+                            <li><a href="{% url 'annonces_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-bullhorn mr-3 w-5 text-center"></i>Annonces</a></li>
+                        </ul>
+                    </li>
 
-              <!-- Publications de Recherche -->
-              <button @click="currentTab = 'publications'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'publications' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-file-alt mr-3"></i>
-                Publications
-              </button>
+                    <!-- Section Recherche (Accordéon) -->
+                    <li x-data="{ open: activeAccordion === 'recherche' }" @click.away="if(open) activeAccordion = ''">
+                        <button @click="activeAccordion = (activeAccordion === 'recherche' ? '' : 'recherche')" class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium hover:bg-slate-700 transition-colors">
+                            <span class="flex items-center">
+                                <i class="fas fa-flask mr-3 w-5 text-center"></i>
+                                Recherche & ressources
+                            </span>
+                            <i class="fas fa-chevron-down shrink-0 transition-transform" :class="{'rotate-180': activeAccordion === 'recherche'}"></i>
+                        </button>
+                        <ul x-show="activeAccordion === 'recherche'" x-transition class="mt-1 space-y-1 pl-5" x-cloak>
+                            <li><a href="{% url 'programmes_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-graduation-cap mr-3 w-5 text-center"></i>Programmes</a></li>
+                            <li><a href="{% url 'axes_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-lightbulb mr-3 w-5 text-center"></i>Axes</a></li>
+                            <li><a href="{% url 'publications_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-file-alt mr-3 w-5 text-center"></i>Publications</a></li>
+                            <li><a href="{% url 'livres_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-book-open mr-3 w-5 text-center"></i>Livres</a></li>
+                        </ul>
+                    </li>
 
-              <!-- Livres -->
-              <button @click="currentTab = 'livres'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'livres' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-book mr-3"></i>
-                Livres
-              </button>
-
-              <!-- Personnel -->
-              <button @click="currentTab = 'personnel'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'personnel' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-users-cog mr-3"></i>
-                Personnel
-              </button>
-
-              <!-- Étapes d'Admission -->
-              <button @click="currentTab = 'etapes_admission'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'etapes_admission' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-tasks mr-3"></i>
-                Étapes d'Admission
-              </button>
-
-              <!-- Demandes d'Admission -->
-              <button @click="currentTab = 'demandes_admission'" class="flex items-center px-4 py-2 text-sm font-medium rounded-md w-full text-left" :class="currentTab === 'demandes_admission' ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'">
-                <i class="fas fa-envelope-open-text mr-3"></i>
-                Demandes d'Admission
-              </button>
-
+                    <!-- Section Administration (Accordéon) -->
+                    <li x-data="{ open: activeAccordion === 'admin' }" @click.away="if(open) activeAccordion = ''">
+                        <button @click="activeAccordion = (activeAccordion === 'admin' ? '' : 'admin')" class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-medium hover:bg-slate-700 transition-colors">
+                            <span class="flex items-center">
+                                <i class="fas fa-cogs mr-3 w-5 text-center"></i>
+                                Administration
+                            </span>
+                            <i class="fas fa-chevron-down shrink-0 transition-transform" :class="{'rotate-180': activeAccordion === 'admin'}"></i>
+                        </button>
+                        <ul x-show="activeAccordion === 'admin'" x-transition class="mt-1 space-y-1 pl-5" x-cloak>
+                            <li><a href="{% url 'personnels_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-users-cog mr-3 w-5 text-center"></i>Personnel</a></li>
+                            <li><a href="{% url 'etapes_admission_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-tasks mr-3 w-5 text-center"></i>Étapes d'admission</a></li>
+                            <li><a href="{% url 'demandes_admission_list' %}" class="flex items-center rounded-md px-3 py-2 text-sm hover:bg-slate-700/50"><i class="fas fa-envelope-open-text mr-3 w-5 text-center"></i>Demandes</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% endblock %}
             </nav>
-          </div>
-        </div>
-      </div>
-    </div>
+        </aside>
 
-    <div class="flex flex-col flex-1 overflow-hidden">
-      <div class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
-        <button @click="sidebarOpen = true" class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-600 lg:hidden">
-          <i class="fas fa-bars"></i>
-        </button>
-        
-        <div class="flex-1 px-4 flex justify-between">
-          <div class="flex-1 flex items-center">
-            <h1 class="text-2xl font-semibold text-gray-900 self-center" x-text="currentTabTitle"></h1>
-          </div>
-
-          <div class="ml-4 flex items-center md:ml-6">
-            <div class="mx-3">
-              <span class="text-gray-700">Admin</span>
-            </div>
-               <div class="relative ml-3">
-              <button
-                @click="userMenuOpen = !userMenuOpen"
-                class="max-w-xs bg-primary flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid"
-                id="user-menu"
-                aria-label="User menu"
-                aria-haspopup="true">
+        <!-- Contenu principal -->
+        <div class="flex flex-1 flex-col lg:pl-64">
+            
+            <!-- Header -->
+            <header class="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white/80 px-4 shadow-sm backdrop-blur-sm sm:px-6 lg:px-8">
                 
-                  <span class="inline-block h-8 w-8 rounded-full overflow-hidden bg-gray-100">
-                    <i class="fas fa-user text-gray-500 p-2"></i>
-                  </span>
-                </button>
-                <div
-                x-show="userMenuOpen"
-                @click.away="userMenuOpen = false"
-                x-cloak
-                x-transition
-                class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
-                role="menu"
-                aria-orientation="vertical"
-                aria-labelledby="user-menu"
-              >
-              <div class="py-1" role="none">
-                  <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Profil</a>
-                  <a href="{% url 'home' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Paramètres</a>
-                  <a href="{% url 'confirmer_deconnexion' %}" 
-                     class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Déconnexion</button>
-              </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <main class="flex-1 relative overflow-y-auto focus:outline-none" tabindex="0">
-        <div class="py-6">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <!-- Dashboard Content -->
-            <div x-show="currentTab === 'dashboard'" x-cloak>
-              <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-primary rounded-md p-3">
-                        <i class="fas fa-user-graduate text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Étudiants
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_etudiants }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Bouton pour sidebar mobile & Titre de la page -->
+                <div class="flex items-center gap-4">
+                    <button @click="sidebarOpen = true" class="text-slate-600 hover:text-slate-900 lg:hidden">
+                        <i class="fas fa-bars fa-lg"></i>
+                        <span class="sr-only">Ouvrir le menu</span>
+                    </button>
+                    <h1 class="text-lg font-semibold text-slate-900">{% block header %}FASCH/UEH{% endblock %}</h1>
                 </div>
 
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-accent rounded-md p-3">
-                        <i class="fas fa-book text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Cours
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_cours }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <!-- Actions du header -->
+                <div class="flex items-center gap-4">
+                    
+                    <!-- Formulaire global search -->
+                    <form id="mobile-search-form" 
+                        method="get" action="{% url 'global_search' %}" 
+                        class="relative hidden mt-2 md:block">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input name="q" value="{{ request.GET.q|default:'' }}" 
+                            type="search" placeholder="Rechercher..." 
+                            class="w-full rounded-md border-slate-300 bg-slate-100 py-2 pl-9 pr-3 text-sm focus:border-blue-500 focus:ring-blue-500">
+                    </form>
 
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-secondary rounded-md p-3">
-                        <i class="fas fa-chalkboard-teacher text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Professeurs
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_professeurs }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-indigo-600 rounded-md p-3">
-                        <i class="fas fa-clipboard-list text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Inscriptions
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_inscriptions }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Card pour les créneaux horaires -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-green-600 rounded-md p-3">
-                        <i class="fas fa-clock text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Horaires
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_horaires }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                        <!-- Bouton loupe (visible seulement sur mobile) -->
+                        <button id="search-toggle" 
+                                class="relative text-slate-600 hover:text-slate-900 block md:hidden">
+                            <i class="fas fa-magnifying-glass fa-lg"></i>
+                        </button>
 
-                <!-- Card pour les examens -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-blue-600 rounded-md p-3">
-                        <i class="fas fa-address-book text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Examens
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_examens }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <!-- Événements -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-indigo-600 rounded-md p-3">
-                        <i class="fas fa-calendar-alt text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Événements
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_evenements }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    {% block header_actions %}{% endblock %}
 
-                <!-- Annonces -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-yellow-600 rounded-md p-3">
-                        <i class="fas fa-bullhorn text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Annonces
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_annonces }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Articles -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-green-600 rounded-md p-3">
-                        <i class="fas fa-newspaper text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Articles
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_articles }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Programmes -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-purple-600 rounded-md p-3">
-                        <i class="fas fa-graduation-cap text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Programmes
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_programmes }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Axes de Recherche -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-yellow-600 rounded-md p-3">
-                        <i class="fas fa-lightbulb text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Axes de Recherche
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_axes }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Publications de Recherche -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-teal-600 rounded-md p-3">
-                        <i class="fas fa-file-alt text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Publications
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_publications }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Livres -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-green-600 rounded-md p-3">
-                        <i class="fas fa-book text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Livres
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_livres }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Personnel -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-red-600 rounded-md p-3">
-                        <i class="fas fa-users-cog text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Personnel
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_personnel }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Étapes d'Admission -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                        <i class="fas fa-tasks text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Étapes d'Admission
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_etapes_admission }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Demandes d'Admission -->
-                <div class="bg-white overflow-hidden shadow rounded-lg">
-                  <div class="p-5">
-                    <div class="flex items-center">
-                      <div class="flex-shrink-0 bg-blue-600 rounded-md p-3">
-                        <i class="fas fa-envelope-open-text text-white"></i>
-                      </div>
-                      <div class="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt class="text-sm font-medium text-gray-500 truncate">
-                            Demandes d'Admission
-                          </dt>
-                          <dd class="flex items-baseline">
-                            <div class="text-2xl font-semibold text-gray-900">
-                              {{ nombre_demandes_admission }}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="mt-8">
-                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                  <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">
-                      Événements à venir
-                    </h3>
-                  </div>
-                  <ul class="divide-y divide-gray-200">
-                    {% for evenement in evenements_a_venir %}
-                    <li class="px-4 py-4 sm:px-6">
-                      <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                          <div class="flex-shrink-0">
-                            <i class="fas fa-calendar-day text-primary text-xl"></i>
-                          </div>
-                          <div class="ml-4">
-                            <div class="text-sm font-medium text-primary">
-                              {{ evenement.titre }}
-                            </div>
-                            <div class="text-sm text-gray-500">
-                              {{ evenement.date_debut|date:"d/m/Y H:i" }}
-                            </div>
-                          </div>
+                    <!-- Menu utilisateur -->
+                    <div class="relative">
+                        <button @click="userMenuOpen = !userMenuOpen" class="flex items-center gap-2 rounded-full p-1 hover:bg-slate-100">
+                            <img class="h-8 w-8 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Admin+FASCH&background=0ea5e9&color=fff" alt="Avatar de l'administrateur">
+                            <span class="hidden font-medium sm:inline">Admin</span>
+                            <i class="fas fa-chevron-down hidden text-xs text-slate-500 sm:inline"></i>
+                        </button>
+                        <div 
+                            x-show="userMenuOpen" 
+                            @click.away="userMenuOpen = false" 
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" 
+                            x-cloak>
+                            {% block user_menu %}
+                            <a href="{% url 'profile' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fas fa-user-circle w-4"></i>Profil</a>
+                            <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"><i class="fas fa-cog w-4"></i>Paramètres</a>
+                            <div class="my-1 h-px bg-slate-200"></div>
+                            <a href="{% url 'confirmer_deconnexion' %}" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt w-4"></i>Déconnexion</a>
+                            {% endblock %}
+                            
                         </div>
-                        <div>
-                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            À venir
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                    {% empty %}
-                    <li class="px-4 py-4 sm:px-6 text-center text-gray-500">
-                      Aucun événement à venir
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </div>
-
-              <div class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                  <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">
-                      Dernières annonces
-                    </h3>
-                  </div>
-                  <ul class="divide-y divide-gray-200">
-                    {% for annonce in dernieres_annonces %}
-                    <li class="px-4 py-4 sm:px-6">
-                      <div class="text-sm font-medium text-primary">
-                        {{ annonce.titre }}
-                      </div>
-                      <div class="text-sm text-gray-500">
-                        {{ annonce.date_publication|date:"d/m/Y" }}
-                      </div>
-                    </li>
-                    {% empty %}
-                    <li class="px-4 py-4 sm:px-6 text-center text-gray-500">
-                      Aucune annonce récente
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-
-                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                  <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900">
-                      Derniers articles
-                    </h3>
-                  </div>
-                  <ul class="divide-y divide-gray-200">
-                    {% for article in derniers_articles %}
-                    <li class="px-4 py-4 sm:px-6">
-                      <div class="text-sm font-medium text-primary">
-                        {{ article.titre }}
-                      </div>
-                      <div class="text-sm text-gray-500">
-                        {{ article.date_publication|date:"d/m/Y" }}
-                      </div>
-                    </li>
-                    {% empty %}
-                    <li class="px-4 py-4 sm:px-6 text-center text-gray-500">
-                      Aucun article récent
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- Etudiants -->
-            <div x-show="currentTab === 'etudiants'" x-cloak>
-              <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                  <h2 class="text-lg leading-6 font-medium text-gray-900">
-                    Liste des étudiants
-                  </h2>
-                  <button @click="showEtudiantForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-                    <i class="fas fa-plus mr-2"></i> Ajouter un étudiant
-                  </button>
-                </div>
-
-                <!-- Formulaire d'ajout d'étudiant -->
-                <div x-show="showEtudiantForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showEtudiantForm = false">
-                  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div x-show="showEtudiantForm" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showEtudiantForm = false">
-                      <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
                     </div>
-                    <div x-show="showEtudiantForm" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                      <form action="{% url 'add_etudiant' %}" method="post">
-                        {% csrf_token %}
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                          <div class="sm:flex sm:items-start">
-                            <div class="w-full">
-                              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                                Ajouter un étudiant
-                              </h3>
-                              <div class="grid grid-cols-1 gap-4">
-                                <div>
-                                  <label for="prenom_etudiant" class="block text-sm font-medium text-gray-700">Prénom</label>
-                                  <input type="text" name="prenom" id="prenom_etudiant" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="nom_etudiant" class="block text-sm font-medium text-gray-700">Nom</label>
-                                  <input type="text" name="nom" id="nom_etudiant" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="email_etudiant" class="block text-sm font-medium text-gray-700">Email</label>
-                                  <input type="email" name="email" id="email_etudiant" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="telephone_etudiant" class="block text-sm font-medium text-gray-700">Téléphone</label>
-                                  <input type="text" name="telephone" id="telephone_etudiant" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="niveau_etudiant" class="block text-sm font-medium text-gray-700">Niveau</label>
-                                  <select id="niveau_etudiant" name="niveau" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
-                                    <option value="Preparatoire">
-                                      Préparatoire
-                                    </option>
-                                    <option value="Premiere Annee">
-                                      Première Année
-                                    </option>
-                                    <option value="Deuxieme Annee">
-                                      Deuxième Année
-                                    </option>
-                                    <option value="Troisieme Annee">
-                                      Troisième Année
-                                    </option>
-                                    <option value="Quatrieme Annee">
-                                      Quatrième Année
-                                    </option>
-                                  </select>
-                                </div>
+                </div>
+            </header>
 
-                                <div>
-  <label for="departement_etudiant" class="block text-sm font-medium text-gray-700">Département</label>
-  <select id="departement_etudiant" name="departement" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
-    <option value="">-- Choisir un département --</option>
-    {% for dep in departements %}
-      <option value="{{ dep.id }}">{{ dep.nom }}</option>
-    {% endfor %}
-  </select>
-</div>
-
-                              </div>
+            <!-- Contenu de la page -->
+            <main class="flex-1 p-4 sm:p-6 lg:p-8">
+                {% block content %}
+                
+                <!-- Cartes de statistiques -->
+                <section class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    
+                    <!-- Carte Étudiant (Exemple de design) -->
+                    {% if nombre_etudiants is not None %}
+                    <div class="overflow-hidden rounded-lg bg-white shadow-md transition-transform hover:scale-105">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                                        <i class="fas fa-user-graduate fa-lg"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="truncate text-sm font-medium text-slate-500">Étudiants</dt>
+                                        <dd class="text-3xl font-bold text-slate-900">{{ nombre_etudiants }}</dd>
+                                    </dl>
+                                </div>
                             </div>
-                          </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                          <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                            Enregistrer
-                          </button>
-                          <button type="button" @click="showEtudiantForm = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Annuler
-                          </button>
+                        <div class="bg-slate-50 px-5 py-3">
+                            <div class="text-sm">
+                                <a href="{% url 'etudiants_list' %}" class="font-medium text-blue-600 hover:text-blue-800">Voir la liste <i class="fas fa-arrow-right text-xs"></i></a>
+                            </div>
                         </div>
-                      </form>
                     </div>
-                  </div>
-                </div>
-
-                <!-- Liste des étudiants -->
-                <div class="px-4 py-5 sm:px-6">
-                  <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                      <thead class="bg-gray-50">
-                        <tr>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Nom complet
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Email
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Téléphone
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Niveau
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Département 
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody class="bg-white divide-y divide-gray-200">
-                        {% for etudiant in etudiants %}
-                        <tr>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">
-                              {{ etudiant.prenom }} {{ etudiant.nom }}
+                    {% endif %}
+                    
+                    <!-- Autres cartes (design similaire) -->
+                    {% if nombre_professeurs is not None %}
+                    <div class="overflow-hidden rounded-lg bg-white shadow-md transition-transform hover:scale-105">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-indigo-600"><i class="fas fa-chalkboard-teacher fa-lg"></i></div>
+                                <div class="ml-5 w-0 flex-1"><dl><dt class="truncate text-sm font-medium text-slate-500">Professeurs</dt><dd class="text-3xl font-bold text-slate-900">{{ nombre_professeurs }}</dd></dl></div>
                             </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ etudiant.email }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ etudiant.telephone }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ etudiant.get_niveau_display }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ etudiant.departement.nom }}
-
-                            </div>
-                          </td>
-
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{% url 'detail_etudiant' etudiant.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                            <a href="{% url 'modifier_etudiant' etudiant.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                            <a href="{% url 'supprimer_etudiant' etudiant.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet étudiant?')">Supprimer</a>
-                          </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                          <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                            Aucun étudiant enregistré
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Cours -->
-            <div x-show="currentTab === 'cours'" x-cloak>
-              <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                  <h2 class="text-lg leading-6 font-medium text-gray-900">
-                    Liste des cours
-                  </h2>
-                  <button @click="showCoursForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-                    <i class="fas fa-plus mr-2"></i> Ajouter un cours
-                  </button>
-                </div>
-
-                <!-- Formulaire d'ajout de cours -->
-                <div x-show="showCoursForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showCoursForm = false">
-                  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div x-show="showCoursForm" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showCoursForm = false">
-                      <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                    </div>
-                    <div x-show="showCoursForm" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                      <form action="{% url 'add_cours' %}" method="post">
-                        {% csrf_token %}
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                          <div class="sm:flex sm:items-start">
-                            <div class="w-full">
-                              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                                Ajouter un cours
-                              </h3>
-                              <div class="grid grid-cols-1 gap-4">
-                                <div>
-                                  <label for="code_cours" class="block text-sm font-medium text-gray-700">Code</label>
-                                  <input type="text" name="code" id="code_cours" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="titre_cours" class="block text-sm font-medium text-gray-700">Nom</label>
-                                  <input type="text" name="titre" id="nom_cours" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-
-                                <div>
-                                  <label for="credits_cours" class="block text-sm font-medium text-gray-700">Crédits</label>
-                                  <input type="number" name="credits" id="credits_cours" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="niveau_cours" class="block text-sm font-medium text-gray-700">Niveau</label>
-                                  <select id="niveau_cours" name="niveau" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
-                                    <option value="Preparatoire">
-                                      Préparatoire
-                                    </option>
-                                    <option value="Premiere Annee">
-                                      Première Année
-                                    </option>
-                                    <option value="Deuxieme Annee">
-                                      Deuxième Année
-                                    </option>
-                                    <option value="Troisieme Annee">
-                                      Troisième Année
-                                    </option>
-                                    <option value="Quatrieme Annee">
-                                      Quatrième Année
-                                    </option>
-                                  </select>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                          <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                            Enregistrer
-                          </button>
-                          <button type="button" @click="showCoursForm = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Annuler
-                          </button>
-                        </div>
-                      </form>
+                        <div class="bg-slate-50 px-5 py-3"><div class="text-sm"><a href="{% url 'professeurs_list' %}" class="font-medium text-indigo-600 hover:text-indigo-800">Voir la liste <i class="fas fa-arrow-right text-xs"></i></a></div></div>
                     </div>
-                  </div>
-                </div>
-
-                <!-- Liste des cours -->
-                <div class="px-4 py-5 sm:px-6">
-                  <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                      <thead class="bg-gray-50">
-                        <tr>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Code
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Nom
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Crédits
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Niveau
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody class="bg-white divide-y divide-gray-200">
-                        {% for cours in cours_list %}
-                        <tr>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">
-                              {{ cours.code }}
+                    {% endif %}
+                    
+                    {% if nombre_cours is not None %}
+                    <div class="overflow-hidden rounded-lg bg-white shadow-md transition-transform hover:scale-105">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600"><i class="fas fa-book fa-lg"></i></div>
+                                <div class="ml-5 w-0 flex-1"><dl><dt class="truncate text-sm font-medium text-slate-500">Cours</dt><dd class="text-3xl font-bold text-slate-900">{{ nombre_cours }}</dd></dl></div>
                             </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">
-                              {{ cours.nom }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ cours.credits }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ cours.get_niveau_display }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{% url 'detail_cours' cours.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                            <a href="{% url 'modifier_cours' cours.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                            <a href="{% url 'supprimer_cours' cours.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours?')">Supprimer</a>
-                          </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                          <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                            Aucun cours enregistré
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Professeurs -->
-            <div x-show="currentTab === 'professeurs'" x-cloak>
-              <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-                <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-                  <h2 class="text-lg leading-6 font-medium text-gray-900">
-                    Liste des professeurs
-                  </h2>
-                  <button @click="showProfesseurForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-                    <i class="fas fa-plus mr-2"></i> Ajouter un professeur
-                  </button>
-                </div>
-
-                <!-- Formulaire d'ajout de professeur -->
-                <div x-show="showProfesseurForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showProfesseurForm = false">
-                  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div x-show="showProfesseurForm" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 transition-opacity" aria-hidden="true" @click="showProfesseurForm = false">
-                      <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                    </div>
-                    <div x-show="showProfesseurForm" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                      <form action="{% url 'add_professeur' %}" method="post">
-                        {% csrf_token %}
-                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                          <div class="sm:flex sm:items-start">
-                            <div class="w-full">
-                              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                                Ajouter un professeur
-                              </h3>
-                              <div class="grid grid-cols-1 gap-4">
-                                <div>
-                                  <label for="prenom_prof" class="block text-sm font-medium text-gray-700">Prénom</label>
-                                  <input type="text" name="prenom" id="prenom_prof" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="nom_prof" class="block text-sm font-medium text-gray-700">Nom</label>
-                                  <input type="text" name="nom" id="nom_prof" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="email_prof" class="block text-sm font-medium text-gray-700">Email</label>
-                                  <input type="email" name="email" id="email_prof" required class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="telephone_prof" class="block text-sm font-medium text-gray-700">Téléphone</label>
-                                  <input type="text" name="telephone" id="telephone_prof" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                </div>
-                                <div>
-                                  <label for="specialite_prof" class="block text-sm font-medium text-gray-700">Spécialité</label>
-                                  <input type="text" name="specialite" id="specialite_prof" class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                                  {{ professeur_form.specialite }}
-
-                                </div>
-                              </div>
-                            </div>
-                          </div>
                         </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                          <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                            Enregistrer
-                          </button>
-                          <button type="button" @click="showProfesseurForm = false" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Annuler
-                          </button>
-                        </div>
-                      </form>
+                        <div class="bg-slate-50 px-5 py-3"><div class="text-sm"><a href="{% url 'cours_list' %}" class="font-medium text-green-600 hover:text-green-800">Voir la liste <i class="fas fa-arrow-right text-xs"></i></a></div></div>
                     </div>
-                  </div>
-                </div>
-
-                <!-- Liste des professeurs -->
-                <div class="px-4 py-5 sm:px-6">
-                  <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                      <thead class="bg-gray-50">
-                        <tr>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Nom complet
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Email
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Téléphone
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Spécialité
-                          </th>
-                          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody class="bg-white divide-y divide-gray-200">
-                        {% for professeur in professeurs %}
-                        <tr>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">
-                              {{ professeur.prenom }} {{ professeur.nom }}
+                    {% endif %}
+                    
+                    {% if nombre_demandes_admission is not None %}
+                    <div class="overflow-hidden rounded-lg bg-white shadow-md transition-transform hover:scale-105">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600"><i class="fas fa-envelope-open-text fa-lg"></i></div>
+                                <div class="ml-5 w-0 flex-1"><dl><dt class="truncate text-sm font-medium text-slate-500">Demandes d'admission</dt><dd class="text-3xl font-bold text-slate-900">{{ nombre_demandes_admission }}</dd></dl></div>
                             </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ professeur.email }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ professeur.telephone }}
-                            </div>
-                          </td>
-                          <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-500">
-                              {{ professeur.cours_enseignes }}
-                            </div>
-                          </td>
-                      
+                        </div>
+                        <div class="bg-slate-50 px-5 py-3"><div class="text-sm"><a href="{% url 'demandes_admission_list' %}" class="font-medium text-amber-600 hover:text-amber-800">Voir la liste <i class="fas fa-arrow-right text-xs"></i></a></div></div>
+                    </div>
+                    {% endif %}
+                    
+                </section>
 
-                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{% url 'detail_professeur' professeur.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                            <a href="{% url 'modifier_professeur' professeur.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                            <a href="{% url 'supprimer_professeur' professeur.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce professeur?')">Supprimer</a>
-                          </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                          <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                            Aucun professeur enregistré
-                          </td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
+               <!-- Section Widgets -->
+<section class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
 
-           <!-- Horaires -->
-<div x-show="currentTab === 'horaires'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des horaires
-      </h2>
-      <button @click="showHoraireForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-clock mr-2"></i> Ajouter un horaire
-      </button>
+    <!-- Graphique Inscriptions -->
+    <div class="lg:col-span-2 rounded-lg bg-white p-6 shadow-md">
+        <h3 class="text-base font-medium text-slate-800">Inscriptions par mois</h3>
+        <canvas id="inscriptionsChart" class="mt-4 h-64"></canvas>
     </div>
 
-    <!-- Formulaire d'ajout d'un horaire -->
-    <div x-show="showHoraireForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showHoraireForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showHoraireForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showHoraireForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showHoraireForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_horaire' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter un horaire
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  {{ horaire_form.jour.label_tag }}
-                  {{ horaire_form.jour }}
-                  {{ horaire_form.jour.errors }}
+    <!-- Activité récente -->
+    <div class="rounded-lg bg-white p-6 shadow-md">
+        <h3 class="text-base font-medium text-slate-800">Activité Récente</h3>
+        <ul class="mt-4 space-y-4">
+            {% for activity in recent_activities %}
+            <li class="flex items-start">
+                <div class="flex h-8 w-8 items-center justify-center rounded-full
+                    {% if activity.type == 'student' %}bg-green-100 text-green-600{% endif %}
+                    {% if activity.type == 'event' %}bg-blue-100 text-blue-600{% endif %}
+                    {% if activity.type == 'publication' %}bg-amber-100 text-amber-600{% endif %}
+                ">
+                    {% if activity.type == 'student' %}<i class="fas fa-plus"></i>{% endif %}
+                    {% if activity.type == 'event' %}<i class="fas fa-calendar-alt"></i>{% endif %}
+                    {% if activity.type == 'publication' %}<i class="fas fa-file-alt"></i>{% endif %}
                 </div>
-                <div>
-                  <label for="heure_debut" class="block text-sm font-medium text-gray-700">Heure début</label>
-                  <input type="time" name="heure_debut" id="heure_debut" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                <div class="ml-3 text-sm">
+                    <p class="font-medium text-slate-700">{{ activity.title }}</p>
+                    <p class="text-slate-500">{{ activity.description }}</p>
                 </div>
-                <div>
-                  <label for="heure_fin" class="block text-sm font-medium text-gray-700">Heure fin</label>
-                  <input type="time" name="heure_fin" id="heure_fin" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="cours" class="block text-sm font-medium text-gray-700">Cours</label>
-                  <select id="cours" name="cours" required
-                          class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                    {% for c in cours_list %}
-                      <option value="{{ c.id }}">{{ c.nom }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div>
-                  <label for="professeur" class="block text-sm font-medium text-gray-700">Professeur</label>
-                  <select id="professeur" name="professeur" required
-                          class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                    {% for p in professeurs %}
-                      <option value="{{ p.id }}">{{ p.prenom }} {{ p.nom }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div>
-                  <label for="capacite_max" class="block text-sm font-medium text-gray-700">Capacité maximale</label>
-                  <input type="number" name="capacite_max" id="capacite_max" value="30" min="1" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div class="flex items-center">
-                  <input type="checkbox" name="est_ferme" id="est_ferme"
-                         class="h-4 w-4 text-blue-600 border-gray-300 rounded">
-                  <label for="est_ferme" class="ml-2 block text-sm text-gray-700">Fermer ce créneau</label>
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showHoraireForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des horaires -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jour</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Début</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fin</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cours</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Professeur</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for h in horaires %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ h.get_jour_display }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ h.heure_debut }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ h.heure_fin }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ h.cours.nom }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ h.professeur.prenom }} {{ h.professeur.nom }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_horaire' h.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_horaire' h.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_horaire' h.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500">Aucun horaire enregistré</td>
-              </tr>
+            </li>
             {% endfor %}
-          </tbody>
-        </table>
-      </div>
+        </ul>
     </div>
-  </div>
-</div>
+</section>
 
 
-            <!-- Inscriptions -->
-<div x-show="currentTab === 'inscriptions'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des inscriptions
-      </h2>
-      <button @click="showInscriptionForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-user-check mr-2"></i> Ajouter une inscription
-      </button>
-    </div>
 
-    <!-- Formulaire d'ajout d'une inscription -->
-    <div x-show="showInscriptionForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showInscriptionForm = false">
-      <div class="flexpx-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showInscriptionForm"
-             x-transition items-center justify-center min-h-screen pt-4 :enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showInscriptionForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                {% endblock %}
+            </main>
         </div>
-        <!-- Modal -->
-        <div x-show="showInscriptionForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-          <form action="{% url 'add_inscription' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter une inscription
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label for="etudiant" class="block text-sm font-medium text-gray-700">Étudiant</label>
-                  <select id="etudiant" name="etudiant" required
-                          class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                    {% for e in etudiants %}
-                      <option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div>
-                  <label for="horaire" class="block text-sm font-medium text-gray-700">Horaire</label>
-                  {{ inscription_form.horaire_cours }}
-                  {{ inscription_form.horaire_cours.errors }}
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showInscriptionForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
 
-    <!-- Liste des inscriptions -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Étudiant</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cours</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Horaire</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for ins in inscriptions %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ ins.etudiant.prenom }} {{ ins.etudiant.nom }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ ins.horaire_cours.cours.nom }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ ins.horaire_cours.get_jour_display }} {{ ins.horaire_cours.heure_debut }}–{{ ins.horaire_cours.heure_fin }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_inscription' ins.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_inscription' ins.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_inscription' ins.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="4" class="px-6 py-4 text-center text-gray-500">Aucune inscription enregistrée</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
+    {% block extra_js %}
 
- 
-<!-- Calendrier examen -->
-<div x-show="currentTab === 'calendrier'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des calendriers
-      </h2>
-      <button @click="showExamenForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-calendar-plus mr-2"></i> Planifier un examen
-      </button>
-    </div>
+    <!-- Script Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('inscriptionsChart').getContext('2d');
+const inscriptionsChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"],
+        datasets: [{
+            label: 'Inscriptions',
+            data: {{ inscriptions_chart_data|safe }},
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3
+        }]
+    }
+});
+</script>
 
-    <!-- Formulaire d'ajout d'un examen -->
-    <div x-show="showExamenForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showExamenForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showExamenForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showExamenForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showExamenForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_examen' %}" method="post" class="space-y-6">
-  {% csrf_token %}
-  <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-      Ajouter un examen
-    </h3>
-    <div class="grid grid-cols-1 gap-4">
-      <!-- Intitulé -->
-      <div>
-        <label for="titre" class="block text-sm font-medium text-gray-700">
-          Intitulé de l'examen :
-        </label>
-        <input type="text" name="titre" id="titre" required
-               class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-      </div>
+    <!-- place ici les scripts additionnels si besoin -->
+      <script>
+    // Initialisation des graphiques
+    document.addEventListener('DOMContentLoaded', function() {
+      // Graphique Répartition des étudiants
+      const ctx1 = document.getElementById('studentsChart').getContext('2d');
+      new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: ['Licence', 'Master', 'Doctorat'],
+          datasets: [{
+            data: [300, 150, 50],
+            backgroundColor: ['#3b82f6', '#10b981', '#8b5cf6'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
 
-      <!-- Date -->
-      <div>
-        <label for="date" class="block text-sm font-medium text-gray-700">
-          Date de l'examen :
-        </label>
-        <input type="date" name="date" id="date" required
-               class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-      </div>
+      // Graphique Activité récente
+      const ctx2 = document.getElementById('activityChart').getContext('2d');
+      new Chart(ctx2, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
+          datasets: [{
+            label: 'Inscriptions',
+            data: [12, 19, 3, 5, 2, 3, 8],
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    });
+  </script>
 
-      <!-- Description -->
-      <div>
-        <label for="description" class="block text-sm font-medium text-gray-700">
-          Description :
-        </label>
-        <textarea name="description" id="description" rows="3" required
-                  class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-      </div>
-
-      <!-- Statut -->
-      <div>
-        <label for="status" class="block text-sm font-medium text-gray-700">
-          Statut :
-        </label>
-        <select name="status" id="status" required
-                class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-          <option value="upcoming">À venir</option>
-          <option value="active">En cours</option>
-          <option value="completed">Terminé</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-    <button type="submit"
-            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-      Enregistrer
-    </button>
-    <button type="button" @click="showExamenForm = false"
-            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-      Annuler
-    </button>
-  </div>
-</form>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des éxamens -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-  <thead class="bg-gray-50">
-    <tr>
-      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
-      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-    </tr>
-  </thead>
-  <tbody class="bg-white divide-y divide-gray-200">
-    {% for exam in examens %}
-      <tr>
-        <!-- Titre de l'examen -->
-        <td class="px-6 py-4 whitespace-nowrap">
-          {{ exam.titre }}
-        </td>
-
-        <!-- Date formatée -->
-        <td class="px-6 py-4 whitespace-nowrap">
-          {{ exam.date|date:"d/m/Y" }}
-        </td>
-
-        <!-- Description (on peut tronquer si trop longue) -->
-        <td class="px-6 py-4 whitespace-nowrap">
-          {{ exam.description|truncatechars:50 }}
-        </td>
-
-        <!-- Libellé du statut (get_FOO_display pour afficher le label) -->
-        <td class="px-6 py-4 whitespace-nowrap">
-          <span class="
-            inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full
-            {% if exam.status == 'upcoming' %}bg-blue-100 text-blue-800
-            {% elif exam.status == 'active' %}bg-green-100 text-green-800
-            {% else %}bg-gray-100 text-gray-800{% endif %}
-          ">
-            {{ exam.get_status_display }}
-          </span>
-        </td>
-
-        <!-- Liens d'action -->
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-          <a href="{% url 'detail_examen' exam.id %}" class="text-indigo-600 hover:text-indigo-900">
-            Voir
-          </a>
-          <a href="{% url 'modifier_examen' exam.id %}" class="ml-2 text-blue-600 hover:text-blue-900">
-            Modifier
-          </a>
-          <a href="{% url 'supprimer_examen' exam.id %}"
-             class="ml-2 text-red-600 hover:text-red-900"
-             onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet examen ?')">
-            Supprimer
-          </a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr>
-        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-          Aucun examen enregistré.
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-<!-- Événements -->
-<div x-show="currentTab === 'evenements'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des événements
-      </h2>
-      <button @click="showEvenementForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-calendar-plus mr-2"></i> Ajouter un événement
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'un événement -->
-    <div x-show="showEvenementForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showEvenementForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showEvenementForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showEvenementForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showEvenementForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_evenement' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter un événement
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label for="titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                  <input type="text" name="titre" id="titre" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                  <input type="text" name="description" id="description" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="date_debut" class="block text-sm font-medium text-gray-700">Date début</label>
-                  <input type="datetime-local" name="date_debut" id="date_debut" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="date_fin" class="block text-sm font-medium text-gray-700">Date fin</label>
-                  <input type="datetime-local" name="date_fin" id="date_fin" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="lieu" class="block text-sm font-medium text-gray-700">Lieu</label>
-                  <input type="text" name="lieu" id="lieu"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
-                  <input type="file" name="image" id="image" accept="image/*"
-                         class="mt-1 block w-full" />
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showEvenementForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des événements -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Début</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fin</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lieu</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for evt in evenements_a_venir %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ evt.titre }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ evt.date_debut|date:"d/m/Y H:i" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ evt.date_fin|date:"d/m/Y H:i" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ evt.lieu }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_evenement' evt.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_evenement' evt.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_evenement' evt.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun événement enregistré</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-          <!-- Annonces -->
-<div x-show="currentTab === 'annonces'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des annonces
-      </h2>
-      <button @click="showAnnonceForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-plus-circle mr-2"></i> Ajouter une annonce
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'une annonce -->
-    <div x-show="showAnnonceForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showAnnonceForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showAnnonceForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showAnnonceForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showAnnonceForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_annonce' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter une annonce
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label for="titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                  <input type="text" name="titre" id="titre" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="contenu" class="block text-sm font-medium text-gray-700">Contenu</label>
-                  <textarea name="contenu" id="contenu" rows="4"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-                <div>
-                  <label for="date_evenement" class="block text-sm font-medium text-gray-700">Date de l'événement</label>
-                  <input type="datetime-local" name="date_evenement" id="date_evenement"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="lieu" class="block text-sm font-medium text-gray-700">Lieu</label>
-                  <input type="text" name="lieu" id="lieu"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
-                  <input type="file" name="image" id="image" accept="image/*"
-                         class="mt-1 block w-full" />
-                </div>
-
-                <div class="flex items-center mt-4">
-  <input type="checkbox" name="est_active" id="est_active"
-         class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-         {% if form.est_active.value %}checked{% endif %}>
-  <label for="est_active" class="ml-2 block text-sm text-gray-700">
-    actif
-  </label>
-</div>
-
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showAnnonceForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des annonces -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Publié le</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for an in dernieres_annonces %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ an.titre }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ an.date_publication|date:"d/m/Y" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_annonce' an.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_annonce' an.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_annonce' an.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="3" class="px-6 py-4 text-center text-gray-500">Aucune annonce enregistrée</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-          <!-- Articles -->
-<div x-show="currentTab === 'articles'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des articles
-      </h2>
-      <button @click="showArticleForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-plus mr-2"></i> Ajouter un article
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'un article -->
-    <div x-show="showArticleForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showArticleForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showArticleForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showArticleForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showArticleForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_article' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter un article
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label for="titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                  <input type="text" name="titre" id="titre" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="contenu" class="block text-sm font-medium text-gray-700">Contenu</label>
-                  <textarea name="contenu" id="contenu" rows="5"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-                <div>
-                  <label for="auteur" class="block text-sm font-medium text-gray-700">Auteur</label>
-                  <input type="text" name="auteur" id="auteur" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
-                  <input type="file" name="image" id="image" accept="image/*"
-                         class="mt-1 block w-full" />
-                </div>
-
-                <div class="flex items-center mt-4">
-  <input type="checkbox" name="est_active" id="est_active"
-         class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-         {% if form.est_active.value %}checked{% endif %}>
-  <label for="est_active" class="ml-2 block text-sm text-gray-700">
-    Actif
-  </label>
-</div>
-
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showArticleForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des articles -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Publié le</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for art in derniers_articles %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ art.titre }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ art.date_publication|date:"d/m/Y" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_article' art.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_article' art.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_article' art.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="3" class="px-6 py-4 text-center text-gray-500">Aucun article enregistré</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-   
- <!-- Programmes -->
-<div x-show="currentTab === 'programmes'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des programmes
-      </h2>
-      <button @click="showProgrammeForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-graduation-cap mr-2"></i> Ajouter un programme
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'un programme -->
-    <div x-show="showProgrammeForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showProgrammeForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showProgrammeForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showProgrammeForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showProgrammeForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_programme' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter un programme
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label for="titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                  <input type="text" name="titre" id="titre" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="niveau" class="block text-sm font-medium text-gray-700">Niveau</label>
-                  {{ programme_form.niveau }}
-                  {{ programme_form.niveau.errors }}
-                </div>
-                <div>
-                  <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea name="description" id="description" rows="3"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showProgrammeForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des programmes -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Niveau</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for p in programmes %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ p.titre }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ p.niveau }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-               
-                  <a href="{% url 'detail_programme' p.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_programme' p.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_programme' p.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce programme ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="3" class="px-6 py-4 text-center text-gray-500">Aucun programme enregistré</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-
- <!-- Axes de Recherche -->
-<div x-show="currentTab === 'axes'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des axes de recherche
-      </h2>
-      <button @click="showAxeForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-lightbulb mr-2"></i> Ajouter un axe
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'un axe -->
-    <div x-show="showAxeForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showAxeForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showAxeForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showAxeForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showAxeForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-          <form action="{% url 'add_axe' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter un axe de recherche
-              </h3>
-              <div class="space-y-4">
-                <div>
-                  <label for="titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                  <input type="text" name="titre" id="titre" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea name="description" id="description" rows="3"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showAxeForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des axes -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for axe in axes %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ axe.titre }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ axe.description|truncatechars:50 }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'modifier_axe' axe.id %}" class="text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_axe' axe.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet axe ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="3" class="px-6 py-4 text-center text-gray-500">Aucun axe enregistré</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
- <!-- Publications de Recherche -->
-<div x-show="currentTab === 'publications'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des publications
-      </h2>
-      <button @click="showPublicationForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-file-alt mr-2"></i> Ajouter une publication
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'une publication -->
-    <div x-show="showPublicationForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showPublicationForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showPublicationForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showPublicationForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showPublicationForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_publication' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter une publication
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label for="titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                  <input type="text" name="titre" id="titre" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="auteurs" class="block text-sm font-medium text-gray-700">Auteurs</label>
-                  <input type="text" name="auteurs" id="auteurs"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="date_publication" class="block text-sm font-medium text-gray-700">Date de publication</label>
-                  <input type="date" name="date_publication" id="date_publication"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea name="description" id="description" rows="3"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-                <div>
-                  <label for="domaines" class="block text-sm font-medium text-gray-700">Domaine</label>
-                  <input type="text" name="domaines" id="domaines"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="lien" class="block text-sm font-medium text-gray-700">Lien (URL)</label>
-                  <input type="url" name="lien" id="lien"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showPublicationForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des publications -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Auteurs</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for pub in publications %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ pub.titre }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ pub.auteurs }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ pub.date_publication|date:"d/m/Y" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'modifier_publication' pub.id %}" class="text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_publication' pub.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette publication ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="4" class="px-6 py-4 text-center text-gray-500">Aucune publication enregistrée</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-           <!-- Livres -->
-<div x-show="currentTab === 'livres'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des livres
-      </h2>
-      <button @click="showLivreForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-book mr-2"></i> Ajouter un livre
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'un livre -->
-    <div x-show="showLivreForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showLivreForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showLivreForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showLivreForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showLivreForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-          <form action="{% url 'add_livre' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter un livre
-              </h3>
-              <div class="space-y-4">
-                <div>
-                  <label for="titre" class="block text-sm font-medium text-gray-700">Titre</label>
-                  <input type="text" name="titre" id="titre" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="auteur" class="block text-sm font-medium text-gray-700">Auteur</label>
-                  <input type="text" name="auteur" id="auteur"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="annee" class="block text-sm font-medium text-gray-700">Année</label>
-                  <input type="number" name="annee" id="annee"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="resume" class="block text-sm font-medium text-gray-700">Résumé</label>
-                  <textarea name="resume" id="resume" rows="3"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-                <div class="flex items-center">
-                  <input type="checkbox" name="disponible" id="disponible"
-                         class="h-4 w-4 text-blue-600 border-gray-300 rounded" />
-                  <label for="disponible" class="ml-2 block text-sm text-gray-700">Disponible</label>
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showLivreForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des livres -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Auteur</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Année</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for livre in livres %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ livre.titre }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ livre.auteur }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ livre.annee }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_livre' livre.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_livre' livre.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_livre' livre.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce livre ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="4" class="px-6 py-4 text-center text-gray-500">Aucun livre enregistré</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-            <!-- Personnel -->
-<div x-show="currentTab === 'personnel'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste du personnel
-      </h2>
-      <button @click="showPersonnelForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-users-cog mr-2"></i> Ajouter un membre
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'un membre -->
-    <div x-show="showPersonnelForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showPersonnelForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showPersonnelForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showPersonnelForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showPersonnelForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-          <form action="{% url 'add_personnel' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter un membre du personnel
-              </h3>
-              <div class="space-y-4">
-                <div>
-                  <label for="poste" class="block text-sm font-medium text-gray-700">Poste</label>
-                  <select name="poste" id="poste" required
-                          class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                    {% for code, label in poste_choices %}
-                      <option value="{{ code }}">{{ label }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-                <div>
-                  <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
-                  <input type="text" name="nom" id="nom" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea name="description" id="description" rows="3"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-                <div>
-                  <label for="photo" class="block text-sm font-medium text-gray-700">Photo</label>
-                  <input type="file" name="photo" id="photo" accept="image/*"
-                         class="mt-1 block w-full" />
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showPersonnelForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste du personnel -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Poste</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for pers in personnel %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ pers.get_poste_display }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ pers.nom }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_personnel' pers.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_personnel' pers.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_personnel' pers.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="3" class="px-6 py-4 text-center text-gray-500">Aucun membre enregistré</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-           <!-- Étapes d'Admission -->
-<div x-show="currentTab === 'etapes_admission'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des étapes d'admission
-      </h2>
-      <button @click="showEtapeAdmissionForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-tasks mr-2"></i> Ajouter une étape
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'une étape -->
-    <div x-show="showEtapeAdmissionForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showEtapeAdmissionForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showEtapeAdmissionForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showEtapeAdmissionForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showEtapeAdmissionForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-          <form action="{% url 'add_etape_admission' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter une étape d'admission
-              </h3>
-              <div class="space-y-4">
-                <div>
-                  <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
-                  <input type="text" name="nom" id="nom" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="date_debut" class="block text-sm font-medium text-gray-700">Date de début</label>
-                  <input type="date" name="date_debut" id="date_debut"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="date_limite" class="block text-sm font-medium text-gray-700">Date limite</label>
-                  <input type="date" name="date_limite" id="date_limite"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showEtapeAdmissionForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des étapes d'admission -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Début</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Limite</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for etp in etapes_admission %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ etp.nom }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ etp.date_debut|date:"d/m/Y" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ etp.date_limite|date:"d/m/Y" }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'modifier_etape_admission' etp.id %}" class="text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_etape_admission' etp.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette étape ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="4" class="px-6 py-4 text-center text-gray-500">Aucune étape enregistrée</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Demandes d'Admission -->
-<div x-show="currentTab === 'demandes_admission'" x-cloak>
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
-      <h2 class="text-lg leading-6 font-medium text-gray-900">
-        Liste des demandes d'admission
-      </h2>
-      <button @click="showDemandeAdmissionForm = true" class="bg-primary hover:bg-secondary text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-envelope-open-text mr-2"></i> Ajouter une demande
-      </button>
-    </div>
-
-    <!-- Formulaire d'ajout d'une demande -->
-    <div x-show="showDemandeAdmissionForm" class="fixed inset-0 overflow-y-auto z-50" x-cloak @keydown.escape.window="showDemandeAdmissionForm = false">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-        <!-- Overlay -->
-        <div x-show="showDemandeAdmissionForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 transition-opacity"
-             aria-hidden="true"
-             @click="showDemandeAdmissionForm = false">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-        <!-- Modal -->
-        <div x-show="showDemandeAdmissionForm"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-             class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-          <form action="{% url 'add_demande_admission' %}" method="post">
-            {% csrf_token %}
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Ajouter une demande d'admission
-              </h3>
-              <div class="grid grid-cols-1 gap-4">
-                <div>
-                  <label for="nom" class="block text-sm font-medium text-gray-700">Nom</label>
-                  <input type="text" name="nom" id="nom" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                  <input type="email" name="email" id="email" required
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone</label>
-                  <input type="text" name="telephone" id="telephone"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="programme" class="block text-sm font-medium text-gray-700">Programme</label>
-                  <input type="text" name="programme" id="programme"
-                         class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                </div>
-                <div>
-                  <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
-                  <textarea name="message" id="message" rows="3"
-                            class="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                </div>
-              </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button type="submit"
-                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary text-base font-medium text-white hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:ml-3 sm:w-auto sm:text-sm">
-                Enregistrer
-              </button>
-              <button type="button" @click="showDemandeAdmissionForm = false"
-                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                Annuler
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <!-- Liste des demandes d'admission -->
-    <div class="px-4 py-5 sm:px-6">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Programme</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            {% for dem in demandes_admission %}
-              <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ dem.nom }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ dem.email }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ dem.programme }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a href="{% url 'detail_demande_admission' dem.id %}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
-                  <a href="{% url 'modifier_demande_admission' dem.id %}" class="ml-2 text-blue-600 hover:text-blue-900">Modifier</a>
-                  <a href="{% url 'supprimer_demande_admission' dem.id %}" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')">Supprimer</a>
-                </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="4" class="px-6 py-4 text-center text-gray-500">Aucune demande enregistrée</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
+  <script>
+    document.getElementById("search-toggle").addEventListener("click", function () {
+        let form = document.getElementById("mobile-search-form");
+        form.classList.toggle("hidden");
+    });
+</script>
+    {% endblock %}
 </body>
-
 </html>

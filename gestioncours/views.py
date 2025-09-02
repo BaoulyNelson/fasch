@@ -12,13 +12,12 @@ from django.apps import apps
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import CreateView
-from django.views.generic import UpdateView
-from django.views.generic import DeleteView
-from django.views.generic import DetailView
+from django.views.generic import CreateView,ListView,UpdateView,DeleteView,DetailView
+from django.core.exceptions import ImproperlyConfigured
 import calendar
 from datetime import date
-
+from datetime import datetime, time as dt_time
+from django.utils import timezone
 from .models import (
     Inscription, Etudiant, Evenement, Article, HoraireCours,
     Annonce, Programme, PublicationRecherche, AxeRecherche,
@@ -118,7 +117,6 @@ def edit_profile_view(request):
 
 
 def logout_view(request):
-    print("🔥 logout_view appelée")  # ← Test console
     logout(request)
     messages.info(request, "🔒 Vous avez été déconnecté avec succès.")
     return redirect('home')
@@ -232,7 +230,7 @@ def edit_info_etudiant(request, etudiant_id):
 
 
 @login_required
-def cours_list(request, session=None):
+def list_cours(request, session=None):
     # 1) on récupère tout
     qs = HoraireCours.objects.select_related('cours', 'professeur') \
     .order_by('cours__session', 'jour', 'heure_debut')
@@ -284,6 +282,8 @@ def cours_par_session(request, session):
         "page_obj": page_obj,
         "session": session  # optionnel pour afficher le titre de la session dans le template
     })
+
+
 
 @login_required
 def mes_cours(request):
@@ -442,13 +442,7 @@ def admission(request, section="demande"):
 
 def recherche_view(request):
     axes_recherche = AxeRecherche.objects.all()
-    publications = PublicationRecherche.objects.order_by(
-        '-date_publication')[:5]
-
-    # Préparer les domaines pour chaque publication
-    for pub in publications:
-        pub.domaines_list = pub.domaines.split(
-            ",")  # Diviser les domaines en une liste
+    publications = PublicationRecherche.objects.order_by('-date_publication')[:5]
 
     return render(request, 'publications/centre_recherche.html', {
         'axes_recherche': axes_recherche,
@@ -459,12 +453,9 @@ def recherche_view(request):
 def publications_list(request):
     publications = PublicationRecherche.objects.all()
 
-    # Préparer les domaines pour chaque publication
-    for pub in publications:
-        pub.domaines_list = pub.domaines.split(
-            ",")  # Diviser les domaines en une liste
-
-    return render(request, 'publications/publications.html', {'publications': publications})
+    return render(request, 'publications/publications.html', {
+        'publications': publications
+    })
 
 
 def publications_view(request, type_publication):
@@ -481,6 +472,7 @@ def publications_view(request, type_publication):
     else:
         # Affiche une page 404 si le type n'est pas trouvé
         return render(request, '404.html')
+
 
 
 def recherche(request):
@@ -576,6 +568,10 @@ def etudiant_view(request, section):
 
 
 
+
+from django.utils import timezone
+from django.db.models import Count
+
 # 1. Vérification du staff
 def is_staff_user(user):
     return user.is_staff
@@ -603,8 +599,6 @@ def dashboard_admin(request):
         'nombre_annonces': Annonce.objects.count(),
         'nombre_articles': Article.objects.count(),
         'nombre_examens': Examen.objects.count(),
-
-
     }
 
     # Listes récentes / à venir
@@ -616,7 +610,6 @@ def dashboard_admin(request):
             .order_by('-date_publication')[:5],
         'derniers_articles': Article.objects
             .order_by('-date_publication')[:5],
-            
     })
 
     # Listes détaillées pour onglets “Gestion”
@@ -636,462 +629,795 @@ def dashboard_admin(request):
         'examens': Examen.objects.all().order_by('date'),
     })
 
-    # **Ajout du formulaire d'inscription pour le modal**
+    # Formulaires pour modals
     context['inscription_form'] = InscriptionForm()
     context['horaire_form']    = HoraireCoursForm()
-    
-    context['inscriptions'] = Inscription.objects.select_related('etudiant', 'horaire_cours').all().order_by('-pk')
-    
-    context['poste_choices'] = Personnel.POSTE_CHOICES
-    context['programme_form'] = ProgrammeForm() 
-    # AJOUT : charger les départements pour le select
+    context['programme_form']  = ProgrammeForm()
+
+    # Départements pour selects
     context['departements']= Departement.objects.all().order_by('nom')
     
+    # Inscriptions (pour tableau)
+    context['inscriptions'] = Inscription.objects.select_related('etudiant', 'horaire_cours').all().order_by('-pk')
+
+    # Poste choices
+    context['poste_choices'] = Personnel.POSTE_CHOICES
+
+    # 1️⃣ Graphique des inscriptions par mois (inchangé)
+    current_year = timezone.now().year
+    inscriptions = Inscription.objects.filter(date_inscription__year=current_year)
+
+    inscriptions_by_month = (
+        inscriptions
+        .values_list('date_inscription__month')
+        .annotate(total=Count('id'))
+        .order_by('date_inscription__month')
+    )
+
+    months = list(range(1, 13))
+    inscriptions_data = {month: 0 for month in months}
+    for month, total in inscriptions_by_month:
+        inscriptions_data[month] = total
+
+    context['inscriptions_chart_data'] = list(inscriptions_data.values())
+
+    # 2️⃣ Activité récente (normalisation des dates pour éviter le TypeError)
+    recent_activities = []
+
+    # Helper : rendre un objet date/datetime en tz-aware datetime
+    def as_datetime(value):
+        """
+        value peut être:
+        - un datetime (aware ou naive)
+        - une date (datetime.date)
+        Retourne un datetime tz-aware.
+        """
+        if value is None:
+            return timezone.make_aware(datetime.min.replace(year=1970))
+        if isinstance(value, datetime):
+            # si naive -> rendre aware avec timezone courant
+            if timezone.is_naive(value):
+                return timezone.make_aware(value, timezone.get_current_timezone())
+            return value
+        # si c'est une date (datetime.date)
+        # on prend min time (00:00) et on rend aware
+        return timezone.make_aware(datetime.combine(value, dt_time.min), timezone.get_current_timezone())
+
+    # Inscription récentes (utilise date_inscription, qui est DateTimeField)
+    for ins in Inscription.objects.select_related('etudiant', 'horaire_cours').order_by('-date_inscription')[:8]:
+        etu = ins.etudiant
+        recent_activities.append({
+            'type': 'student',
+            'title': 'Nouvel étudiant inscrit',
+            'description': f"{etu.prenom} {etu.nom} a été inscrit à {ins.horaire_cours.cours.nom}",
+            'created_at': as_datetime(ins.date_inscription)
+        })
+
+    # Événements récents (date_debut est DateTimeField)
+    for event in Evenement.objects.order_by('-date_debut')[:8]:
+        recent_activities.append({
+            'type': 'event',
+            'title': 'Événement publié',
+            'description': event.titre,
+            'created_at': as_datetime(event.date_debut)
+        })
+
+    # Publications récentes (date_publication est DateField) -> normaliser en datetime aware
+    for pub in PublicationRecherche.objects.order_by('-date_publication')[:8]:
+        recent_activities.append({
+            'type': 'publication',
+            'title': 'Nouvelle publication',
+            'description': pub.titre,
+            'created_at': as_datetime(pub.date_publication)
+        })
+
+    # Trier toutes activités par date décroissante et garder top 5
+    recent_activities.sort(key=lambda x: x['created_at'], reverse=True)
+    context['recent_activities'] = recent_activities[:5]
+
     return render(request, 'admin/dashboard.html', context)
 
 
+
+
+# Classe générique
 class CreateWithMessage(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     """
     Vue générique pour créer un objet,
-    afficher un message de succès et revenir au dashboard.
+    afficher un message de succès et rediriger vers la liste.
     """
-    success_url = reverse_lazy('dashboard')
+    success_url_name = None  # Nom de l'URL de la liste
+    success_message = None   # Message de succès
+
+    def get_success_url(self):
+        if not self.success_url_name:
+            raise ImproperlyConfigured(
+                "Vous devez définir success_url_name dans la sous-classe"
+            )
+        return reverse_lazy(self.success_url_name)
 
 
+# Sous-classes pour chaque modèle
 
-
-class ExamenCreate(CreateWithMessage, SuccessMessageMixin, CreateView):
-    model = Examen
-    form_class = ExamenForm
-    template_name = 'admin/examen_form.html'
-    success_message = "L'examen « %(titre)s » a été créé avec succès."
-    
-    
-
-# Sous-classes pour chaque formulaire
 class EtudiantCreate(CreateWithMessage):
+    model = Etudiant
     form_class = EtudiantForm
-    template_name = 'admin/etudiant_form.html'
+    template_name = 'admin/etudiant/etudiant_form.html'
     success_message = "L'étudiant a été ajouté avec succès."
+    success_url_name = "etudiants_list"
+
 
 class CoursCreate(CreateWithMessage):
+    model = Cours
     form_class = CoursForm
-    template_name = 'admin/cours_form.html'
+    template_name = 'admin/cours/cours_form.html'
     success_message = "Le cours a été ajouté avec succès."
+    success_url_name = "cours_list"
+
 
 class ProfesseurCreate(CreateWithMessage):
+    model = Professeur
     form_class = ProfesseurForm
-    template_name = 'admin/professeur_form.html'
+    template_name = 'admin/professeur/professeur_form.html'
     success_message = "Le professeur a été ajouté avec succès."
+    success_url_name = "professeurs_list"
+
 
 class InscriptionCreate(CreateWithMessage):
+    model = Inscription
     form_class = InscriptionForm
-    template_name = 'admin/inscription_form.html'
+    template_name = 'admin/inscription/inscription_form.html'
     success_message = "Inscription créée."
+    success_url_name = "inscriptions_list"
+
 
 class HoraireCoursCreate(CreateWithMessage):
+    model = HoraireCours
     form_class = HoraireCoursForm
-    template_name = 'admin/horaire_form.html'
+    template_name = 'admin/horaire/horaire_form.html'
     success_message = "Horaire ajouté."
+    success_url_name = "horaires_list"
+
 
 class ArticleCreate(CreateWithMessage):
+    model = Article
     form_class = ArticleForm
-    template_name = 'admin/article_form.html'
+    template_name = 'admin/article/article_form.html'
     success_message = "Article ajouté."
+    success_url_name = "articles_list"
+
 
 class EvenementCreate(CreateWithMessage):
+    model = Evenement
     form_class = EvenementForm
-    template_name = 'admin/evenement_form.html'
+    template_name = 'admin/evenement/evenement_form.html'
     success_message = "Événement ajouté."
+    success_url_name = "evenements_list"
+
 
 class AnnonceCreate(CreateWithMessage):
+    model = Annonce
     form_class = AnnonceForm
-    template_name = 'admin/annonce_form.html'
+    template_name = 'admin/annonce/annonce_form.html'
     success_message = "Annonce ajoutée."
+    success_url_name = "annonces_list"
+
 
 class ProgrammeCreate(CreateWithMessage):
+    model = Programme
     form_class = ProgrammeForm
-    template_name = 'admin/programme_form.html'
+    template_name = 'admin/programme/programme_form.html'
     success_message = "Programme ajouté."
+    success_url_name = "programmes_list"
+
 
 class AxeRechercheCreate(CreateWithMessage):
+    model = AxeRecherche
     form_class = AxeRechercheForm
-    template_name = 'admin/axe_form.html'
+    template_name = 'admin/axe/axe_form.html'
     success_message = "Axe de recherche ajouté."
+    success_url_name = "axes_list"
+
 
 class PublicationRechercheCreate(CreateWithMessage):
+    model = PublicationRecherche
     form_class = PublicationRechercheForm
-    template_name = 'admin/publication_form.html'
+    template_name = 'admin/publication/publication_form.html'
     success_message = "Publication ajoutée."
+    success_url_name = "publications_list"
+
 
 class LivreCreate(CreateWithMessage):
+    model = Livre
     form_class = LivreForm
-    template_name = 'admin/livre_form.html'
+    template_name = 'admin/livre/livre_form.html'
     success_message = "Livre ajouté."
+    success_url_name = "livres_list"
+
 
 class PersonnelCreate(CreateWithMessage):
+    model = Personnel
     form_class = PersonnelForm
-    template_name = 'admin/personnel_form.html'
+    template_name = 'admin/personnel/personnel_form.html'
     success_message = "Membre du personnel ajouté."
+    success_url_name = "personnels_list"
+
 
 class EtapeAdmissionCreate(CreateWithMessage):
+    model = EtapeAdmission
     form_class = EtapeAdmissionForm
-    template_name = 'admin/etape_admission_form.html'
+    template_name = 'admin/etape/etape_admission_form.html'
     success_message = "Étape d'admission ajoutée."
+    success_url_name = "etapes_admission_list"
+
 
 class DemandeAdmissionCreate(CreateWithMessage):
+    model = DemandeAdmission
     form_class = DemandeAdmissionForm
-    template_name = 'admin/demande_admission_form.html'
+    template_name = 'admin/demande/demande_admission_form.html'
     success_message = "Demande d'admission ajoutée."
+    success_url_name = "demandes_admission_list"
 
-    #modifier
+class ExamenCreate(CreateWithMessage):
+    model = Examen
+    form_class = ExamenForm
+    template_name = 'admin/examen/examen_form.html'
+    success_message = "L'examen « %(titre)s » a été créé avec succès."
+    success_url_name = "examens_list"
+    
+# ------------------ Étudiants ------------------
+class EtudiantListView(ListView):
+    model = Etudiant
+    template_name = "admin/etudiant/list.html"
+    context_object_name = "etudiants"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
 
+# ------------------ Cours ------------------
+class CoursListView(ListView):
+    model = Cours
+    template_name = "admin/cours/list.html"
+    context_object_name = "cours"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Professeurs ------------------
+class ProfesseurListView(ListView):
+    model = Professeur
+    template_name = "admin/professeur/list.html"
+    context_object_name = "professeurs"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Inscriptions ------------------
+class InscriptionListView(ListView):
+    model = Inscription
+    template_name = "admin/inscription/list.html"
+    context_object_name = "inscriptions"
+    ordering = ['-date_inscription']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Horaires ------------------
+class HoraireCoursListView(ListView):
+    model = HoraireCours
+    template_name = "admin/horaire/list.html"
+    context_object_name = "horaires"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+
+# ------------------ Articles ------------------
+class ArticleListView(ListView):
+    model = Article
+    template_name = "admin/article/list.html"
+    context_object_name = "articles"
+    ordering = ['-date_publication']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Événements ------------------
+class EvenementListView(ListView):
+    model = Evenement
+    template_name = "admin/evenement/list.html"
+    context_object_name = "evenements"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Annonces ------------------
+class AnnonceListView(ListView):
+    model = Annonce
+    template_name = "admin/annonce/list.html"
+    context_object_name = "annonces"
+    ordering = ['-date_publication']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Programmes ------------------
+class ProgrammeListView(ListView):
+    model = Programme
+    template_name = "admin/programme/list.html"
+    context_object_name = "programmes"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Axes de recherche ------------------
+class AxeRechercheListView(ListView):
+    model = AxeRecherche
+    template_name = "admin/axe/list.html"
+    context_object_name = "axes"
+
+# ------------------ Publications ------------------
+class PublicationRechercheListView(ListView):
+    model = PublicationRecherche
+    template_name = "admin/publication/list.html"
+    context_object_name = "publications"
+
+# ------------------ Livres ------------------
+class LivreListView(ListView):
+    model = Livre
+    template_name = "admin/livre/list.html"
+    context_object_name = "livres"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Personnel ------------------
+class PersonnelListView(ListView):
+    model = Personnel
+    template_name = "admin/personnel/list.html"
+    context_object_name = "personnels"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['departements'] = Departement.objects.all()
+        context['postes'] = Personnel.POSTE_CHOICES
+        return context
+# ------------------ Étapes d'admission ------------------
+class EtapeAdmissionListView(ListView):
+    model = EtapeAdmission
+    template_name = "admin/etape/list.html"
+    context_object_name = "etapes_admission"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Demandes d'admission ------------------
+class DemandeAdmissionListView(ListView):
+    model = DemandeAdmission
+    template_name = "admin/demande/list.html"
+    context_object_name = "demandes_admission"
+    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    
+
+# ------------------ Examens ------------------
+class ExamenListView(ListView):
+    model = Examen
+    template_name = "admin/examen/list.html"
+    context_object_name = "examens"
+    
+
+# Classe générique pour UpdateView
 class UpdateWithMessage(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     """
     Vue générique pour modifier un objet,
-    afficher un message de succès et revenir au dashboard.
+    afficher un message de succès et rediriger vers la liste.
     """
-    success_url = reverse_lazy('dashboard')
+    success_url_name = None  # Nom de l'URL de la liste
+    success_message = None   # Message de succès
+
+    def get_success_url(self):
+        if not self.success_url_name:
+            raise ImproperlyConfigured(
+                "Vous devez définir success_url_name dans la sous-classe"
+            )
+        return reverse_lazy(self.success_url_name)
+
 
 # Sous-classes pour chaque modèle
-class ExamenUpdate(UpdateWithMessage, SuccessMessageMixin, UpdateView):
+class ExamenUpdate(UpdateWithMessage):
     model = Examen
     form_class = ExamenForm
-    template_name = 'admin/examen_form.html'
+    template_name = 'admin/examen/examen_form.html'
     success_message = "L'examen « %(titre)s » a été mis à jour."
+    success_url_name = "examens_list"
+
 
 class EtudiantUpdate(UpdateWithMessage):
     model = Etudiant
     form_class = EtudiantForm
-    template_name = 'admin/etudiant_form.html'
+    template_name = 'admin/etudiant/etudiant_form.html'
     success_message = "Les informations de l'étudiant ont été modifiées avec succès."
+    success_url_name = "etudiants_list"
+
 
 class CoursUpdate(UpdateWithMessage):
     model = Cours
     form_class = CoursForm
-    template_name = 'admin/cours_form.html'
+    template_name = 'admin/cours/cours_form.html'
     success_message = "Les informations du cours ont été modifiées avec succès."
+    success_url_name = "cours_list"
+
 
 class ProfesseurUpdate(UpdateWithMessage):
     model = Professeur
     form_class = ProfesseurForm
-    template_name = 'admin/professeur_form.html'
+    template_name = 'admin/professeur/professeur_form.html'
     success_message = "Le professeur a été mis à jour avec succès."
+    success_url_name = "professeurs_list"
+
 
 class InscriptionUpdate(UpdateWithMessage):
     model = Inscription
     form_class = InscriptionForm
-    template_name = 'admin/inscription_form.html'
+    template_name = 'admin/inscription/inscription_form.html'
     success_message = "Inscription modifiée."
+    success_url_name = "inscriptions_list"
+
 
 class HoraireCoursUpdate(UpdateWithMessage):
     model = HoraireCours
     form_class = HoraireCoursForm
-    template_name = 'admin/horaire_form.html'
+    template_name = 'admin/horaire/horaire_form.html'
     success_message = "Horaire modifié."
+    success_url_name = "horaires_list"
+
 
 class ArticleUpdate(UpdateWithMessage):
     model = Article
     form_class = ArticleForm
-    template_name = 'admin/article_form.html'
+    template_name = 'admin/article/article_form.html'
     success_message = "Article modifié."
+    success_url_name = "articles_list"
+
 
 class EvenementUpdate(UpdateWithMessage):
     model = Evenement
     form_class = EvenementForm
-    template_name = 'admin/evenement_form.html'
+    template_name = 'admin/evenement/evenement_form.html'
     success_message = "Événement modifié."
+    success_url_name = "evenements_list"
+
 
 class AnnonceUpdate(UpdateWithMessage):
     model = Annonce
     form_class = AnnonceForm
-    template_name = 'admin/annonce_form.html'
+    template_name = 'admin/annonce/annonce_form.html'
     success_message = "Annonce modifiée."
+    success_url_name = "annonces_list"
+
 
 class ProgrammeUpdate(UpdateWithMessage):
     model = Programme
     form_class = ProgrammeForm
-    template_name = 'admin/programme_form.html'
+    template_name = 'admin/programme/programme_form.html'
     success_message = "Programme modifié."
+    success_url_name = "programmes_list"
+
 
 class AxeRechercheUpdate(UpdateWithMessage):
     model = AxeRecherche
     form_class = AxeRechercheForm
-    template_name = 'admin/axe_form.html'
+    template_name = 'admin/axe/axe_form.html'
     success_message = "Axe de recherche modifié."
+    success_url_name = "axes_list"
+
 
 class PublicationRechercheUpdate(UpdateWithMessage):
     model = PublicationRecherche
     form_class = PublicationRechercheForm
-    template_name = 'admin/publication_form.html'
+    template_name = 'admin/publication/publication_form.html'
     success_message = "Publication modifiée."
+    success_url_name = "publications_list"
+
 
 class LivreUpdate(UpdateWithMessage):
     model = Livre
     form_class = LivreForm
-    template_name = 'admin/livre_form.html'
+    template_name = 'admin/livre/livre_form.html'
     success_message = "Livre modifié."
+    success_url_name = "livres_list"
+
 
 class PersonnelUpdate(UpdateWithMessage):
     model = Personnel
     form_class = PersonnelForm
-    template_name = 'admin/personnel_form.html'
+    template_name = 'admin/personnel/personnel_form.html'
     success_message = "Membre du personnel modifié."
+    success_url_name = "personnels_list"
+
 
 class EtapeAdmissionUpdate(UpdateWithMessage):
     model = EtapeAdmission
     form_class = EtapeAdmissionForm
-    template_name = 'admin/etape_admission_form.html'
+    template_name = 'admin/etape/etape_admission_form.html'
     success_message = "Étape d'admission modifiée."
+    success_url_name = "etapes_admission_list"
+
 
 class DemandeAdmissionUpdate(UpdateWithMessage):
     model = DemandeAdmission
     form_class = DemandeAdmissionForm
-    template_name = 'admin/demande_admission_form.html'
+    template_name = 'admin/demande/demande_admission_form.html'
     success_message = "Demande d'admission modifiée."
-
-
+    success_url_name = "demandes_admission_list"
 #detail
 class DetailWithLogin(LoginRequiredMixin, DetailView):
     """
     Vue générique pour afficher le détail d'un objet.
     """
-    # par défaut, context_object_name = '<model>'
 
 # Sous-classes pour chaque modèle
 class ExamenDetail(DetailWithLogin):
     model = Examen
-    template_name = 'admin/examen_detail.html'
+    template_name = 'admin/examen/examen_detail.html'
     context_object_name = 'examen'
     
 class EtudiantDetail(DetailWithLogin):
     model = Etudiant
-    template_name = 'admin/etudiant_detail.html'
+    template_name = 'admin/etudiant/etudiant_detail.html'
     context_object_name = 'etudiant'
 
 class CoursDetail(DetailWithLogin):
     model = Cours
-    template_name = 'admin/cours_detail.html'
+    template_name = 'admin/cours/cours_detail.html'
     context_object_name = 'cours'
 
 class ProfesseurDetail(DetailWithLogin):
     model = Professeur
-    template_name = 'admin/professeur_detail.html'
+    template_name = 'admin/professeur/professeur_detail.html'
     context_object_name = 'professeur'
 
 class InscriptionDetail(DetailWithLogin):
     model = Inscription
-    template_name = 'admin/inscription_detail.html'
+    template_name = 'admin/inscription/inscription_detail.html'
     context_object_name = 'inscription'
 
 class HoraireCoursDetail(DetailWithLogin):
     model = HoraireCours
-    template_name = 'admin/horaire_detail.html'
+    template_name = 'admin/horaire/horaire_detail.html'
     context_object_name = 'horaire'
 
 class ArticleDetail(DetailWithLogin):
     model = Article
-    template_name = 'admin/article_detail.html'
+    template_name = 'admin/article/article_detail.html'
     context_object_name = 'article'
 
 class EvenementDetail(DetailWithLogin):
     model = Evenement
-    template_name = 'admin/evenement_detail.html'
+    template_name = 'admin/evenement/evenement_detail.html'
     context_object_name = 'evenement'
 
 class AnnonceDetail(DetailWithLogin):
     model = Annonce
-    template_name = 'admin/annonce_detail.html'
+    template_name = 'admin/annonce/annonce_detail.html'
     context_object_name = 'annonce'
     
 
 class ProgrammeDetail(DetailWithLogin):
     model = Programme
-    template_name = 'admin/programme_detail.html'
+    template_name = 'admin/programme/programme_detail.html'
     context_object_name = 'programme'
 
 class AxeRechercheDetail(DetailWithLogin):
     model = AxeRecherche
-    template_name = 'admin/axe_detail.html'
+    template_name = 'admin/axe/axe_detail.html'
     context_object_name = 'axe'
 
 class PublicationRechercheDetail(DetailWithLogin):
     model = PublicationRecherche
-    template_name = 'admin/publication_detail.html'
+    template_name = 'admin/publication/publication_detail.html'
     context_object_name = 'publication'
 
 class LivreDetail(DetailWithLogin):
     model = Livre
-    template_name = 'admin/livre_detail.html'
+    template_name = 'admin/livre/livre_detail.html'
     context_object_name = 'livre'
 
 class PersonnelDetail(DetailWithLogin):
     model = Personnel
-    template_name = 'admin/personnel_detail.html'
+    template_name = 'admin/personnel/personnel_detail.html'
     context_object_name = 'personnel'
 
 class EtapeAdmissionDetail(DetailWithLogin):
     model = EtapeAdmission
-    template_name = 'admin/etape_admission_detail.html'
+    template_name = 'admin/etape/etape_admission_detail.html'
     context_object_name = 'etape_admission'
 
 class DemandeAdmissionDetail(DetailWithLogin):
     model = DemandeAdmission
-    template_name = 'admin/demande_admission_detail.html'
+    template_name = 'admin/demande/demande_admission_detail.html'
     context_object_name = 'demande_admission'
     
     
 #pour supprimer
+# Classe générique pour DeleteView
 class DeleteWithMessage(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     """
     Vue générique pour supprimer un objet,
-    afficher un message de succès et revenir au dashboard.
+    afficher un message de succès et rediriger vers la liste.
     """
-    success_url = reverse_lazy('dashboard')
+    success_url_name = None  # Nom de l'URL de la liste
+    success_message = None   # Message de succès
+
+    def get_success_url(self):
+        if not self.success_url_name:
+            raise ImproperlyConfigured(
+                "Vous devez définir success_url_name dans la sous-classe"
+            )
+        return reverse_lazy(self.success_url_name)
+
 
 # Sous-classes pour chaque modèle
-
-class ExamenDelete(DeleteWithMessage, SuccessMessageMixin, DeleteView):
+class ExamenDelete(DeleteWithMessage):
     model = Examen
-    template_name = 'admin/examen_confirm_delete.html'
+    template_name = 'admin/examen/examen_confirm_delete.html'
     success_message = "L'examen a bien été supprimé."
-    
-    
+    success_url_name = "examens_list"
+
+
 class EtudiantDelete(DeleteWithMessage):
     model = Etudiant
-    template_name = 'admin/etudiant_confirm_delete.html'
+    template_name = 'admin/etudiant/etudiant_confirm_delete.html'
     success_message = "L'étudiant a été supprimé avec succès."
+    success_url_name = "etudiants_list"
+
 
 class CoursDelete(DeleteWithMessage):
     model = Cours
-    template_name = 'admin/cours_confirm_delete.html'
+    template_name = 'admin/cours/cours_confirm_delete.html'
     success_message = "Le cours a été supprimé avec succès."
+    success_url_name = "cours_list"
+
 
 class ProfesseurDelete(DeleteWithMessage):
     model = Professeur
-    template_name = 'admin/professeur_confirm_delete.html'
+    template_name = 'admin/professeur/professeur_confirm_delete.html'
     success_message = "Le professeur a été supprimé avec succès."
+    success_url_name = "professeurs_list"
+
 
 class InscriptionDelete(DeleteWithMessage):
     model = Inscription
-    template_name = 'admin/inscription_confirm_delete.html'
+    template_name = 'admin/inscription/inscription_confirm_delete.html'
     success_message = "Inscription supprimée."
+    success_url_name = "inscriptions_list"
+
 
 class HoraireCoursDelete(DeleteWithMessage):
     model = HoraireCours
-    template_name = 'admin/horaire_confirm_delete.html'
+    template_name = 'admin/horaire/horaire_confirm_delete.html'
     success_message = "Horaire supprimé."
+    success_url_name = "horaires_list"
+
 
 class ArticleDelete(DeleteWithMessage):
     model = Article
-    template_name = 'admin/article_confirm_delete.html'
+    template_name = 'admin/article/article_confirm_delete.html'
     success_message = "Article supprimé."
+    success_url_name = "articles_list"
+
 
 class EvenementDelete(DeleteWithMessage):
     model = Evenement
-    template_name = 'admin/evenement_confirm_delete.html'
+    template_name = 'admin/evenement/evenement_confirm_delete.html'
     success_message = "Événement supprimé."
+    success_url_name = "evenements_list"
+
 
 class AnnonceDelete(DeleteWithMessage):
     model = Annonce
-    template_name = 'admin/annonce_confirm_delete.html'
+    template_name = 'admin/annonce/annonce_confirm_delete.html'
     success_message = "Annonce supprimée."
+    success_url_name = "annonces_list"
+
 
 class ProgrammeDelete(DeleteWithMessage):
     model = Programme
-    template_name = 'admin/programme_confirm_delete.html'
+    template_name = 'admin/programme/programme_confirm_delete.html'
     success_message = "Programme supprimé."
+    success_url_name = "programmes_list"
+
 
 class AxeRechercheDelete(DeleteWithMessage):
     model = AxeRecherche
-    template_name = 'admin/axe_confirm_delete.html'
+    template_name = 'admin/axe/axe_confirm_delete.html'
     success_message = "Axe de recherche supprimé."
+    success_url_name = "axes_list"
+
 
 class PublicationRechercheDelete(DeleteWithMessage):
     model = PublicationRecherche
-    template_name = 'admin/publication_confirm_delete.html'
+    template_name = 'admin/publication/publication_confirm_delete.html'
     success_message = "Publication supprimée."
+    success_url_name = "publications_list"
+
 
 class LivreDelete(DeleteWithMessage):
     model = Livre
-    template_name = 'admin/livre_confirm_delete.html'
+    template_name = 'admin/livre/livre_confirm_delete.html'
     success_message = "Livre supprimé."
+    success_url_name = "livres_list"
+
 
 class PersonnelDelete(DeleteWithMessage):
     model = Personnel
-    template_name = 'admin/personnel_confirm_delete.html'
+    template_name = 'admin/personnel/personnel_confirm_delete.html'
     success_message = "Membre du personnel supprimé."
+    success_url_name = "personnels_list"
+
 
 class EtapeAdmissionDelete(DeleteWithMessage):
     model = EtapeAdmission
-    template_name = 'admin/etape_admission_confirm_delete.html'
+    template_name = 'admin/etape/etape_admission_confirm_delete.html'
     success_message = "Étape d'admission supprimée."
+    success_url_name = "etapes_admission_list"
+
 
 class DemandeAdmissionDelete(DeleteWithMessage):
     model = DemandeAdmission
-    template_name = 'admin/demande_admission_confirm_delete.html'
+    template_name = 'admin/demande/demande_admission_confirm_delete.html'
     success_message = "Demande d'admission supprimée."
-
-
-
-
-def exam_calendar(request, year=None, month=None):
-    """
-    Affiche un calendrier mensuel des examens pour le staff.
-    """
-    # 1) Détermination de l'année et du mois
-    today = date.today()
-    year = int(year) if year else today.year
-    month = int(month) if month else today.month
-
-    # 2) Construction des dates du mois
-    cal = calendar.Calendar(firstweekday=0)  # lundi=0
-    month_dates = cal.monthdatescalendar(year, month)
-
-    # 3) Récupération et groupement des examens
-    events = Examen.objects.filter(date__year=year, date__month=month)
-    events_by_day = {}
-    for ev in events:
-        events_by_day.setdefault(ev.date.day, []).append(ev)
-
-    # 4) Calcul du mois précédent
-    if month == 1:
-        prev_month, prev_year = 12, year - 1
-    else:
-        prev_month, prev_year = month - 1, year
-
-    # 5) Calcul du mois suivant
-    if month == 12:
-        next_month, next_year = 1, year + 1
-    else:
-        next_month, next_year = month + 1, year
-
-    # 6) Contexte pour le template
-    context = {
-        'month_name': date(year, month, 1).strftime('%B %Y'),
-        'month_dates': month_dates,
-        'events_by_day': events_by_day,
-        'current_month': month,
-        'current_year': year,
-        'day_names': ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-        'prev_month': prev_month,
-        'prev_year': prev_year,
-        'next_month': next_month,
-        'next_year': next_year,
-        'today': date.today(),  # ← ajoute ceci
-        
-    }
+    success_url_name = "demandes_admission_list"
     
-       
-    # 7) Examens à venir (au-delà d'aujourd'hui)
-    upcoming_exams = Examen.objects.filter(date__gt=now()).order_by('date')
 
-    # Ajout au contexte
-    context['upcoming_exams'] = upcoming_exams
 
-    return render(request, 'calendrier/calendrier.html', context)
 
- 
+def calendrier_examen(request, annee=None):
+    """
+    Affiche une vue annuelle (12 mois) des examens.
+    Variables en français : annee, mois, mois_donnees, evenements_par_date, aujourd
+    """
+    aujourd = timezone.localdate()
+    annee = int(annee) if annee else aujourd.year
+
+    cal = calendar.Calendar(firstweekday=0)  # lundi = 0
+
+    # Récupère tous les examens de l'année (une seule requête)
+    examens_annee = Examen.objects.filter(date__year=annee).order_by('date')
+
+    # Groupe les examens par date (clé: datetime.date)
+    evenements_par_date = {}
+    for ex in examens_annee:
+        evenements_par_date.setdefault(ex.date, []).append(ex)
+
+    # noms des mois en français courts (tu peux les modifier)
+    mois_noms = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin',
+                 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.']
+
+    # Construire la structure des 12 mois
+    mois_donnees = []
+    for m in range(1, 13):
+        semaines = cal.monthdatescalendar(annee, m)
+        # semaines : liste de semaines, chaque semaine = liste de 7 objets date
+        semaines_cells = []
+        for semaine in semaines:
+            jours = []
+            # dans la boucle construisant les jours (remplace ton code actuel de construction de jours)
+            for d in semaine:
+                jours.append({
+                    'date': d,
+                    'day': d.day,
+                    'est_mois_courant': d.month == m,
+                    'evenements': evenements_par_date.get(d, []),
+                    'est_aujourd': d == aujourd,
+                    'weekday': d.weekday(),  # 0=Lun ... 6=Dim -> utile pour colorer le dimanche
+                })
+
+            semaines_cells.append(jours)
+        mois_donnees.append({
+            'numero': m,
+            'nom': mois_noms[m - 1],
+            'semaines': semaines_cells,
+        })
+
+    contexte = {
+        'annee': annee,
+        'mois_donnees': mois_donnees,
+        'aujourd': aujourd,
+        'jours_noms': ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+        'annee_precedente': annee - 1,
+        'annee_suivante': annee + 1,
+        # examens à venir globaux (optionnel)
+        'examens_a_venir': Examen.objects.filter(date__gt=aujourd).order_by('date')[:10],
+    }
+
+    return render(request, 'calendrier/annee.html', contexte)
 
 
 
@@ -1124,3 +1450,140 @@ def detail_annonce(request, slug):
     annonce = get_object_or_404(Annonce, slug=slug)
     return render(request, 'annonces/annonces_details.html', {'annonce': annonce})
 
+
+
+def global_search(request):
+    q = request.GET.get('q', '').strip()
+    limit_per_model = 10  # ajustable
+
+    results = {}
+    total_counts = {}
+
+    if q:
+        # Étudiants
+        qs = Etudiant.objects.select_related('departement').filter(
+            Q(prenom__icontains=q) |
+            Q(nom__icontains=q) |
+            Q(email__icontains=q) |
+            Q(telephone__icontains=q)
+        )
+        total_counts['etudiants'] = qs.count()
+        results['etudiants'] = qs[:limit_per_model]
+
+        # Cours
+        qs = Cours.objects.filter(
+            Q(code__icontains=q) |
+            Q(nom__icontains=q)
+        )
+        total_counts['cours'] = qs.count()
+        results['cours'] = qs[:limit_per_model]
+
+        # Professeurs
+        qs = Professeur.objects.filter(
+            Q(prenom__icontains=q) |
+            Q(nom__icontains=q) |
+            Q(email__icontains=q) |
+            Q(specialite__icontains=q)
+        )
+        total_counts['professeurs'] = qs.count()
+        results['professeurs'] = qs[:limit_per_model]
+
+        # Programmes
+        qs = Programme.objects.filter(
+            Q(titre__icontains=q) |
+            Q(description__icontains=q)
+        )
+        total_counts['programmes'] = qs.count()
+        results['programmes'] = qs[:limit_per_model]
+
+        # Articles
+        qs = Article.objects.filter(
+            Q(titre__icontains=q) |
+            Q(contenu__icontains=q) |
+            Q(auteur__icontains=q)
+        )
+        total_counts['articles'] = qs.count()
+        results['articles'] = qs[:limit_per_model]
+
+        # Evenements
+        qs = Evenement.objects.filter(
+            Q(titre__icontains=q) |
+            Q(description__icontains=q) |
+            Q(lieu__icontains=q)
+        )
+        total_counts['evenements'] = qs.count()
+        results['evenements'] = qs[:limit_per_model]
+
+        # Annonces
+        qs = Annonce.objects.filter(
+            Q(titre__icontains=q) |
+            Q(contenu__icontains=q) |
+            Q(organisateur__icontains=q) |
+            Q(lieu__icontains=q)
+        )
+        total_counts['annonces'] = qs.count()
+        results['annonces'] = qs[:limit_per_model]
+
+        # Publications de recherche
+        qs = PublicationRecherche.objects.filter(
+            Q(titre__icontains=q) |
+            Q(auteurs__icontains=q) |
+            Q(description__icontains=q) |
+            Q(domaines__icontains=q)
+        )
+        total_counts['publications'] = qs.count()
+        results['publications'] = qs[:limit_per_model]
+
+        # Livres
+        qs = Livre.objects.filter(
+            Q(titre__icontains=q) |
+            Q(auteur__icontains=q) |
+            Q(resume__icontains=q)
+        )
+        total_counts['livres'] = qs.count()
+        results['livres'] = qs[:limit_per_model]
+
+        # Personnel
+        qs = Personnel.objects.filter(
+            Q(nom__icontains=q) |
+            Q(description__icontains=q) |
+            Q(poste__icontains=q)
+        )
+        total_counts['personnel'] = qs.count()
+        results['personnel'] = qs[:limit_per_model]
+
+        # Examens
+        qs = Examen.objects.filter(
+            Q(titre__icontains=q) |
+            Q(description__icontains=q)
+        )
+        total_counts['examens'] = qs.count()
+        results['examens'] = qs[:limit_per_model]
+
+        # Horaires & Inscriptions (si tu veux les inclure)
+        qs = HoraireCours.objects.filter(
+            Q(jour__icontains=q) |
+            Q(cours__nom__icontains=q) |
+            Q(professeur__prenom__icontains=q) |
+            Q(professeur__nom__icontains=q)
+        ).select_related('cours', 'professeur')
+        total_counts['horaires'] = qs.count()
+        results['horaires'] = qs[:limit_per_model]
+
+        qs = Inscription.objects.filter(
+            Q(etudiant__prenom__icontains=q) |
+            Q(etudiant__nom__icontains=q) |
+            Q(horaire_cours__cours__nom__icontains=q)
+        ).select_related('etudiant', 'horaire_cours')
+        total_counts['inscriptions'] = qs.count()
+        results['inscriptions'] = qs[:limit_per_model]
+
+
+
+    context = {
+        'query': q,
+        'results': results,
+        'total_counts': total_counts,
+        'limit_per_model': limit_per_model,
+    }
+    return render(request, 'search/global_search.html', context)

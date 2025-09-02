@@ -91,9 +91,14 @@
   
       </div>
   
-      <div class="mt-8 pt-8 border-t border-gray-700 text-center text-xs text-gray-400">
-        <p>Ce site est à des fins éducatives. Tous les contenus sont fictifs.</p>
-      </div>
+  <div class="mt-8 pt-8 border-t border-gray-700 text-center text-xs text-gray-400">
+    <p>&copy; <span id="current-year"> </span> FASCH concu par  Baouly Nelson</p>
+</div>
+
+<script>
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
+
     </div>
     <!-- Back to top button -->
     <a href="#" class="back-to-top" id="backToTop">

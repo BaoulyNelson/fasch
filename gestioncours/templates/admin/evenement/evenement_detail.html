@@ -1,0 +1,153 @@
+{% extends 'admin/dashboard.html' %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}{{ evenement.titre }} | {% trans "Événements" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/evenements.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-5">
+  <!-- Breadcrumb -->
+  <nav class="flex text-sm text-gray-600 mb-4" aria-label="Breadcrumb">
+    <ol class="inline-flex items-center space-x-1">
+      <li class="inline-flex items-center">
+        <a href="{% url 'dashboard' %}" class="inline-flex items-center hover:text-blue-600">
+          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 1L3 8h4v7h6V8h4L10 1z" />
+          </svg>
+          {% trans "Accueil" %}
+        </a>
+      </li>
+      <li>
+        <div class="flex items-center">
+          <svg class="w-3 h-3 text-gray-400 mx-2" fill="none" viewBox="0 0 6 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 9l4-4-4-4"/>
+          </svg>
+          <a href="{% url 'dashboard' %}" class="hover:text-blue-600">{% trans "Événements" %}</a>
+        </div>
+      </li>
+      <li aria-current="page">
+        <div class="flex items-center">
+          <svg class="w-3 h-3 text-gray-400 mx-2" fill="none" viewBox="0 0 6 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 9l4-4-4-4"/>
+          </svg>
+          <span class="text-gray-500">{{ evenement.titre }}</span>
+        </div>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Event Detail Card -->
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    {% if evenement.is_past %}
+      <div class="bg-red-100 text-red-700 px-4 py-2 text-sm font-semibold">{% trans "Événement passé" %}</div>
+    {% elif evenement.is_ongoing %}
+      <div class="bg-green-100 text-green-700 px-4 py-2 text-sm font-semibold">{% trans "En cours" %}</div>
+    {% endif %}
+
+    <div class="md:flex">
+      {% if evenement.image %}
+        <div class="md:flex-shrink-0">
+          <img src="{{ evenement.image.url }}" alt="{{ evenement.titre }}" class="w-full h-64 object-cover md:w-96">
+        </div>
+        <div class="p-6 flex flex-col justify-between">
+      {% else %}
+        <div class="p-6">
+      {% endif %}
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800 mb-4">{{ evenement.titre }}</h1>
+          <!-- Meta -->
+          <div class="text-gray-600 space-y-2">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M6 2a1 1 0 011 1v1h6V3a1 1 0 112 0v1h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h1V3a1 1 0 011-1z"/>
+              </svg>
+              {% if evenement.date_debut.date == evenement.date_fin.date %}
+                <span class="font-semibold">{{ evenement.date_debut|date:"l j F Y" }}</span>
+                <span class="ml-2">{% trans "De" %} {{ evenement.date_debut|date:"H:i" }} {% trans "à" %} {{ evenement.date_fin|date:"H:i" }}</span>
+              {% else %}
+                <span class="font-semibold">{% trans "Du" %} {{ evenement.date_debut|date:"j F Y - H:i" }}</span>
+                <span class="ml-2">{% trans "au" %} {{ evenement.date_fin|date:"j F Y - H:i" }}</span>
+              {% endif %}
+            </div>
+            {% if evenement.lieu %}
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9l-4.95 4.95a.7.7 0 01-1 0l-4.95-4.95a7 7 0 010-9.9zm3.95 3.95a1 1 0 102 0 1 1 0 00-2 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>{{ evenement.lieu }}</span>
+            </div>
+            {% endif %}
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-8V5a1 1 0 10-2 0v5a1 1 0 00.553.894l3 1.5a1 1 0 10.894-1.789L11 10z" clip-rule="evenodd"/>
+              </svg>
+              {% blocktrans with duration=evenement.duration %}
+Durée : {{ duration }} heures
+{% endblocktrans %}
+
+            </div>
+          </div>
+        </div>
+
+        {% if not evenement.is_past %}
+        <div class="mt-6 flex space-x-3">
+          <a href="#" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+            {% trans "S'inscrire" %}
+          </a>
+          <a href="#" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+            <svg class="w-5 h-5 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M6 2a1 1 0 011 1v1h6V3a1 1 0 112 0v1h1a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h1V3a1 1 0 011-1z"/>
+            </svg>
+            {% trans "Ajouter au calendrier" %}
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="border-t px-6 py-4">
+      <h2 class="text-xl font-semibold text-gray-800 mb-3">{% trans "À propos de cet événement" %}</h2>
+      <p class="text-gray-700 leading-relaxed">{{ evenement.description|linebreaks }}</p>
+    </div>
+
+    <div class="px-6 py-4">
+      <a href="{% url 'evenements_list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+        <svg class="w-5 h-5 mr-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+        </svg>
+        {% trans "Retour aux événements" %}
+      </a>
+    </div>
+
+    {% if related_events %}
+    <div class="border-t px-6 py-4">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">{% trans "Événements similaires" %}</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {% for event in related_events %}
+        <div class="bg-white rounded-lg shadow hover:shadow-md overflow-hidden">
+          {% if event.image %}
+            <img src="{{ event.image.url }}" alt="{{ event.titre }}" class="w-full h-40 object-cover">
+          {% endif %}
+          <div class="p-4">
+            <h4 class="text-md font-semibold text-gray-800">{{ event.titre }}</h4>
+            <p class="text-sm text-gray-500">{{ event.date_debut|date:"j F Y" }}</p>
+            <a href="{{ event.get_absolute_url }}" class="inline-block mt-2 text-blue-600 hover:underline">{% trans "Voir" %}</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/evenements.js' %}"></script>
+{% endblock %}

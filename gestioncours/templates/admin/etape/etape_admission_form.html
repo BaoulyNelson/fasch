@@ -1,0 +1,178 @@
+{% extends 'admin/dashboard.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+    {% if form.instance.pk %}{% trans "Modifier une étape d'admission" %}{% else %}{% trans "Ajouter une étape d'admission" %}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-2xl">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h1 class="text-2xl font-semibold text-gray-800">
+                {% if form.instance.pk %}{% trans "Modifier une Étape d'Admission" %}{% else %}{% trans "Nouvelle Étape d'Admission" %}{% endif %}
+            </h1>
+            <p class="text-sm text-gray-600 mt-1">
+                {% trans "Définissez les paramètres de cette étape du processus d'admission" %}
+            </p>
+        </div>
+
+        <form method="post" 
+              action="{% if form.instance.pk %}{% url 'modifier_etape_admission' form.instance.pk %}{% else %}{% url 'add_etape_admission' %}{% endif %}" 
+              class="p-6">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">{% trans "Erreurs de validation" %}</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                {{ form.non_field_errors }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="space-y-6">
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                        </label>
+                        <div class="relative">
+                            {% if field.field.widget.input_type == 'textarea' %}
+                                {{ field|add_class:"w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-vertical min-h-24" }}
+                            {% elif field.field.widget.input_type == 'select' %}
+                                {{ field|add_class:"w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white" }}
+                            {% elif field.field.widget.input_type in 'number date' %}
+                                {{ field|add_class:"w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" }}
+                            {% elif field.field.widget.input_type == 'checkbox' %}
+                                <div class="flex items-center">
+                                    {{ field|add_class:"h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" }}
+                                    <span class="ml-2 text-sm text-gray-600">{{ field.help_text }}</span>
+                                </div>
+                            {% else %}
+                                {{ field|add_class:"w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" }}
+                            {% endif %}
+                        </div>
+
+                        {% if field.help_text and field.field.widget.input_type != 'checkbox' %}
+                            <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div class="mt-1">
+                                {% for error in field.errors %}
+                                    <p class="text-red-500 text-sm flex items-center">
+                                        <svg class="h-4 w-4 mr-1 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        </svg>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-8 flex items-center justify-between pt-6 border-t border-gray-200">
+                <a href="{% url 'etapes_admission_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-9-7 9-7v14z" />
+                    </svg>
+                    {% trans "Annuler" %}
+                </a>
+                
+                <button type="submit" 
+                        class="inline-flex items-center px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {% if form.instance.pk %}{% trans "Mettre à jour" %}{% else %}{% trans "Enregistrer" %}{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach(function(textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    });
+});
+
+// Form validation enhancement
+document.querySelector('form').addEventListener('submit', function(e) {
+    const requiredFields = document.querySelectorAll('[required]');
+    let hasErrors = false;
+    
+    requiredFields.forEach(function(field) {
+        if (!field.value.trim()) {
+            field.classList.add('border-red-500');
+            hasErrors = true;
+        } else {
+            field.classList.remove('border-red-500');
+        }
+    });
+    
+    if (hasErrors) {
+        e.preventDefault();
+        // Scroll to first error
+        const firstError = document.querySelector('.border-red-500');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            firstError.focus();
+        }
+    }
+});
+</script>
+
+<style>
+/* Styles personnalisés pour les champs de formulaire */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-group input[type="checkbox"]:checked {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+}
+
+/* Animation pour les erreurs */
+.text-red-500 {
+    animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+/* Amélioration visuelle pour les champs requis */
+.form-group label span.text-red-500 {
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}

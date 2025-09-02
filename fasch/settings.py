@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'gestioncours',
+    "widget_tweaks",
 ]
 
 MIDDLEWARE = [

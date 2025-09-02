@@ -1,0 +1,47 @@
+{% extends 'admin/dashboard.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6">
+    <div class="bg-white rounded-lg shadow p-6">
+        <h1 class="text-2xl font-bold text-gray-700 mb-4">{{ object.nom }}</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+            <div>
+                <h2 class="font-semibold">Nom de l'étape :</h2>
+                <p>{{ object.nom }}</p>
+            </div>
+            <div>
+                <h2 class="font-semibold">Date de début :</h2>
+                <p>
+                    {% if object.date_debut %}
+                        {{ object.date_debut|date:"d M Y" }}
+                    {% else %}
+                        Non définie
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <h2 class="font-semibold">Date limite :</h2>
+                <p>
+                    {% if object.date_limite %}
+                        {{ object.date_limite|date:"d M Y" }}
+                    {% else %}
+                        Non définie
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-6 flex gap-2">
+            <a href="{% url 'modifier_etape_admission' object.pk %}" 
+               class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                Modifier
+            </a>
+            <a href="{% url 'etapes_admission_list' %}" 
+               class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                Retour à la liste
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

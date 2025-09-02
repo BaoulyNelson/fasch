@@ -7,6 +7,10 @@ class ExamenAdmin(admin.ModelAdmin):
     list_display  = ('titre', 'date', 'status')
     list_filter   = ('date', 'status')
     search_fields = ('titre',)
+
+    # Empêche l’édition manuelle de `status`
+    exclude = ('status',)
+
     
 @admin.register(Etudiant)
 class EtudiantAdmin(admin.ModelAdmin):

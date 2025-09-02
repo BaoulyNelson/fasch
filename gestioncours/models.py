@@ -21,7 +21,7 @@ class Etudiant(models.Model):
 )
     telephone = models.CharField(max_length=20, unique=True,  error_messages={'unique': "Ce numero appartient déjà à un autre étudiant."}
 )
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
 
 
     NIVEAU_CHOICES = [
@@ -41,7 +41,7 @@ class Cours(models.Model):
     code = models.CharField(max_length=20, unique=True, null=True, blank=True)
     nom = models.CharField(max_length=255, unique=True)
     credits = models.PositiveIntegerField(default=3)
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     NIVEAU_CHOICES = [
         ("Preparatoire", "Préparatoire"),
         ("Premiere Annee", "Première Année"),
@@ -69,7 +69,7 @@ class Professeur(models.Model):
     telephone = models.CharField(max_length=20, null=True, unique=True,  error_messages={'unique': "Ce numero appartient déjà à un autre professeur."}
 )
     specialite = models.CharField(max_length=255, blank=True, null=True)  # Champ stocké
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     def __str__(self):
         return f"{self.prenom} {self.nom}"
 
@@ -96,7 +96,7 @@ class HoraireCours(models.Model):
     professeur = models.ForeignKey(Professeur, on_delete=models.CASCADE)
     capacite_max = models.PositiveIntegerField(default=30)  # <- capacité maximale du créneau
     est_ferme = models.BooleanField(default=False)
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     def __str__(self):
         return f"{self.jour} {self.heure_debut}-{self.heure_fin}: {self.cours.nom}"
 
@@ -109,6 +109,8 @@ class HoraireCours(models.Model):
 class Inscription(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
     horaire_cours = models.ForeignKey(HoraireCours, on_delete=models.CASCADE)
+    date_inscription = models.DateTimeField(auto_now_add=True)  # <-- Ajouté
+
 
     class Meta:
         unique_together = ('etudiant', 'horaire_cours')
@@ -148,7 +150,7 @@ class EtapeAdmission(models.Model):
     nom = models.CharField(max_length=255)
     date_debut = models.DateField(null=True, blank=True)
     date_limite = models.DateField(null=True, blank=True)
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     def __str__(self):
         return self.nom
     
@@ -162,7 +164,7 @@ class DemandeAdmission(models.Model):
 )
     programme = models.CharField(max_length=255)
     message = models.TextField()
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     date_envoi = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -186,7 +188,7 @@ class Programme(models.Model):
         choices=NIVEAU_CHOICES,
         default="Preparatoire",
     )
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     def __str__(self):
         return self.titre
 
@@ -211,7 +213,7 @@ class Article(models.Model):
     contenu = models.TextField(help_text="Le contenu de l'article")
     auteur = models.CharField(max_length=100, default="FASCH")
     date_publication = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(upload_to='articles/', null=True, blank=True, help_text="Image associée à l'article")
+    image = models.ImageField(upload_to='articles/', null=True, blank=True)
     est_active = models.BooleanField(default=True, help_text="Indique si l'article est actif ou non")
     slug = models.SlugField(max_length=255, unique=True, blank=True)
 
@@ -227,6 +229,8 @@ class Article(models.Model):
         return self.contenu[:200] + "..." if len(self.contenu) > 200 else self.contenu
 
 
+from django.utils import timezone
+
 class Evenement(models.Model):
     titre = models.CharField(max_length=255)
     description = models.TextField()
@@ -235,6 +239,7 @@ class Evenement(models.Model):
     image = models.ImageField(upload_to='evenements/', null=True, blank=True)
     lieu = models.CharField(max_length=255, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
+    date_creation = models.DateTimeField(auto_now_add=True, editable=False)
 
     def save(self, *args, **kwargs):
         if not self.slug or self._state.adding:
@@ -244,8 +249,15 @@ class Evenement(models.Model):
     def __str__(self):
         return self.titre
 
-    def is_coming_up(self):
-        return self.date_debut > timezone.now()
+    def get_status(self):
+        now = timezone.now()
+        if self.date_debut > now:
+            return "À venir"
+        elif self.date_debut <= now <= self.date_fin:
+            return "En cours"
+        else:
+            return "Terminé"
+
 
 
 class Annonce(models.Model):
@@ -292,6 +304,12 @@ class PublicationRecherche(models.Model):
 
     def __str__(self):
         return self.titre
+
+    @property
+    def domaines_list(self):
+        """Retourne la liste des domaines en enlevant les espaces superflus."""
+        return [d.strip() for d in self.domaines.split(",")] if self.domaines else []
+
     
     
 class Livre(models.Model):
@@ -300,7 +318,7 @@ class Livre(models.Model):
     annee = models.IntegerField()
     resume = models.TextField()
     disponible = models.BooleanField(default=True)
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     def __str__(self):
         return self.titre
 
@@ -323,7 +341,7 @@ class Personnel(models.Model):
     nom = models.CharField(max_length=100)
     description = models.TextField()
     photo = models.ImageField(upload_to='personnel/', blank=True, null=True)
-
+    date_creation = models.DateTimeField(auto_now_add=True,editable=False)
     class Meta:
         verbose_name = "Membre du personnel"
         verbose_name_plural = "Personnel administratif"

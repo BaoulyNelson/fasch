@@ -1,0 +1,124 @@
+{% extends 'admin/dashboard.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <!-- En-tête avec titre et bouton d'ajout -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Bibliothèque</h1>
+      <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        Gestion des livres disponibles
+      </p>
+    </div>
+    <a href="{% url 'add_livre' %}"
+       class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+      <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+      </svg>
+      Ajouter un livre
+    </a>
+  </div>
+
+  <!-- Tableau des livres -->
+  <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+    <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
+      <thead class="bg-gray-50 dark:bg-gray-800">
+        <tr>
+          <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-white sm:pl-6">
+            Titre
+          </th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+            Auteur
+          </th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+            Année
+          </th>
+          <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+            Disponibilité
+          </th>
+          <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+            <span class="sr-only">Actions</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900">
+        {% for livre in livres %}
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+          <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-6">
+            {{ livre.titre }}
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+            {{ livre.auteur }}
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
+            {{ livre.annee }}
+          </td>
+          <td class="whitespace-nowrap px-3 py-4 text-sm">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                  {% if livre.disponible %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                  {% else %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200{% endif %}">
+              {% if livre.disponible %}Disponible{% else %}Indisponible{% endif %}
+            </span>
+          </td>
+          <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+            <div class="flex justify-end space-x-3">
+              <a href="{% url 'detail_livre' livre.pk %}"
+                 class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                 title="Voir les détails">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </a>
+              <a href="{% url 'modifier_livre' livre.pk %}"
+                 class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
+                 title="Modifier">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </a>
+              <a href="{% url 'supprimer_livre' livre.pk %}"
+                 class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                 title="Supprimer"
+                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce livre ? Cette action est irréversible.')">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500 dark:text-gray-400 sm:pl-6 text-center">
+            <div class="py-8">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 19 7.5 19s3.332-.523 4.5-1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 19 16.5 19c-1.746 0-3.332-.523-4.5-1.253" />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">Aucun livre disponible</h3>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Commencez par ajouter un nouveau livre à la bibliothèque.
+              </p>
+              <div class="mt-6">
+                <a href="{% url 'add_livre' %}"
+                   class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Ajouter un livre
+                </a>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

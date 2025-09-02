@@ -1,0 +1,53 @@
+{% extends "admin/dashboard.html" %}
+{% load extras %}
+
+{% block title %}Résultats de recherche{% endblock %}
+
+{% block content %}
+  <div class="mb-4">
+    <h1 class="text-xl font-semibold">Résultats pour « {{ query }} »</h1>
+    <p class="text-sm text-gray-500">Affichage jusqu'à {{ limit_per_model }} résultats par type. Utilisez les pages dédiées pour voir tout.</p>
+  </div>
+
+  {% if not query %}
+    <p class="text-gray-600">Entrez un mot-clé pour lancer la recherche.</p>
+  {% else %}
+    <div class="space-y-6">
+      {% for model_name, items in results.items %}
+        {% if items %}
+          <div class="bg-white p-4 rounded shadow">
+            <div class="flex items-center justify-between">
+              <h2 class="font-semibold">{{ model_name|capfirst }} ({{ total_counts|get_item:model_name }})</h2>
+              
+              {# lien vers la page listée avec param q pour filtre global #}
+              <a href="{% url model_name|add:'_list' %}?q={{ query|urlencode }}" class="text-sm text-primary hover:underline">Voir tout</a>
+            </div>
+
+            <ul class="mt-3 space-y-2">
+              {% for obj in items %}
+                <li class="border-b py-2 last:border-b-0">
+                  {# Affichage générique : adapte selon modèle si besoin #}
+                  {% if model_name == 'etudiants' %}
+                    <a href="{% url 'detail_etudiant' obj.pk %}" class="font-medium">{{ obj.prenom }} {{ obj.nom }}</a>
+                    <div class="text-sm text-gray-500">{{ obj.email }}</div>
+                  {% elif model_name == 'cours' %}
+                    <a href="{% url 'detail_cours' obj.pk %}" class="font-medium">{{ obj.code }} — {{ obj.nom }}</a>
+                    <div class="text-sm text-gray-500">{{ obj.get_niveau_display }}</div>
+                  {% elif model_name == 'professeurs' %}
+                    <a href="{% url 'detail_professeur' obj.pk %}" class="font-medium">{{ obj.prenom }} {{ obj.nom }}</a>
+                    <div class="text-sm text-gray-500">{{ obj.specialite }}</div>
+                  {% elif model_name == 'articles' %}
+                    <a href="{% url 'detail_article' obj.pk %}" class="font-medium">{{ obj.titre }}</a>
+                    <div class="text-sm text-gray-500">{{ obj.auteur }} • {{ obj.date_publication|date:"d/m/Y" }}</div>
+                  {% else %}
+                    <a class="font-medium" href="#">{{ obj }}</a>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

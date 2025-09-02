@@ -1,0 +1,101 @@
+nom,prenom,email,telephone,niveau,departement
+Dupont,Louis,louis.dupont@example.com,+50936527601,Première Année,Service Social
+Dupont,Léa,lea.dupont@example.com,+50936431840,Préparatoire,Sociologie
+Petit,Gabriel,gabriel.petit@example.com,+50935911378,Deuxième Année,Psychologie
+Chevalier,Sophie,sophie.chevalier@example.com,+50932423072,Première Année,Communication sociale
+Perrot,Thomas,thomas.perrot@example.com,+50938277202,Quatrième Année,Service Social
+Mercier,Hugo,hugo.mercier@example.com,+50938025220,Quatrième Année,Communication sociale
+Bernard,Léa,lea.bernard@example.com,+50934139087,Troisième Année,Communication sociale
+Moreau,David,david.moreau@example.com,+50938538948,Préparatoire,Service Social
+Petit,Emma,emma.petit@example.com,+50932023833,Deuxième Année,Communication sociale
+Roux,Julien,julien.roux@example.com,+50935600102,Préparatoire,Service Social
+Lemoine,David,david.lemoine@example.com,+50937924933,Deuxième Année,Service Social
+Dupont,Noah,noah.dupont@example.com,+50934751637,Troisième Année,Sociologie
+Garnier,Chloé,chloe.garnier@example.com,+50934334858,Première Année,Service Social
+Mercier,Sarah,sarah.mercier@example.com,+50939806781,Deuxième Année,Sociologie
+Chevalier,Léa,lea.chevalier@example.com,+50933078230,Quatrième Année,Communication sociale
+Fournier,David,david.fournier@example.com,+50939657826,Deuxième Année,Communication sociale
+Mercier,Sophie,sophie.mercier@example.com,+50935187673,Deuxième Année,Sociologie
+Muller,Thomas,thomas.muller@example.com,+50936151882,Quatrième Année,Service Social
+Blanc,Manon,manon.blanc@example.com,+50939950100,Première Année,Sociologie
+Garnier,Jade,jade.garnier@example.com,+50935115429,Préparatoire,Service Social
+Andre,Marie,marie.andre@example.com,+50931428113,Première Année,Service Social
+Lambert,Léa,lea.lambert@example.com,+50938923688,Quatrième Année,Communication sociale
+Moreau,Camille,camille.moreau@example.com,+50935989450,Première Année,Psychologie
+Perrot,Lucas,lucas.perrot@example.com,+50933534003,Quatrième Année,Communication sociale
+Lemoine,David,david.lemoine@example.com,+50939239732,Deuxième Année,Service Social
+Garnier,Clara,clara.garnier@example.com,+50931676329,Préparatoire,Sociologie
+Fournier,Antoine,antoine.fournier@example.com,+50933321671,Première Année,Communication sociale
+Moreau,Lucas,lucas.moreau@example.com,+50934721177,Première Année,Service Social
+Roux,Chloé,chloe.roux@example.com,+50934115807,Quatrième Année,Communication sociale
+Lambert,Chloé,chloe.lambert@example.com,+50931944602,Troisième Année,Communication sociale
+Francois,Nathan,nathan.francois@example.com,+50933623093,Préparatoire,Psychologie
+Dupont,Clara,clara.dupont@example.com,+50932446042,Préparatoire,Communication sociale
+Muller,Nathan,nathan.muller@example.com,+50933713945,Première Année,Communication sociale
+Francois,Julien,julien.francois@example.com,+50937929051,Quatrième Année,Service Social
+Moreau,Manon,manon.moreau@example.com,+50933732344,Préparatoire,Psychologie
+Mathieu,David,david.mathieu@example.com,+50933699979,Troisième Année,Service Social
+Andre,Sarah,sarah.andre@example.com,+50934961792,Préparatoire,Psychologie
+Roux,Nathan,nathan.roux@example.com,+50931519571,Quatrième Année,Communication sociale
+Riviere,Chloé,chloe.riviere@example.com,+50937943806,Préparatoire,Psychologie
+Garnier,Hugo,hugo.garnier@example.com,+50933185455,Quatrième Année,Sociologie
+Bernard,Gabriel,gabriel.bernard@example.com,+50932946299,Troisième Année,Sociologie
+Lemoine,David,david.lemoine@example.com,+50938288590,Deuxième Année,Communication sociale
+Perrot,Antoine,antoine.perrot@example.com,+50934871815,Deuxième Année,Service Social
+Blanc,Sarah,sarah.blanc@example.com,+50938043779,Première Année,Sociologie
+Riviere,Emma,emma.riviere@example.com,+50934297320,Préparatoire,Communication sociale
+Laurent,Manon,manon.laurent@example.com,+50931266651,Première Année,Communication sociale
+Roux,Gabriel,gabriel.roux@example.com,+50933068199,Première Année,Service Social
+Girard,Chloé,chloe.girard@example.com,+50932432272,Préparatoire,Communication sociale
+Chevalier,Julien,julien.chevalier@example.com,+50931004816,Première Année,Psychologie
+Perrot,Manon,manon.perrot@example.com,+50938270142,Première Année,Service Social
+Petit,Lucas,lucas.petit@example.com,+50938716511,Troisième Année,Sociologie
+Petit,Manon,manon.petit@example.com,+50932985269,Quatrième Année,Psychologie
+Chevalier,Thomas,thomas.chevalier@example.com,+50933366460,Deuxième Année,Communication sociale
+Fournier,Antoine,antoine.fournier@example.com,+50937064291,Préparatoire,Service Social
+Moreau,Hugo,hugo.moreau@example.com,+50936388058,Préparatoire,Sociologie
+Petit,Camille,camille.petit@example.com,+50937759561,Deuxième Année,Communication sociale
+Roux,Antoine,antoine.roux@example.com,+50935829084,Troisième Année,Sociologie
+Roux,Julien,julien.roux@example.com,+50933865878,Deuxième Année,Communication sociale
+Mathieu,David,david.mathieu@example.com,+50937475303,Deuxième Année,Sociologie
+Fournier,Julien,julien.fournier@example.com,+50931223547,Première Année,Psychologie
+Dupont,Léa,lea.dupont@example.com,+50936437065,Quatrième Année,Psychologie
+Lemoine,Emma,emma.lemoine@example.com,+50936977510,Première Année,Communication sociale
+Chevalier,Noah,noah.chevalier@example.com,+50938377704,Préparatoire,Communication sociale
+Garnier,Léa,lea.garnier@example.com,+50935838457,Préparatoire,Psychologie
+Mathieu,Jade,jade.mathieu@example.com,+50938813985,Troisième Année,Communication sociale
+Francois,Julien,julien.francois@example.com,+50937268078,Troisième Année,Psychologie
+Lemoine,Lucas,lucas.lemoine@example.com,+50938100943,Troisième Année,Communication sociale
+Blanc,Léa,lea.blanc@example.com,+50931159379,Deuxième Année,Communication sociale
+Mathieu,Jade,jade.mathieu@example.com,+50934274485,Préparatoire,Service Social
+Mathieu,Marie,marie.mathieu@example.com,+50939184706,Préparatoire,Psychologie
+Andre,Antoine,antoine.andre@example.com,+50933918869,Deuxième Année,Sociologie
+Girard,Clara,clara.girard@example.com,+50933444331,Préparatoire,Service Social
+Roux,Hugo,hugo.roux@example.com,+50936306693,Préparatoire,Communication sociale
+Perrot,Marie,marie.perrot@example.com,+50937387059,Troisième Année,Sociologie
+Chevalier,Nathan,nathan.chevalier@example.com,+50938498437,Première Année,Service Social
+Mercier,Noah,noah.mercier@example.com,+50936926173,Deuxième Année,Communication sociale
+Bernard,Jade,jade.bernard@example.com,+50938377005,Préparatoire,Psychologie
+Garnier,Léa,lea.garnier@example.com,+50933305429,Deuxième Année,Sociologie
+Muller,David,david.muller@example.com,+50937627470,Première Année,Psychologie
+Fournier,Louis,louis.fournier@example.com,+50939218188,Préparatoire,Psychologie
+Lemoine,Emma,emma.lemoine@example.com,+50933408648,Deuxième Année,Psychologie
+Chevalier,Jade,jade.chevalier@example.com,+50939137771,Préparatoire,Psychologie
+Garnier,Lucas,lucas.garnier@example.com,+50932980746,Préparatoire,Service Social
+Moreau,Thomas,thomas.moreau@example.com,+50934745845,Troisième Année,Sociologie
+Moreau,Hugo,hugo.moreau@example.com,+50936201736,Première Année,Psychologie
+Muller,Sophie,sophie.muller@example.com,+50933221349,Préparatoire,Service Social
+Lambert,Sophie,sophie.lambert@example.com,+50933326954,Première Année,Psychologie
+Andre,Noah,noah.andre@example.com,+50933255226,Première Année,Psychologie
+Dupont,Antoine,antoine.dupont@example.com,+50937751021,Troisième Année,Psychologie
+Laurent,Léa,lea.laurent@example.com,+50936954894,Première Année,Communication sociale
+Roux,Manon,manon.roux@example.com,+50936845255,Deuxième Année,Service Social
+Petit,Lucas,lucas.petit@example.com,+50933077465,Quatrième Année,Psychologie
+Chevalier,Noah,noah.chevalier@example.com,+50939263788,Deuxième Année,Psychologie
+Chevalier,Jade,jade.chevalier@example.com,+50934963012,Première Année,Communication sociale
+Lemoine,Camille,camille.lemoine@example.com,+50938382548,Préparatoire,Psychologie
+Roux,Julien,julien.roux@example.com,+50939292533,Préparatoire,Service Social
+Francois,Léa,lea.francois@example.com,+50932397790,Préparatoire,Psychologie
+Riviere,Louis,louis.riviere@example.com,+50939311022,Première Année,Service Social
+Mathieu,Louis,louis.mathieu@example.com,+50939012648,Deuxième Année,Service Social
+Roux,Hugo,hugo.roux@example.com,+50936014648,Préparatoire,Communication sociale

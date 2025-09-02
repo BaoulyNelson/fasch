@@ -1,0 +1,243 @@
+{% extends 'admin/dashboard.html' %}
+{% load widget_tweaks %}
+
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="container mx-auto px-4 max-w-4xl">
+    <!-- En-tête avec breadcrumb -->
+    <div class="mb-8">
+      <nav class="flex mb-4" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+          <li class="inline-flex items-center">
+            <a href="{% url 'dashboard' %}" class="text-gray-500 hover:text-gray-700 text-sm">
+              Tableau de bord
+            </a>
+          </li>
+          <li>
+            <div class="flex items-center">
+              <svg class="w-4 h-4 text-gray-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-gray-500 text-sm">Nouvelle publication</span>
+            </div>
+          </li>
+        </ol>
+      </nav>
+      
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Publication de Recherche</h1>
+          <p class="text-gray-600 mt-1">Créer une nouvelle publication de recherche</p>
+        </div>
+        <div class="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Les champs marqués d'un * sont obligatoires
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire principal -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+      <form method="post" 
+      action="{% if form.instance.pk %}{% url 'modifier_axe' form.instance.pk %}{% else %}{% url 'add_axe' %}{% endif %}" 
+      class="w-full">
+  {% csrf_token %}
+  
+  <!-- Erreurs générales -->
+  {% if form.non_field_errors %}
+    <div class="px-6 py-4 bg-red-50 border-b border-red-100">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div class="text-sm text-red-800">
+          {{ form.non_field_errors }}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- Champs du formulaire -->
+  <div class="px-6 py-6">
+    <div class="space-y-6">
+      {% for field in form %}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+          <!-- Label -->
+          <div class="md:text-right md:pr-4">
+            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-1 md:mb-0 md:pt-2">
+              {{ field.label }}
+              {% if field.field.required %}<span class="text-red-500 ml-1">*</span>{% endif %}
+            </label>
+          </div>
+          
+          <!-- Champ -->
+          <div class="md:col-span-2">
+            <div class="relative">
+              {% if field.field.widget.input_type == 'textarea' %}
+                {{ field|add_class:"block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-vertical min-h-[100px]" }}
+              {% elif field.field.widget.input_type == 'select' %}
+                {{ field|add_class:"block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white" }}
+              {% else %}
+                {{ field|add_class:"block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500" }}
+              {% endif %}
+            </div>
+            
+            <!-- Erreurs du champ -->
+            {% if field.errors %}
+              {% for error in field.errors %}
+                <p class="text-red-600 text-xs mt-1 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  {{ error }}
+                </p>
+              {% endfor %}
+            {% endif %}
+            
+            <!-- Aide contextuelle -->
+            {% if field.help_text %}
+              <p class="text-gray-500 text-xs mt-1">{{ field.help_text }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Actions du formulaire -->
+  <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-xl">
+    <div class="flex flex-col sm:flex-row-reverse sm:justify-between gap-3">
+      <!-- Boutons principaux -->
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button type="submit" 
+                class="inline-flex items-center justify-center px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          {% if form.instance.pk %}Mettre à jour{% else %}Enregistrer{% endif %}
+        </button>
+        
+        <button type="button" onclick="window.history.back()" 
+                class="inline-flex items-center justify-center px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg shadow-sm hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          Annuler
+        </button>
+      </div>
+      
+      <!-- Bouton optionnel brouillon -->
+      <div class="flex">
+        <button type="button" 
+                class="inline-flex items-center justify-center px-4 py-2.5 bg-gray-100 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          Sauvegarder en brouillon
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+
+    </div>
+
+    <!-- Informations d'aide (optionnel) -->
+    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div class="flex items-start">
+        <svg class="w-5 h-5 text-blue-400 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div class="text-sm text-blue-800">
+          <h4 class="font-medium mb-1">Conseils pour une publication de qualité</h4>
+          <ul class="text-blue-700 space-y-1">
+            <li>• Assurez-vous que le titre soit descriptif et précis</li>
+            <li>• Vérifiez l'orthographe et la grammaire avant de publier</li>
+            <li>• Utilisez des mots-clés pertinents pour faciliter la recherche</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Amélioration des champs de formulaire */
+.form-control:focus {
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+/* Animation de chargement pour le bouton submit */
+.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+</style>
+
+<script>
+// Prévention de la double soumission
+document.querySelector('form').addEventListener('submit', function(e) {
+  const submitBtn = this.querySelector('button[type="submit"]');
+  if (submitBtn.classList.contains('loading')) {
+    e.preventDefault();
+    return false;
+  }
+  
+  submitBtn.classList.add('loading');
+  submitBtn.innerHTML = '<span class="opacity-0">Enregistrer</span>';
+  
+  // Timeout de sécurité
+  setTimeout(() => {
+    submitBtn.classList.remove('loading');
+    submitBtn.innerHTML = `
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      Enregistrer
+    `;
+  }, 10000);
+});
+
+// Confirmation avant annulation si le formulaire a été modifié
+let formModified = false;
+const formInputs = document.querySelectorAll('input, textarea, select');
+
+formInputs.forEach(input => {
+  input.addEventListener('change', () => {
+    formModified = true;
+  });
+});
+
+document.querySelector('button[onclick="window.history.back()"]').addEventListener('click', function(e) {
+  if (formModified) {
+    if (!confirm('Vous avez des modifications non sauvegardées. Êtes-vous sûr de vouloir quitter ?')) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }
+});
+</script>
+{% endblock %}
