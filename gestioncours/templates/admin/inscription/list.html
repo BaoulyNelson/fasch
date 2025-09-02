@@ -58,4 +58,60 @@
     </tbody>
   </table>
 </div>
+{% if page_obj.has_other_pages %}
+  <div class="flex justify-center mt-6">
+    <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+      
+      {# Bouton précédent #}
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+          ← Précédent
+        </a>
+      {% else %}
+        <span class="px-3 py-2 rounded-l-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400">
+          ← Précédent
+        </span>
+      {% endif %}
+
+      {# Numéros de page #}
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+          <span class="px-3 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600">
+            {{ num }}
+          </span>
+        {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+          <a href="?page={{ num }}"
+             class="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            {{ num }}
+          </a>
+        {% elif num == 1 or num == page_obj.paginator.num_pages %}
+          <a href="?page={{ num }}"
+             class="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+            {{ num }}
+          </a>
+          {% if num == 1 and page_obj.number > 3 %}
+            <span class="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-400">…</span>
+          {% elif num == page_obj.paginator.num_pages and page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+            <span class="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-400">…</span>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {# Bouton suivant #}
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+          Suivant →
+        </a>
+      {% else %}
+        <span class="px-3 py-2 rounded-r-md border border-gray-300 bg-gray-100 text-sm font-medium text-gray-400">
+          Suivant →
+        </span>
+      {% endif %}
+
+    </nav>
+  </div>
+{% endif %}
+
 {% endblock %}

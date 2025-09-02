@@ -870,8 +870,9 @@ class EtudiantListView(ListView):
     model = Etudiant
     template_name = "admin/etudiant/list.html"
     context_object_name = "etudiants"
-    ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
-    
+    ordering = ['-date_creation']  # tri décroissant
+    paginate_by = 20  # <-- 10 étudiants par page
+
 
 # ------------------ Cours ------------------
 class CoursListView(ListView):
@@ -879,6 +880,7 @@ class CoursListView(ListView):
     template_name = "admin/cours/list.html"
     context_object_name = "cours"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 20  # <-- 10 étudiants par page
     
 
 # ------------------ Professeurs ------------------
@@ -887,6 +889,7 @@ class ProfesseurListView(ListView):
     template_name = "admin/professeur/list.html"
     context_object_name = "professeurs"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 20  # <-- 10 étudiants par page
     
 
 # ------------------ Inscriptions ------------------
@@ -895,6 +898,7 @@ class InscriptionListView(ListView):
     template_name = "admin/inscription/list.html"
     context_object_name = "inscriptions"
     ordering = ['-date_inscription']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 20  # <-- 10 étudiants par page
     
 
 # ------------------ Horaires ------------------
@@ -903,6 +907,7 @@ class HoraireCoursListView(ListView):
     template_name = "admin/horaire/list.html"
     context_object_name = "horaires"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 20  # <-- 10 étudiants par page
 
 # ------------------ Articles ------------------
 class ArticleListView(ListView):
@@ -910,6 +915,7 @@ class ArticleListView(ListView):
     template_name = "admin/article/list.html"
     context_object_name = "articles"
     ordering = ['-date_publication']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # ------------------ Événements ------------------
@@ -918,6 +924,7 @@ class EvenementListView(ListView):
     template_name = "admin/evenement/list.html"
     context_object_name = "evenements"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # ------------------ Annonces ------------------
@@ -926,6 +933,7 @@ class AnnonceListView(ListView):
     template_name = "admin/annonce/list.html"
     context_object_name = "annonces"
     ordering = ['-date_publication']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # ------------------ Programmes ------------------
@@ -934,6 +942,7 @@ class ProgrammeListView(ListView):
     template_name = "admin/programme/list.html"
     context_object_name = "programmes"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # ------------------ Axes de recherche ------------------
@@ -941,12 +950,16 @@ class AxeRechercheListView(ListView):
     model = AxeRecherche
     template_name = "admin/axe/list.html"
     context_object_name = "axes"
+    paginate_by = 10  # <-- 10 étudiants par page
 
 # ------------------ Publications ------------------
 class PublicationRechercheListView(ListView):
     model = PublicationRecherche
     template_name = "admin/publication/list.html"
     context_object_name = "publications"
+    paginate_by = 10  # <-- 10 étudiants par page
+    ordering = ['-date_publication']  # <- tri décroissant, du plus récent au plus ancien
+    
 
 # ------------------ Livres ------------------
 class LivreListView(ListView):
@@ -954,6 +967,7 @@ class LivreListView(ListView):
     template_name = "admin/livre/list.html"
     context_object_name = "livres"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # ------------------ Personnel ------------------
@@ -962,6 +976,7 @@ class PersonnelListView(ListView):
     template_name = "admin/personnel/list.html"
     context_object_name = "personnels"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
     def get_context_data(self, **kwargs):
@@ -975,6 +990,7 @@ class EtapeAdmissionListView(ListView):
     template_name = "admin/etape/list.html"
     context_object_name = "etapes_admission"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # ------------------ Demandes d'admission ------------------
@@ -983,6 +999,7 @@ class DemandeAdmissionListView(ListView):
     template_name = "admin/demande/list.html"
     context_object_name = "demandes_admission"
     ordering = ['-date_creation']  # <- tri décroissant, du plus récent au plus ancien
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # ------------------ Examens ------------------
@@ -990,6 +1007,7 @@ class ExamenListView(ListView):
     model = Examen
     template_name = "admin/examen/list.html"
     context_object_name = "examens"
+    paginate_by = 10  # <-- 10 étudiants par page
     
 
 # Classe générique pour UpdateView
